@@ -8,73 +8,68 @@
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:url("./assets/bg.jpg") no-repeat center center fixed;
-  background-size:cover;
+  font-family:'Poppins',sans-serif;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:url('https://static.promediateknologi.id/crop/0x0:0x0/x/photo/p1/290/2024/01/02/Syarifah-Khadijah-Alhabsyi-Siapa_-Ini-Profil-Biodata-Gadis-yang-Viral-di-TikTok-Umur-Asal-Sekolah-Instagram-dan-TikTok-2-199858789.jpg') center/cover no-repeat;
+  position:relative;
   overflow:hidden;
-  color:white;
 }
 
-.overlay{
-  position:fixed;
+/* overlay */
+body::before{
+  content:'';
+  position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
+  background:rgba(10,25,47,0.65);
+  backdrop-filter:blur(4px);
+  z-index:1;
 }
 
+/* logo */
 .logo{
   position:absolute;
   top:20px;
   left:20px;
   width:120px;
   z-index:10;
+  filter:drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
 
-.container{
+/* container */
+.box{
   position:relative;
   z-index:2;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.glass{
-  padding:60px 90px;
-  border-radius:30px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
   text-align:center;
-  border:1px solid rgba(255,255,255,0.2);
+  color:white;
 }
 
+/* nomor */
 .nomor{
-  font-size:170px;
+  font-size:160px;
   font-weight:900;
   color:#00ff99;
-  text-shadow:0 0 30px rgba(0,255,153,0.5);
+  text-shadow:0 0 30px rgba(0,255,153,0.4);
 }
 
+/* info */
 .info{
   font-size:22px;
   margin-top:10px;
-  color:#e2e8f0;
+  opacity:0.9;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay"></div>
+<img src="./assets/logo.png" class="logo">
 
-<!-- ✅ LOGO FIX -->
-<img src="./assets/logo.png" class="logo" onerror="this.style.display='none'">
-
-<div class="container">
-  <div class="glass">
-    <div class="nomor" id="nomor">---</div>
-    <div class="info">SILAHKAN MENUJU LOKET PELAYANAN</div>
-  </div>
+<div class="box">
+  <div class="nomor" id="nomor">---</div>
+  <div class="info">Silakan menunggu panggilan...</div>
 </div>
 
 <script type="module">
@@ -82,7 +77,6 @@ body{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
@@ -96,22 +90,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+const el = document.getElementById("nomor");
+
+let lastNomor = "";
+
 /* ================= PETUGAS ================= */
 const petugas = {
-  A: "Bapak Rahmad",
-  B: "Bapak Bayu",
-  C: "Bapak Sunariyadi",
-  D: "Ibu Tasya",
-  E: "Ibu Eva",
-  F: "Bapak Mujib",
-  G: "Ibu Ria",
-  H: "Bapak Raka",
-  I: "Bapak Chozin",
-  J: "Ibu Ita"
+  A:"Bapak Rahmad",
+  B:"Bapak Bayu",
+  C:"Bapak Sunariyadi",
+  D:"Ibu Tasya",
+  E:"Ibu Eva",
+  F:"Bapak Mujib",
+  G:"Ibu Ria",
+  H:"Bapak Raka",
+  I:"Bapak Chozin",
+  J:"Ibu Ita"
 };
-
-const el = document.getElementById("nomor");
-let lastNomor = "";
 
 /* ================= AUDIO UNLOCK ================= */
 document.body.addEventListener("click", () => {
@@ -119,33 +114,16 @@ document.body.addEventListener("click", () => {
   new Audio("./sounds/ding.mp3").play().catch(()=>{});
 }, { once:true });
 
-/* ================= FORMAT ANNOUNCEMENT ================= */
-function formatAnnouncement(loket, angka, nama){
-
-  const digit = angka.split("").join(" ");
-
-  const id =
-`Nomor antrean ${loket} ${digit}.
-Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026.
-Meja ${nama}.`;
-
-  const en =
-`Queue number ${loket} ${digit}.
-Please proceed to SPMB 2026 verification service counter.
-Service desk ${nama}.`;
-
-  return id + " " + en;
-}
-
-/* ================= VOICE ENGINE (BANK / AIRPORT STYLE) ================= */
+/* ================= VOICE ENGINE (BANK/AIRPORT STYLE) ================= */
 function speak(text){
+  speechSynthesis.cancel();
 
   const u = new SpeechSynthesisUtterance(text);
 
   const voices = speechSynthesis.getVoices();
 
+  // pilih voice formal (fallback aman)
   const voice =
-    voices.find(v => v.lang.includes("en") && v.name.toLowerCase().includes("female")) ||
     voices.find(v => v.lang.includes("en")) ||
     voices.find(v => v.lang.includes("id")) ||
     voices[0];
@@ -153,23 +131,31 @@ function speak(text){
   if(voice) u.voice = voice;
 
   u.lang = "en-US";
-  u.rate = 0.85;   // airport slow clear
-  u.pitch = 0.95;  // neutral professional
+  u.rate = 0.92;   // slow airport
+  u.pitch = 1.0;   // natural
   u.volume = 1;
-
-  speechSynthesis.cancel();
 
   setTimeout(()=>{
     speechSynthesis.speak(u);
-  }, 150);
+  }, 120);
 }
 
-/* ================= SOUND ================= */
-function ding(){
-  new Audio("./sounds/ding.mp3").play();
+/* ================= FORMAT ANNOUNCEMENT ================= */
+function formatAnnouncement(loket, angka){
+
+  const digit = angka.split("").join(" ");
+  const nama = petugas[loket] || "petugas layanan";
+
+  const id =
+`Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
+
+  const en =
+`Queue number ${loket} ${digit}, please proceed to verification service counter at ${nama} desk.`;
+
+  return id + " . " + en;
 }
 
-/* ================= FIREBASE LISTENER ================= */
+/* ================= FIREBASE ================= */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
@@ -177,25 +163,19 @@ onValue(ref(db,"current_call"), (snap)=>{
 
   const nomor = data.nomor;
 
-  if(nomor !== lastNomor){
+  if(nomor === lastNomor) return;
 
-    lastNomor = nomor;
-    el.innerText = nomor;
+  lastNomor = nomor;
 
-    setTimeout(()=>{
+  el.innerText = nomor;
 
-      ding();
+  const [loket, angka] = nomor.split("-");
 
-      const [loket, angka] = nomor.split("-");
-      const nama = petugas[loket] || "petugas layanan";
+  const text = formatAnnouncement(loket, angka);
 
-      const text = formatAnnouncement(loket, angka, nama);
-
-      speak(text);
-
-    }, 500);
-  }
-
+  // bunyi ding + voice
+  new Audio("./sounds/ding.mp3").play().catch(()=>{});
+  speak(text);
 });
 
 </script>
