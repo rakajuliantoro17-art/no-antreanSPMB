@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DISPLAY ANTREAN BANK STYLE</title>
+<title>DISPLAY ANTREAN SPMB</title>
 
 <style>
 body{
@@ -48,12 +48,6 @@ body{
   border:1px solid rgba(255,255,255,0.2);
 }
 
-.label{
-  font-size:26px;
-  color:#cbd5e1;
-  letter-spacing:4px;
-}
-
 .nomor{
   font-size:170px;
   font-weight:900;
@@ -64,22 +58,21 @@ body{
 .info{
   font-size:22px;
   margin-top:10px;
+  color:#e2e8f0;
 }
-
-.blink{animation:blink 1s infinite alternate;}
-@keyframes blink{from{opacity:1}to{opacity:.6}}
 </style>
 </head>
 
 <body>
 
 <div class="overlay"></div>
-<img src="./assets/logo.png" class="logo">
+
+<!-- ✅ LOGO FIX -->
+<img src="./assets/logo.png" class="logo" onerror="this.style.display='none'">
 
 <div class="container">
   <div class="glass">
-    <div class="label">NOMOR ANTREAN</div>
-    <div class="nomor blink" id="nomor">---</div>
+    <div class="nomor" id="nomor">---</div>
     <div class="info">SILAHKAN MENUJU LOKET PELAYANAN</div>
   </div>
 </div>
@@ -89,86 +82,91 @@ body{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+/* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "no-antrean-spmb",
   storageBucket: "no-antrean-spmb.firebasestorage.app",
-  messagingSenderId: "357121462512",
+  messagingSenderId: "357121462357",
   appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const el = document.getElementById("nomor");
+/* ================= PETUGAS ================= */
+const petugas = {
+  A: "Bapak Rahmad",
+  B: "Bapak Bayu",
+  C: "Bapak Sunariyadi",
+  D: "Ibu Tasya",
+  E: "Ibu Eva",
+  F: "Bapak Mujib",
+  G: "Ibu Ria",
+  H: "Bapak Raka",
+  I: "Bapak Chozin",
+  J: "Ibu Ita"
+};
 
+const el = document.getElementById("nomor");
 let lastNomor = "";
 
 /* ================= AUDIO UNLOCK ================= */
-function unlockAudio(){
-  const silent = new SpeechSynthesisUtterance("");
-  speechSynthesis.speak(silent);
+document.body.addEventListener("click", () => {
+  speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+  new Audio("./sounds/ding.mp3").play().catch(()=>{});
+}, { once:true });
 
-  const audio = new Audio("./sounds/ding.mp3");
-  audio.play().catch(()=>{});
-}
-document.body.addEventListener("click", unlockAudio, { once:true });
+/* ================= FORMAT ANNOUNCEMENT ================= */
+function formatAnnouncement(loket, angka, nama){
 
-/* ================= LOAD VOICE ================= */
-let voicesReady = false;
-let selectedVoice = null;
+  const digit = angka.split("").join(" ");
 
-function loadVoice(){
-  const voices = speechSynthesis.getVoices();
+  const id =
+`Nomor antrean ${loket} ${digit}.
+Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026.
+Meja ${nama}.`;
 
-  selectedVoice =
-    voices.find(v => v.lang.includes("id") && v.name.toLowerCase().includes("female")) ||
-    voices.find(v => v.lang.includes("id")) ||
-    voices[0];
+  const en =
+`Queue number ${loket} ${digit}.
+Please proceed to SPMB 2026 verification service counter.
+Service desk ${nama}.`;
 
-  voicesReady = true;
-}
-
-speechSynthesis.onvoiceschanged = loadVoice;
-loadVoice();
-
-/* ================= SOUND ================= */
-function playDing(){
-  new Audio("./sounds/ding.mp3").play();
+  return id + " " + en;
 }
 
-/* ================= AI VOICE (FEMALE GEN Z STYLE) ================= */
+/* ================= VOICE ENGINE (BANK / AIRPORT STYLE) ================= */
 function speak(text){
-
-  if(!voicesReady) loadVoice();
 
   const u = new SpeechSynthesisUtterance(text);
 
-  if(selectedVoice) u.voice = selectedVoice;
+  const voices = speechSynthesis.getVoices();
 
-  u.lang = "id-ID";
-  u.rate = 1.05;   // natural
-  u.pitch = 1.25;  // feminine
+  const voice =
+    voices.find(v => v.lang.includes("en") && v.name.toLowerCase().includes("female")) ||
+    voices.find(v => v.lang.includes("en")) ||
+    voices.find(v => v.lang.includes("id")) ||
+    voices[0];
+
+  if(voice) u.voice = voice;
+
+  u.lang = "en-US";
+  u.rate = 0.85;   // airport slow clear
+  u.pitch = 0.95;  // neutral professional
   u.volume = 1;
 
   speechSynthesis.cancel();
 
   setTimeout(()=>{
     speechSynthesis.speak(u);
-  }, 80);
+  }, 150);
 }
 
-/* ================= FORMAT NOMOR ================= */
-function format(nomor){
-
-  if(!nomor || !nomor.includes("-")) return "";
-
-  const [loket, angka] = nomor.split("-");
-  const digit = angka.split("").join(" ");
-
-  return `Nomor antrean ${loket} ${digit}. Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026. Terima kasih.`;
+/* ================= SOUND ================= */
+function ding(){
+  new Audio("./sounds/ding.mp3").play();
 }
 
 /* ================= FIREBASE LISTENER ================= */
@@ -178,26 +176,24 @@ onValue(ref(db,"current_call"), (snap)=>{
   if(!data) return;
 
   const nomor = data.nomor;
-  const type = data.callType || "NEXT";
-
-  el.innerText = nomor;
 
   if(nomor !== lastNomor){
 
     lastNomor = nomor;
+    el.innerText = nomor;
 
     setTimeout(()=>{
 
-      playDing();
+      ding();
 
-      if(type === "RECALL"){
-        speak("Pengulangan panggilan. " + format(nomor));
-      } else {
-        speak(format(nomor));
-      }
+      const [loket, angka] = nomor.split("-");
+      const nama = petugas[loket] || "petugas layanan";
 
-    },500);
+      const text = formatAnnouncement(loket, angka, nama);
 
+      speak(text);
+
+    }, 500);
   }
 
 });
