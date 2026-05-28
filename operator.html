@@ -9,34 +9,64 @@
 body{
   margin:0;
   font-family:Arial;
-  background:#0f172a;
+  background:url("./assets/bg.jpg") no-repeat center center fixed;
+  background-size:cover;
+  overflow:hidden;
   color:white;
+}
+
+/* overlay glass */
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+}
+
+/* container */
+.container{
+  position:relative;
+  z-index:2;
+  padding:20px;
   text-align:center;
 }
 
-h1{
-  margin:20px 0;
-}
-
-.panel{
+/* glass panel */
+.glass{
+  max-width:800px;
+  margin:20px auto;
   padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(20px);
 }
 
-.loket-grid{
+/* display */
+.display{
+  font-size:28px;
+  margin-bottom:20px;
+  color:#00ff99;
+}
+
+/* grid loket */
+.grid{
   display:grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns:repeat(5,1fr);
   gap:10px;
-  max-width:600px;
-  margin:0 auto;
 }
 
 button{
-  padding:20px;
-  font-size:20px;
+  padding:18px;
+  font-size:18px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   font-weight:bold;
+  transition:0.2s;
 }
 
 .loket{
@@ -44,12 +74,8 @@ button{
   color:white;
 }
 
-.loket.active{
-  background:#22c55e;
-}
-
-.action{
-  margin-top:20px;
+.loket:hover{
+  transform:scale(1.05);
 }
 
 .next{
@@ -62,7 +88,6 @@ button{
   background:#f59e0b;
   color:white;
   width:200px;
-  margin-left:10px;
 }
 
 .reset{
@@ -71,51 +96,52 @@ button{
   width:200px;
   margin-top:10px;
 }
-
-.display{
-  font-size:40px;
-  margin:20px 0;
-  color:#00ff99;
-}
 </style>
 </head>
 
 <body>
 
-<h1>OPERATOR PANEL ANTREAN</h1>
+<div class="overlay"></div>
 
-<div class="display" id="current">LOKET: - | NOMOR: ---</div>
+<div class="container">
 
-<div class="panel">
+  <div class="glass">
 
-  <div class="loket-grid">
-    <button class="loket" onclick="setLoket('A')">A</button>
-    <button class="loket" onclick="setLoket('B')">B</button>
-    <button class="loket" onclick="setLoket('C')">C</button>
-    <button class="loket" onclick="setLoket('D')">D</button>
-    <button class="loket" onclick="setLoket('E')">E</button>
-    <button class="loket" onclick="setLoket('F')">F</button>
-    <button class="loket" onclick="setLoket('G')">G</button>
-    <button class="loket" onclick="setLoket('H')">H</button>
-    <button class="loket" onclick="setLoket('I')">I</button>
-    <button class="loket" onclick="setLoket('J')">J</button>
-  </div>
+    <h2>OPERATOR PANEL ANTREAN</h2>
 
-  <div class="action">
+    <div class="display" id="current">
+      LOKET: - | NOMOR: ---
+    </div>
+
+    <div class="grid">
+      <button class="loket" onclick="setLoket('A')">A</button>
+      <button class="loket" onclick="setLoket('B')">B</button>
+      <button class="loket" onclick="setLoket('C')">C</button>
+      <button class="loket" onclick="setLoket('D')">D</button>
+      <button class="loket" onclick="setLoket('E')">E</button>
+      <button class="loket" onclick="setLoket('F')">F</button>
+      <button class="loket" onclick="setLoket('G')">G</button>
+      <button class="loket" onclick="setLoket('H')">H</button>
+      <button class="loket" onclick="setLoket('I')">I</button>
+      <button class="loket" onclick="setLoket('J')">J</button>
+    </div>
+
+    <br>
+
     <button class="next" onclick="next()">NEXT</button>
     <button class="recall" onclick="recall()">RECALL</button>
-  </div>
+    <br>
+    <button class="reset" onclick="resetCounter()">RESET</button>
 
-  <button class="reset" onclick="resetCounter()">RESET LOKET</button>
+  </div>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ================= FIREBASE =================
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
@@ -129,108 +155,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= STATE =================
 let loket = "-";
 let counter = 0;
 
-// ================= INIT LOAD =================
-async function loadState(){
-  const snap = await get(ref(db, "operator_state"));
-  if(snap.exists()){
-    const data = snap.val();
-    loket = data.loket || "-";
-    counter = data.counter || 0;
-    updateDisplay();
-  }
+// SOUND ENGINE
+function playSound(path){
+  const audio = new Audio(path);
+  audio.play();
 }
 
-loadState();
-
-// ================= SET LOKET =================
+// SET LOKET
 window.setLoket = async function(l){
   loket = l;
 
   const snap = await get(ref(db, "counter/" + loket));
   counter = snap.exists() ? snap.val() : 0;
 
-  await saveState();
-
   updateDisplay();
 };
 
-// ================= NEXT =================
-window.next = async function(){
-  if(loket === "-"){
-    alert("Pilih loket dulu!");
-    return;
-  }
-
-  counter++;
-
-  const nomor = `${loket}-${String(counter).padStart(3,"0")}`;
-
-  await set(ref(db, "current_call"), {
-    nomor: nomor,
-    loket: loket,
-    counter: counter,
-    updatedAt: Date.now()
-  });
-
-  await set(ref(db, "counter/" + loket), counter);
-
-  await saveState();
-
-  updateDisplay();
-};
-
-// ================= RECALL =================
-window.recall = async function(){
-  const snap = await get(ref(db, "current_call"));
-  if(snap.exists()){
-    await set(ref(db, "current_call"), snap.val());
-  }
-};
-
-// ================= RESET =================
-window.resetCounter = async function(){
-  if(confirm("Reset counter loket ini?")){
-    counter = 0;
-    await set(ref(db, "counter/" + loket), 0);
-    await saveState();
-    updateDisplay();
-  }
-};
-
-// ================= SAVE STATE =================
-async function saveState(){
-  await set(ref(db, "operator_state"), {
-    loket,
-    counter
-  });
-}
-
-// ================= DISPLAY =================
-function updateDisplay(){
-  document.getElementById("current").innerText =
-    `LOKET: ${loket} | NOMOR: ${loket}-${String(counter).padStart(3,"0")}`;
-}
-
-// ================= REALTIME LISTEN (optional sync) =================
-onValue(ref(db, "current_call"), (snap)=>{
-  const data = snap.val();
-  if(data){
-    console.log("CALL:", data.nomor);
-  }
-});
-
-</script>
-
-</body>
-</html>
-function playSound(path){
-  const audio = new Audio(path);
-  audio.play();
-}
+// NEXT
 window.next = async function(){
 
   if(loket === "-"){
@@ -251,10 +195,11 @@ window.next = async function(){
 
   await set(ref(db, "counter/" + loket), counter);
 
-  playSound("./sounds/ding.mp3"); // 🔊 NEXT SOUND
-
+  playSound("./sounds/ding.mp3");
   updateDisplay();
 };
+
+// RECALL
 window.recall = async function(){
 
   const snap = await get(ref(db, "current_call"));
@@ -262,12 +207,26 @@ window.recall = async function(){
   if(snap.exists()){
     await set(ref(db, "current_call"), snap.val());
 
-    playSound("./sounds/panggilan.mp3"); // 🔊 RECALL SOUND
+    playSound("./sounds/panggilan.mp3");
   }
 };
-document.querySelectorAll("button").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const audio = new Audio("./sounds/next.mp3");
-    audio.play();
-  });
-});
+
+// RESET
+window.resetCounter = async function(){
+  if(confirm("Reset counter?")){
+    counter = 0;
+    await set(ref(db, "counter/" + loket), 0);
+    updateDisplay();
+  }
+};
+
+// DISPLAY
+function updateDisplay(){
+  document.getElementById("current").innerText =
+    `LOKET: ${loket} | NOMOR: ${loket}-${String(counter).padStart(3,"0")}`;
+}
+
+</script>
+
+</body>
+</html>
