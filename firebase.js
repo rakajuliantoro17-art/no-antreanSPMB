@@ -13,33 +13,33 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 
-// CONFIG FIREBASE
+// Firebase Config
 const firebaseConfig = {
 
-  apiKey: "ISI_API_KEY",
+  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
 
-  authDomain: "ISI_PROJECT.firebaseapp.com",
+  authDomain: "no-antrean-spmb.firebaseapp.com",
 
-  databaseURL: "https://ISI_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
 
-  projectId: "ISI_PROJECT",
+  projectId: "no-antrean-spmb",
 
-  storageBucket: "ISI_PROJECT.appspot.com",
+  storageBucket: "no-antrean-spmb.firebasestorage.app",
 
-  messagingSenderId: "ISI_SENDER_ID",
+  messagingSenderId: "357121462512",
 
-  appId: "ISI_APP_ID"
+  appId: "1:357121462512:web:8fd937bc2a8d2a3894b235"
 };
 
 
-// INITIALIZE
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// DATABASE
+// Database
 const db = getDatabase(app);
 
 
-// EXPORT
+// Export
 export {
   db,
   ref,
