@@ -190,7 +190,30 @@ onValue(ref(db, "current_call"), (snap)=>{
   }
 
 });
+onValue(ref(db,"current_call"), (snap)=>{
 
+  const data = snap.val();
+  if(!data) return;
+
+  nomorEl.innerText = data.nomor;
+
+  const type = data.callType || "NEXT";
+
+  if(data.nomor !== lastNomor){
+
+    lastNomor = data.nomor;
+
+    playDing();
+
+    if(type === "RECALL"){
+      speak("Pengulangan panggilan. " + format(data.nomor));
+    } else {
+      speak(format(data.nomor));
+    }
+
+  }
+
+});
 </script>
 
 </body>
