@@ -167,11 +167,11 @@ window.recall = async ()=>{
 
   const data = snap.val();
 
-  await set(ref(db,"current_call"),{
-    ...data,
-    callType:"RECALL",
-    updatedAt:Date.now()
-  });
+  await set(ref(db,"current_call"), {
+  ...snap.val(),
+  callType: "RECALL",
+  updatedAt: Date.now()
+});
 
   playSound("./sounds/panggilan.mp3");
 };
