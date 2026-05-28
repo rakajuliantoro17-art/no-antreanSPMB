@@ -66,139 +66,83 @@ body{
 
 <div class="container">
 
-  <div class="label">
-    NOMOR ANTREAN
-  </div>
+  <div class="label">NOMOR ANTREAN</div>
 
-  <div class="nomor blink" id="nomor">
-    ---
-  </div>
+  <div class="nomor blink" id="nomor">---</div>
 
-  <div class="info">
-    HARAP MENUJU LOKET PELAYANAN
-  </div>
+  <div class="info">HARAP MENUJU LOKET PELAYANAN</div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-  getDatabase,
-  ref,
-  onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-
 // ================= FIREBASE =================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-
-  apiKey: "YOUR_API_KEY",
-
-  authDomain: "YOUR_AUTH_DOMAIN",
-
-  databaseURL: "YOUR_DATABASE_URL",
-
-  projectId: "YOUR_PROJECT_ID",
-
-  storageBucket: "YOUR_STORAGE_BUCKET",
-
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-
-  appId: "YOUR_APP_ID"
-
+  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
+  authDomain: "no-antrean-spmb.firebaseapp.com",
+  databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "no-antrean-spmb",
+  storageBucket: "no-antrean-spmb.firebasestorage.app",
+  messagingSenderId: "357121462512",
+  appId: "1:357121462512:web:8fd937bc2a8d2a3894b235"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
-
-// ================= DISPLAY =================
-
+// ================= ELEMENT =================
 const nomorEl = document.getElementById("nomor");
-
 let lastNomor = "";
 
-
-// ================= UNLOCK AUDIO =================
-
+// ================= UNLOCK AUDIO (WAJIB BROWSER) =================
 document.body.addEventListener("click", () => {
-
   const unlock = new SpeechSynthesisUtterance("");
-
   speechSynthesis.speak(unlock);
-
 }, { once:true });
 
-
 // ================= SUARA =================
-
 function speak(text){
-
   window.speechSynthesis.cancel();
-
   const speech = new SpeechSynthesisUtterance(text);
-
   speech.lang = "id-ID";
-
   speech.rate = 0.9;
-
   speech.pitch = 1;
-
   speech.volume = 1;
-
   window.speechSynthesis.speak(speech);
 }
 
-
 // ================= FORMAT SUARA =================
-
 function suaraAntrean(nomor){
+  if(!nomor || !nomor.includes("-")) return "Nomor antrean tidak tersedia";
 
   const parts = nomor.split("-");
-
   const huruf = parts[0];
-
   const angka = parseInt(parts[1]);
 
-  const angkaText = angka
-    .toString()
-    .split("")
-    .join(" ");
+  const angkaText = angka.toString().split("").join(" ");
 
   return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan`;
-
 }
 
-
-// ================= REALTIME =================
-
-onValue(ref(db, "current_call"), (snapshot)=>{
+// ================= REALTIME LISTENER =================
+onValue(ref(db, "current_call"), (snapshot) => {
 
   const data = snapshot.val();
-
   if(!data) return;
 
   const nomor = data.nomor || "---";
-
   nomorEl.innerText = nomor;
 
   // hindari suara berulang
   if(nomor !== lastNomor){
-
     lastNomor = nomor;
 
-    setTimeout(()=>{
-
-      speak(
-        suaraAntrean(nomor)
-      );
-
-    },500);
-
+    setTimeout(() => {
+      speak(suaraAntrean(nomor));
+    }, 500);
   }
 
 });
