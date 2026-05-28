@@ -133,30 +133,50 @@ Please proceed to SPMB 2026 verification counter at ${nama}.`;
   return id + " ... " + en;
 }
 
-/* VOICE ENGINE (BANK / AIRPORT STYLE) */
+let selectedVoice = null;
+
+/* ================= FORCE FEMALE VOICE ================= */
+function loadVoice(){
+
+  const voices = speechSynthesis.getVoices();
+
+  // prioritas: perempuan + Indonesia / English netral
+  selectedVoice =
+    voices.find(v =>
+      /female|woman|samantha|google uk english female/i.test(v.name)
+    ) ||
+    voices.find(v => v.lang.includes("id")) ||
+    voices.find(v => v.lang.includes("en")) ||
+    voices[0];
+
+}
+
+/* trigger load */
+speechSynthesis.onvoiceschanged = loadVoice;
+loadVoice();
+
+/* ================= FIXED FEMALE AIRPORT VOICE ================= */
 function speak(text){
 
   const u = new SpeechSynthesisUtterance(text);
 
   const voices = speechSynthesis.getVoices();
 
-  const voice =
-    voices.find(v => v.lang.includes("en")) ||
-    voices.find(v => v.lang.includes("id")) ||
-    voices[0];
+  if(selectedVoice){
+    u.voice = selectedVoice;
+  }
 
-  if(voice) u.voice = voice;
-
-  u.lang = "en-US";
-  u.rate = 0.85;   // airport slow clear
-  u.pitch = 1.0;
+  // 🔥 FORCE STYLE: REMAJA PUTRI NETRAL (BANK / AIRPORT)
+  u.lang = "id-ID";
+  u.rate = 0.92;     // slow jelas
+  u.pitch = 1.25;    // feminim tapi tidak lebay
   u.volume = 1;
 
   speechSynthesis.cancel();
 
   setTimeout(()=>{
     speechSynthesis.speak(u);
-  }, 150);
+  }, 120);
 }
 
 /* DING */
