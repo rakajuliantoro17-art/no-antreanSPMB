@@ -110,13 +110,13 @@ const petugas = {
   J:"Ibu Ita"
 };
 
-/* UNLOCK AUDIO */
+/* AUDIO UNLOCK */
 document.body.addEventListener("click", () => {
   speechSynthesis.speak(new SpeechSynthesisUtterance(""));
   new Audio("./sounds/ding.mp3").play().catch(()=>{});
 }, { once:true });
 
-/* FORMAT SUARA */
+/* FORMAT ANNOUNCEMENT */
 function format(loket, angka, nama){
 
   const digit = angka.split("").join(" ");
@@ -129,10 +129,10 @@ Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
 `Queue number ${loket} ${digit}.
 Please proceed to SPMB 2026 verification counter at ${nama}.`;
 
-  return id + " " + en;
+  return id + " ... " + en;
 }
 
-/* VOICE ENGINE (BANK / AIRPORT) */
+/* VOICE ENGINE (BANK / AIRPORT STYLE) */
 function speak(text){
 
   const u = new SpeechSynthesisUtterance(text);
@@ -147,7 +147,7 @@ function speak(text){
   if(voice) u.voice = voice;
 
   u.lang = "en-US";
-  u.rate = 0.85;
+  u.rate = 0.85;   // airport slow clear
   u.pitch = 1.0;
   u.volume = 1;
 
@@ -163,7 +163,7 @@ function ding(){
   new Audio("./sounds/ding.mp3").play();
 }
 
-/* FIREBASE */
+/* FIREBASE LISTENER */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
@@ -180,48 +180,22 @@ onValue(ref(db,"current_call"), (snap)=>{
   const [loket, angka] = nomor.split("-");
   const nama = petugas[loket] || "petugas layanan";
 
-  const text = formatAnnouncement(loket, angka, nama);
-
   setTimeout(()=>{
 
     ding();
 
     if(type === "RECALL"){
-
-      const recallText =
-        "Pengulangan pemanggilan. " + text +
-        " Sekali lagi, kami ulangi.";
-
-      speak(recallText);
-
+      const recall =
+        "Attention please. Pengulangan panggilan. " +
+        format(loket, angka, nama) +
+        " We repeat the announcement.";
+      speak(recall);
     } else {
-
-      speak(text);
-
+      speak(format(loket, angka, nama));
     }
 
   }, 500);
 
-});
-
-  const data = snap.val();
-  if(!data) return;
-
-  const nomor = data.nomor;
-
-  if(nomor === lastNomor) return;
-
-  lastNomor = nomor;
-
-  el.innerText = nomor;
-
-  const [loket, angka] = nomor.split("-");
-  const nama = petugas[loket] || "petugas layanan";
-
-  setTimeout(()=>{
-    ding();
-    speak(format(loket, angka, nama));
-  }, 500);
 });
 
 </script>
