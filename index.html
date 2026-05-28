@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DISPLAY ANTREAN BANK STYLE</title>
+<title>DISPLAY ANTREAN BANK AIRPORT STYLE</title>
 
 <style>
 body{
@@ -95,7 +95,7 @@ const firebaseConfig = {
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "no-antrean-spmb",
   storageBucket: "no-antrean-spmb.firebasestorage.app",
-  messagingSenderId: "357121462512",
+  messagingSenderId: "357121462357",
   appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
@@ -107,71 +107,61 @@ const el = document.getElementById("nomor");
 let lastNomor = "";
 
 /* ================= AUDIO UNLOCK ================= */
-function unlockAudio(){
-  const silent = new SpeechSynthesisUtterance("");
-  speechSynthesis.speak(silent);
-
+document.body.addEventListener("click", () => {
   const audio = new Audio("./sounds/ding.mp3");
   audio.play().catch(()=>{});
-}
-document.body.addEventListener("click", unlockAudio, { once:true });
+  speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+}, { once:true });
 
-/* ================= LOAD VOICE ================= */
-let voicesReady = false;
-let selectedVoice = null;
-
-function loadVoice(){
-  const voices = speechSynthesis.getVoices();
-
-  selectedVoice =
-    voices.find(v => v.lang.includes("id") && v.name.toLowerCase().includes("female")) ||
-    voices.find(v => v.lang.includes("id")) ||
-    voices[0];
-
-  voicesReady = true;
-}
-
-speechSynthesis.onvoiceschanged = loadVoice;
-loadVoice();
-
-/* ================= SOUND ================= */
-function playDing(){
-  new Audio("./sounds/ding.mp3").play();
-}
-
-/* ================= AI VOICE (FEMALE GEN Z STYLE) ================= */
-function speak(text){
-
-  if(!voicesReady) loadVoice();
-
-  const u = new SpeechSynthesisUtterance(text);
-
-  if(selectedVoice) u.voice = selectedVoice;
-
-  u.lang = "id-ID";
-  u.rate = 1.05;   // natural
-  u.pitch = 1.25;  // feminine
-  u.volume = 1;
-
-  speechSynthesis.cancel();
-
-  setTimeout(()=>{
-    speechSynthesis.speak(u);
-  }, 80);
-}
-
-/* ================= FORMAT NOMOR ================= */
-function format(nomor){
+/* ================= FORMAT VOICE ================= */
+function formatDual(nomor){
 
   if(!nomor || !nomor.includes("-")) return "";
 
   const [loket, angka] = nomor.split("-");
   const digit = angka.split("").join(" ");
 
-  return `Nomor antrean ${loket} ${digit}. Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026. Terima kasih.`;
+  const id =
+    `Nomor antrean ${loket} ${digit}. Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026.`;
+
+  const en =
+    `Number ${loket} ${digit}. Please proceed to verification counter SPMB 2026 service.`;
+
+  return id + " " + en;
 }
 
-/* ================= FIREBASE LISTENER ================= */
+/* ================= VOICE ENGINE ================= */
+function speak(text){
+
+  const u = new SpeechSynthesisUtterance(text);
+
+  const voices = speechSynthesis.getVoices();
+
+  const female =
+    voices.find(v => v.lang.includes("id")) ||
+    voices.find(v => v.lang.includes("en")) ||
+    voices[0];
+
+  if(female) u.voice = female;
+
+  u.lang = "id-ID";
+  u.rate = 0.95;   // airport calm
+  u.pitch = 1.0;   // natural female
+  u.volume = 1;
+
+  speechSynthesis.cancel();
+
+  setTimeout(()=>{
+    speechSynthesis.speak(u);
+  }, 120);
+}
+
+/* ================= SOUND ================= */
+function playDing(){
+  new Audio("./sounds/ding.mp3").play();
+}
+
+/* ================= FIREBASE ================= */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
@@ -190,10 +180,12 @@ onValue(ref(db,"current_call"), (snap)=>{
 
       playDing();
 
+      const text = formatDual(nomor);
+
       if(type === "RECALL"){
-        speak("Pengulangan panggilan. " + format(nomor));
+        speak("Pengulangan panggilan. " + text);
       } else {
-        speak(format(nomor));
+        speak(text);
       }
 
     },500);
