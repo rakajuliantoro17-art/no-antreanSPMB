@@ -227,4 +227,47 @@ onValue(ref(db, "current_call"), (snap)=>{
 
 </body>
 </html>
+function playSound(path){
+  const audio = new Audio(path);
+  audio.play();
+}
+window.next = async function(){
 
+  if(loket === "-"){
+    alert("Pilih loket dulu!");
+    return;
+  }
+
+  counter++;
+
+  const nomor = `${loket}-${String(counter).padStart(3,"0")}`;
+
+  await set(ref(db, "current_call"), {
+    nomor,
+    loket,
+    counter,
+    updatedAt: Date.now()
+  });
+
+  await set(ref(db, "counter/" + loket), counter);
+
+  playSound("./sounds/ding.mp3"); // 🔊 NEXT SOUND
+
+  updateDisplay();
+};
+window.recall = async function(){
+
+  const snap = await get(ref(db, "current_call"));
+
+  if(snap.exists()){
+    await set(ref(db, "current_call"), snap.val());
+
+    playSound("./sounds/panggilan.mp3"); // 🔊 RECALL SOUND
+  }
+};
+document.querySelectorAll("button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const audio = new Audio("./sounds/next.mp3");
+    audio.play();
+  });
+});
