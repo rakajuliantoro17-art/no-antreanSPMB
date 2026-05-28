@@ -6,17 +6,21 @@
 <title>DISPLAY ANTREAN SPMB</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
 body{
-  background:#020617;
-  font-family:Arial, Helvetica, sans-serif;
+  margin:0;
+  font-family:Arial;
   overflow:hidden;
   color:white;
+  background:url("./assets/bg.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.logo{
+  position:absolute;
+  top:20px;
+  left:20px;
+  width:120px;
+  z-index:10;
 }
 
 .container{
@@ -26,13 +30,12 @@ body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  text-align:center;
 }
 
 .label{
   font-size:45px;
   font-weight:bold;
-  letter-spacing:3px;
-  margin-bottom:20px;
   color:#94a3b8;
 }
 
@@ -40,13 +43,10 @@ body{
   font-size:180px;
   font-weight:900;
   color:#00ff99;
-  text-shadow:
-    0 0 20px rgba(0,255,153,.7),
-    0 0 40px rgba(0,255,153,.5);
+  text-shadow:0 0 30px rgba(0,255,153,.7);
 }
 
 .info{
-  margin-top:30px;
   font-size:28px;
   color:#cbd5e1;
 }
@@ -64,19 +64,16 @@ body{
 
 <body>
 
+<img src="./assets/logo.png" class="logo">
+
 <div class="container">
-
   <div class="label">NOMOR ANTREAN</div>
-
   <div class="nomor blink" id="nomor">---</div>
-
   <div class="info">HARAP MENUJU LOKET PELAYANAN</div>
-
 </div>
 
 <script type="module">
 
-// ================= FIREBASE =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -93,55 +90,53 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= ELEMENT =================
 const nomorEl = document.getElementById("nomor");
 let lastNomor = "";
 
-// ================= UNLOCK AUDIO (WAJIB BROWSER) =================
+// unlock audio browser
 document.body.addEventListener("click", () => {
-  const unlock = new SpeechSynthesisUtterance("");
-  speechSynthesis.speak(unlock);
+  new Audio("./sounds/ding.mp3").play().catch(()=>{});
 }, { once:true });
 
-// ================= SUARA =================
+// suara text
 function speak(text){
-  window.speechSynthesis.cancel();
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = "id-ID";
-  speech.rate = 0.9;
-  speech.pitch = 1;
-  speech.volume = 1;
-  window.speechSynthesis.speak(speech);
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "id-ID";
+  speechSynthesis.speak(u);
 }
 
-// ================= FORMAT SUARA =================
+// format suara
 function suaraAntrean(nomor){
-  if(!nomor || !nomor.includes("-")) return "Nomor antrean tidak tersedia";
+  if(!nomor || !nomor.includes("-")) return "";
 
-  const parts = nomor.split("-");
-  const huruf = parts[0];
-  const angka = parseInt(parts[1]);
-
-  const angkaText = angka.toString().split("").join(" ");
+  const [huruf, angka] = nomor.split("-");
+  const angkaText = parseInt(angka).toString().split("").join(" ");
 
   return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan`;
 }
 
-// ================= REALTIME LISTENER =================
-onValue(ref(db, "current_call"), (snapshot) => {
+// ding sound
+function playDing(){
+  const audio = new Audio("./sounds/ding.mp3");
+  audio.play();
+}
 
-  const data = snapshot.val();
+// realtime listener
+onValue(ref(db, "current_call"), (snap)=>{
+
+  const data = snap.val();
   if(!data) return;
 
   const nomor = data.nomor || "---";
   nomorEl.innerText = nomor;
 
-  // hindari suara berulang
   if(nomor !== lastNomor){
     lastNomor = nomor;
 
-    setTimeout(() => {
+    setTimeout(()=>{
       speak(suaraAntrean(nomor));
+      playDing();
     }, 500);
   }
 
@@ -151,33 +146,3 @@ onValue(ref(db, "current_call"), (snapshot) => {
 
 </body>
 </html>
-<style>
-body{
-  background: url("./assets/bg.jpg") no-repeat center center fixed;
-  background-size: cover;
-  font-family: Arial;
-  overflow:hidden;
-}
-
-.logo{
-  position:absolute;
-  top:20px;
-  left:20px;
-  width:120px;
-  z-index:10;
-}
-</style>
-<img src="./assets/logo.png" class="logo">
-function playDing(){
-  const audio = new Audio("./sounds/ding.mp3");
-  audio.play();
-}
-if(nomor !== lastNomor){
-  lastNomor = nomor;
-
-  setTimeout(()=>{
-    speak(suaraAntrean(nomor));
-
-    playDing(); // 🔊 suara bank
-  }, 500);
-}
