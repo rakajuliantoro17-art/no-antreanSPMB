@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SPMB Queue</title>
+<title>ADMIN PANEL</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>Firebase Connected</h1>
+<h1>ADMIN CONTROL CENTER</h1>
+
+<button class="btn danger" onclick="resetAll()">RESET SEMUA LOKET</button>
+
+<div id="log"></div>
 
 <script type="module">
 
-import {
-  db,
-  ref,
-  set
-} from './firebase.js'
+import { db } from "./firebase.js";
+import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-set(ref(db, 'test'), {
-  status: 'connected'
-})
+// RESET ALL
+window.resetAll = async function(){
+  if(confirm("Reset semua antrean?")){
+    await set(ref(db, "counter"), {});
+    await set(ref(db, "current_call"), {nomor:"---"});
+    alert("RESET DONE");
+  }
+};
+
+// MONITOR
+onValue(ref(db, "current_call"), (snap)=>{
+  document.getElementById("log").innerText =
+    "CALL: " + (snap.val()?.nomor || "---");
+});
 
 </script>
 
