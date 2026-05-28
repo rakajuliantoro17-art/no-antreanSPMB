@@ -1,125 +1,90 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ANTREAN BANK STYLE</title>
+<title>DISPLAY ANTREAN BANK STYLE</title>
 
 <style>
-/* ================= BACKGROUND ================= */
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  overflow:hidden;
-  color:white;
+  font-family:Arial;
   background:url("./assets/bg.jpg") no-repeat center center fixed;
   background-size:cover;
+  overflow:hidden;
+  color:white;
 }
 
-/* overlay gelap + blur */
 .overlay{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  inset:0;
   background:rgba(0,0,0,0.55);
   backdrop-filter: blur(10px);
 }
 
-/* logo */
 .logo{
   position:absolute;
   top:20px;
   left:20px;
   width:120px;
-  z-index:10;
-  filter: drop-shadow(0 0 10px rgba(0,0,0,0.6));
 }
 
-/* container glass */
 .container{
   position:relative;
   z-index:2;
-  width:100vw;
   height:100vh;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
 }
 
-/* glass card */
 .glass{
-  padding:50px 80px;
+  padding:60px 90px;
   border-radius:30px;
   background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.2);
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
   backdrop-filter: blur(20px);
   text-align:center;
+  border:1px solid rgba(255,255,255,0.2);
 }
 
-/* label */
 .label{
-  font-size:28px;
-  letter-spacing:4px;
+  font-size:26px;
   color:#cbd5e1;
-  margin-bottom:20px;
+  letter-spacing:4px;
 }
 
-/* nomor besar */
 .nomor{
-  font-size:160px;
+  font-size:170px;
   font-weight:900;
   color:#00ff99;
-  text-shadow:
-    0 0 20px rgba(0,255,153,0.6),
-    0 0 40px rgba(0,255,153,0.4);
+  text-shadow:0 0 30px rgba(0,255,153,0.5);
 }
 
-/* info */
 .info{
-  margin-top:20px;
   font-size:22px;
-  color:#e2e8f0;
+  margin-top:10px;
 }
 
-/* animasi halus */
-.blink{
-  animation:blink 1s infinite alternate;
-}
-
-@keyframes blink{
-  from{opacity:1}
-  to{opacity:0.6}
-}
+.blink{animation:blink 1s infinite alternate;}
+@keyframes blink{from{opacity:1}to{opacity:.6}}
 </style>
 </head>
 
 <body>
 
 <div class="overlay"></div>
-
 <img src="./assets/logo.png" class="logo">
 
 <div class="container">
-
   <div class="glass">
-
     <div class="label">NOMOR ANTREAN</div>
-
     <div class="nomor blink" id="nomor">---</div>
-
     <div class="info">SILAHKAN MENUJU LOKET PELAYANAN</div>
-
   </div>
-
 </div>
 
 <script type="module">
 
-// ================= FIREBASE =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -130,90 +95,83 @@ const firebaseConfig = {
   projectId: "no-antrean-spmb",
   storageBucket: "no-antrean-spmb.firebasestorage.app",
   messagingSenderId: "357121462512",
-  appId: "1:357121462512:web:8fd937bc2a8d2a3894b235"
+  appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ================= ELEMENT =================
-const nomorEl = document.getElementById("nomor");
-let lastNomor = "";
+const el = document.getElementById("nomor");
 
-// ================= AUDIO UNLOCK =================
-document.body.addEventListener("click", () => {
-  const a = new Audio("./sounds/ding.mp3");
-  a.play().catch(()=>{});
-}, { once:true });
+let last = "";
 
-// ================= VOICE =================
+/* ================= SOUND ================= */
+function playDing(){
+  new Audio("./sounds/ding.mp3").play();
+}
+
+/* ================= JAPAN GEN Z VOICE ================= */
 function speak(text){
+
   speechSynthesis.cancel();
+
   const u = new SpeechSynthesisUtterance(text);
+
+  const voices = speechSynthesis.getVoices();
+  const jp = voices.find(v => v.lang.includes("ja"));
+
+  if(jp) u.voice = jp;
+
   u.lang = "id-ID";
-  u.rate = 0.9;
+  u.rate = 1.15;
+  u.pitch = 1.35;
+  u.volume = 1;
+
   speechSynthesis.speak(u);
 }
 
-// ================= FORMAT =================
-function formatNomor(nomor){
+/* ================= FORMAT ================= */
+function format(nomor){
+
   if(!nomor || !nomor.includes("-")) return "";
 
-  const [huruf, angka] = nomor.split("-");
-  const angkaText = angka.split("").join(" ");
+  const [h,a] = nomor.split("-");
+  const angka = a.split("").join(" ");
 
-  return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan`;
+  return `Nomor antrean ${h} ${angka}, silahkan menuju konter layanan Verifikasi SPMB 2026`;
 }
 
-// ================= SOUND =================
-function playDing(){
-  const audio = new Audio("./sounds/ding.mp3");
-  audio.play();
-}
-
-// ================= REALTIME =================
-onValue(ref(db, "current_call"), (snap)=>{
-
-  const data = snap.val();
-  if(!data) return;
-
-  const nomor = data.nomor || "---";
-  nomorEl.innerText = nomor;
-
-  if(nomor !== lastNomor){
-    lastNomor = nomor;
-
-    setTimeout(()=>{
-      speak(formatNomor(nomor));
-      playDing();
-    }, 500);
-  }
-
-});
+/* ================= FIREBASE LISTENER ================= */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
   if(!data) return;
 
-  nomorEl.innerText = data.nomor;
-
+  const nomor = data.nomor;
   const type = data.callType || "NEXT";
 
-  if(data.nomor !== lastNomor){
+  el.innerText = nomor;
 
-    lastNomor = data.nomor;
+  if(nomor !== last){
 
-    playDing();
+    last = nomor;
 
-    if(type === "RECALL"){
-      speak("Pengulangan panggilan. " + format(data.nomor));
-    } else {
-      speak(format(data.nomor));
-    }
+    setTimeout(()=>{
+
+      playDing();
+
+      if(type === "RECALL"){
+        speak("Pengulangan panggilan. " + format(nomor));
+      } else {
+        speak(format(nomor));
+      }
+
+    },500);
 
   }
 
 });
+
 </script>
 
 </body>
