@@ -151,3 +151,33 @@ onValue(ref(db, "current_call"), (snapshot) => {
 
 </body>
 </html>
+<style>
+body{
+  background: url("./assets/bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: Arial;
+  overflow:hidden;
+}
+
+.logo{
+  position:absolute;
+  top:20px;
+  left:20px;
+  width:120px;
+  z-index:10;
+}
+</style>
+<img src="./assets/logo.png" class="logo">
+function playDing(){
+  const audio = new Audio("./sounds/ding.mp3");
+  audio.play();
+}
+if(nomor !== lastNomor){
+  lastNomor = nomor;
+
+  setTimeout(()=>{
+    speak(suaraAntrean(nomor));
+
+    playDing(); // 🔊 suara bank
+  }, 500);
+}
