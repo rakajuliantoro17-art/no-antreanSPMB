@@ -1,94 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DISPLAY ANTREAN BANK AIRPORT STYLE</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:url("./assets/bg.jpg") no-repeat center center fixed;
-  background-size:cover;
-  overflow:hidden;
-  color:white;
-}
-
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-}
-
-.logo{
-  position:absolute;
-  top:20px;
-  left:20px;
-  width:120px;
-  z-index:10;
-}
-
-.container{
-  position:relative;
-  z-index:2;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.glass{
-  padding:60px 90px;
-  border-radius:30px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.2);
-}
-
-.label{
-  font-size:26px;
-  color:#cbd5e1;
-  letter-spacing:4px;
-}
-
-.nomor{
-  font-size:170px;
-  font-weight:900;
-  color:#00ff99;
-  text-shadow:0 0 30px rgba(0,255,153,0.5);
-}
-
-.info{
-  font-size:22px;
-  margin-top:10px;
-}
-
-.blink{animation:blink 1s infinite alternate;}
-@keyframes blink{from{opacity:1}to{opacity:.6}}
-</style>
-</head>
-
-<body>
-
-<div class="overlay"></div>
-<img src="./assets/logo.png" class="logo">
-
-<div class="container">
-  <div class="glass">
-    <div class="label">NOMOR ANTREAN</div>
-    <div class="nomor blink" id="nomor">---</div>
-    <div class="info">SILAHKAN MENUJU LOKET PELAYANAN</div>
-  </div>
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+/* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
@@ -102,66 +17,84 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* ================= DISPLAY ================= */
 const el = document.getElementById("nomor");
-
 let lastNomor = "";
 
 /* ================= AUDIO UNLOCK ================= */
 document.body.addEventListener("click", () => {
-  const audio = new Audio("./sounds/ding.mp3");
-  audio.play().catch(()=>{});
+  new Audio("./sounds/ding.mp3").play().catch(()=>{});
   speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 }, { once:true });
-
-/* ================= FORMAT VOICE ================= */
-function formatDual(nomor){
-
-  if(!nomor || !nomor.includes("-")) return "";
-
-  const [loket, angka] = nomor.split("-");
-  const digit = angka.split("").join(" ");
-
-  const id =
-    `Nomor antrean ${loket} ${digit}. Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026.`;
-
-  const en =
-    `Number ${loket} ${digit}. Please proceed to verification counter SPMB 2026 service.`;
-
-  return id + " " + en;
-}
-
-/* ================= VOICE ENGINE ================= */
-function speak(text){
-
-  const u = new SpeechSynthesisUtterance(text);
-
-  const voices = speechSynthesis.getVoices();
-
-  const female =
-    voices.find(v => v.lang.includes("id")) ||
-    voices.find(v => v.lang.includes("en")) ||
-    voices[0];
-
-  if(female) u.voice = female;
-
-  u.lang = "id-ID";
-  u.rate = 0.95;   // airport calm
-  u.pitch = 1.0;   // natural female
-  u.volume = 1;
-
-  speechSynthesis.cancel();
-
-  setTimeout(()=>{
-    speechSynthesis.speak(u);
-  }, 120);
-}
 
 /* ================= SOUND ================= */
 function playDing(){
   new Audio("./sounds/ding.mp3").play();
 }
 
-/* ================= FIREBASE ================= */
+/* ================= FORMAT FINAL (BANK STYLE) ================= */
+function formatAnnouncement(nomor, type){
+
+  if(!nomor || !nomor.includes("-")) return "";
+
+  const [loket, angka] = nomor.split("-");
+  const digit = angka.split("").join(" ");
+
+  const namaMap = {
+    A:"Bapak Rahmad",
+    B:"Bapak Bayu",
+    C:"Bapak Sunariyadi",
+    D:"Ibu Tasya",
+    E:"Ibu Eva",
+    F:"Bapak Mujib",
+    G:"Ibu Ria",
+    H:"Bapak Raka",
+    I:"Bapak Chozin",
+    J:"Ibu Ita"
+  };
+
+  const nama = namaMap[loket] || "petugas layanan";
+
+  const idText =
+    `Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
+
+  const enText =
+    `Queue number ${loket} ${digit}, please proceed to the SPMB 2026 verification service counter at ${nama} desk.`;
+
+  if(type === "RECALL"){
+    return "Pengulangan panggilan. " + idText + " " + enText;
+  }
+
+  return idText + " " + enText;
+}
+
+/* ================= VOICE ENGINE (STABLE AIRPORT STYLE) ================= */
+function speak(text){
+
+  speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+
+  const voices = speechSynthesis.getVoices();
+
+  const voice =
+    voices.find(v => v.lang.includes("en")) ||
+    voices.find(v => v.lang.includes("id")) ||
+    voices[0];
+
+  if(voice) u.voice = voice;
+
+  u.lang = "en-US";
+  u.rate = 0.9;     // airport calm
+  u.pitch = 1.0;    // neutral
+  u.volume = 1;
+
+  setTimeout(()=>{
+    speechSynthesis.speak(u);
+  }, 150);
+}
+
+/* ================= REALTIME FIREBASE ================= */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
@@ -180,96 +113,14 @@ onValue(ref(db,"current_call"), (snap)=>{
 
       playDing();
 
-      const text = formatDual(nomor);
+      const text = formatAnnouncement(nomor, type);
 
-      if(type === "RECALL"){
-        speak("Pengulangan panggilan. " + text);
-      } else {
-        speak(text);
-      }
+      speak(text);
 
-    },500);
+    }, 500);
 
   }
 
 });
 
 </script>
-
-</body>
-</html>
-function speakDual(nomor){
-
-  if(!nomor || !nomor.includes("-")) return;
-
-  const [loket, angka] = nomor.split("-");
-  const digit = angka.split("").join(" ");
-
-  const nama = petugas[loket] || "petugas layanan";
-
-  const idText =
-    `Nomor antrean ${loket} ${digit}, atas nama layanan ${nama}, silakan menuju loket pelayanan.`;
-
-  const enText =
-    `Queue number ${loket} ${digit}, assigned to ${nama}, please proceed to the service counter.`;
-
-  const fullText = idText + " . " + enText;
-
-  const u = new SpeechSynthesisUtterance(fullText);
-
-  const voices = speechSynthesis.getVoices();
-
-  // 🔊 pilih voice formal (airport/bank style)
-  const voice =
-    voices.find(v => v.lang.includes("en") && v.name.toLowerCase().includes("female")) ||
-    voices.find(v => v.lang.includes("en")) ||
-    voices[0];
-
-  if(voice) u.voice = voice;
-
-  u.lang = "en-US";
-  u.rate = 0.9;     // lebih formal (airport)
-  u.pitch = 1.0;    // netral (tidak anime)
-  u.volume = 1;
-
-  speechSynthesis.cancel();
-
-  setTimeout(()=>{
-    speechSynthesis.speak(u);
-  }, 200);
-}
-function formatAnnouncement(loket, angka, namaPetugas){
-
-  const digit = angka.split("").join(" ");
-
-  const id = `Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${namaPetugas}.`;
-
-  const en = `Queue number ${loket} ${digit}, please proceed to the SPMB 2026 verification service counter at ${namaPetugas} desk.`;
-
-  return id + " " + en;
-}
-onValue(ref(db,"current_call"), (snap)=>{
-
-  const data = snap.val();
-  if(!data) return;
-
-  const nomor = data.nomor;
-  const type = data.callType || "NEXT";
-
-  el.innerText = nomor;
-
-  if(nomor !== lastNomor){
-
-    lastNomor = nomor;
-
-    setTimeout(()=>{
-
-      new Audio("./sounds/ding.mp3").play();
-
-      // 🔥 BOTH NEXT & RECALL HARUS SUARA
-      speakDual(nomor);
-
-    }, 500);
-  }
-
-});
