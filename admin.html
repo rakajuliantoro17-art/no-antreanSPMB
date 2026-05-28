@@ -1,1 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SPMB Queue</title>
+</head>
+<body>
 
+<h1>Firebase Connected</h1>
+
+<script type="module">
+
+import {
+  db,
+  ref,
+  set
+} from './firebase.js'
+
+set(ref(db, 'test'), {
+  status: 'connected'
+})
+
+</script>
+
+</body>
+</html>
