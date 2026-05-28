@@ -1,9 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DISPLAY ANTREAN</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:white;
+}
+.nomor{
+  font-size:100px;
+  text-align:center;
+  margin-top:20vh;
+}
+</style>
+</head>
+
+<body>
+
+<div class="nomor" id="nomor">LOADING...</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ================= FIREBASE ================= */
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
@@ -17,110 +43,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ================= DISPLAY ================= */
 const el = document.getElementById("nomor");
+
 let lastNomor = "";
 
-/* ================= AUDIO UNLOCK ================= */
-document.body.addEventListener("click", () => {
-  new Audio("./sounds/ding.mp3").play().catch(()=>{});
-  speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-}, { once:true });
+/* FORMAT ANNOUNCEMENT (WAJIB DI SINI) */
+function formatAnnouncement(loket, angka, namaPetugas){
 
-/* ================= SOUND ================= */
-function playDing(){
-  new Audio("./sounds/ding.mp3").play();
-}
-
-/* ================= FORMAT FINAL (BANK STYLE) ================= */
-function formatAnnouncement(nomor, type){
-
-  if(!nomor || !nomor.includes("-")) return "";
-
-  const [loket, angka] = nomor.split("-");
   const digit = angka.split("").join(" ");
 
-  const namaMap = {
-    A:"Bapak Rahmad",
-    B:"Bapak Bayu",
-    C:"Bapak Sunariyadi",
-    D:"Ibu Tasya",
-    E:"Ibu Eva",
-    F:"Bapak Mujib",
-    G:"Ibu Ria",
-    H:"Bapak Raka",
-    I:"Bapak Chozin",
-    J:"Ibu Ita"
-  };
+  const id =
+    `Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${namaPetugas}.`;
 
-  const nama = namaMap[loket] || "petugas layanan";
+  const en =
+    `Queue number ${loket} ${digit}, please proceed to the SPMB 2026 verification service counter at ${namaPetugas} desk.`;
 
-  const idText =
-    `Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
-
-  const enText =
-    `Queue number ${loket} ${digit}, please proceed to the SPMB 2026 verification service counter at ${nama} desk.`;
-
-  if(type === "RECALL"){
-    return "Pengulangan panggilan. " + idText + " " + enText;
-  }
-
-  return idText + " " + enText;
+  return id + " " + en;
 }
 
-/* ================= VOICE ENGINE (STABLE AIRPORT STYLE) ================= */
+/* VOICE */
 function speak(text){
-
   speechSynthesis.cancel();
 
   const u = new SpeechSynthesisUtterance(text);
+  u.lang = "id-ID";
+  u.rate = 0.9;
 
-  const voices = speechSynthesis.getVoices();
-
-  const voice =
-    voices.find(v => v.lang.includes("en")) ||
-    voices.find(v => v.lang.includes("id")) ||
-    voices[0];
-
-  if(voice) u.voice = voice;
-
-  u.lang = "en-US";
-  u.rate = 0.9;     // airport calm
-  u.pitch = 1.0;    // neutral
-  u.volume = 1;
-
-  setTimeout(()=>{
-    speechSynthesis.speak(u);
-  }, 150);
+  speechSynthesis.speak(u);
 }
 
-/* ================= REALTIME FIREBASE ================= */
+/* FIREBASE LISTENER */
 onValue(ref(db,"current_call"), (snap)=>{
 
   const data = snap.val();
   if(!data) return;
 
   const nomor = data.nomor;
-  const type = data.callType || "NEXT";
-
-  el.innerText = nomor;
 
   if(nomor !== lastNomor){
 
     lastNomor = nomor;
 
-    setTimeout(()=>{
+    el.innerText = nomor;
 
-      playDing();
+    const [loket, angka] = nomor.split("-");
+    const nama = "petugas layanan";
 
-      const text = formatAnnouncement(nomor, type);
-
-      speak(text);
-
-    }, 500);
-
+    speak(formatAnnouncement(loket, angka, nama));
   }
 
 });
 
 </script>
+
+</body>
+</html>
