@@ -170,6 +170,44 @@ onValue(ref(db,"current_call"), (snap)=>{
   if(!data) return;
 
   const nomor = data.nomor;
+  const type = data.callType || "NEXT";
+
+  if(nomor === lastNomor && type !== "RECALL") return;
+
+  lastNomor = nomor;
+  el.innerText = nomor;
+
+  const [loket, angka] = nomor.split("-");
+  const nama = petugas[loket] || "petugas layanan";
+
+  const text = formatAnnouncement(loket, angka, nama);
+
+  setTimeout(()=>{
+
+    ding();
+
+    if(type === "RECALL"){
+
+      const recallText =
+        "Pengulangan pemanggilan. " + text +
+        " Sekali lagi, kami ulangi.";
+
+      speak(recallText);
+
+    } else {
+
+      speak(text);
+
+    }
+
+  }, 500);
+
+});
+
+  const data = snap.val();
+  if(!data) return;
+
+  const nomor = data.nomor;
 
   if(nomor === lastNomor) return;
 
