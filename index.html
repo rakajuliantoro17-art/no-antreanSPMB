@@ -27,6 +27,7 @@ body{
   top:20px;
   left:20px;
   width:120px;
+  z-index:10;
 }
 
 .container{
@@ -103,42 +104,71 @@ const db = getDatabase(app);
 
 const el = document.getElementById("nomor");
 
-let last = "";
+let lastNomor = "";
+
+/* ================= AUDIO UNLOCK ================= */
+function unlockAudio(){
+  const silent = new SpeechSynthesisUtterance("");
+  speechSynthesis.speak(silent);
+
+  const audio = new Audio("./sounds/ding.mp3");
+  audio.play().catch(()=>{});
+}
+document.body.addEventListener("click", unlockAudio, { once:true });
+
+/* ================= LOAD VOICE ================= */
+let voicesReady = false;
+let selectedVoice = null;
+
+function loadVoice(){
+  const voices = speechSynthesis.getVoices();
+
+  selectedVoice =
+    voices.find(v => v.lang.includes("id") && v.name.toLowerCase().includes("female")) ||
+    voices.find(v => v.lang.includes("id")) ||
+    voices[0];
+
+  voicesReady = true;
+}
+
+speechSynthesis.onvoiceschanged = loadVoice;
+loadVoice();
 
 /* ================= SOUND ================= */
 function playDing(){
   new Audio("./sounds/ding.mp3").play();
 }
 
-/* ================= JAPAN GEN Z VOICE ================= */
+/* ================= AI VOICE (FEMALE GEN Z STYLE) ================= */
 function speak(text){
 
-  speechSynthesis.cancel();
+  if(!voicesReady) loadVoice();
 
   const u = new SpeechSynthesisUtterance(text);
 
-  const voices = speechSynthesis.getVoices();
-  const jp = voices.find(v => v.lang.includes("ja"));
-
-  if(jp) u.voice = jp;
+  if(selectedVoice) u.voice = selectedVoice;
 
   u.lang = "id-ID";
-  u.rate = 1.15;
-  u.pitch = 1.35;
+  u.rate = 1.05;   // natural
+  u.pitch = 1.25;  // feminine
   u.volume = 1;
 
-  speechSynthesis.speak(u);
+  speechSynthesis.cancel();
+
+  setTimeout(()=>{
+    speechSynthesis.speak(u);
+  }, 80);
 }
 
-/* ================= FORMAT ================= */
+/* ================= FORMAT NOMOR ================= */
 function format(nomor){
 
   if(!nomor || !nomor.includes("-")) return "";
 
-  const [h,a] = nomor.split("-");
-  const angka = a.split("").join(" ");
+  const [loket, angka] = nomor.split("-");
+  const digit = angka.split("").join(" ");
 
-  return `Nomor antrean ${h} ${angka}, silahkan menuju konter layanan Verifikasi SPMB 2026`;
+  return `Nomor antrean ${loket} ${digit}. Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026. Terima kasih.`;
 }
 
 /* ================= FIREBASE LISTENER ================= */
@@ -152,9 +182,9 @@ onValue(ref(db,"current_call"), (snap)=>{
 
   el.innerText = nomor;
 
-  if(nomor !== last){
+  if(nomor !== lastNomor){
 
-    last = nomor;
+    lastNomor = nomor;
 
     setTimeout(()=>{
 
