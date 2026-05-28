@@ -69,6 +69,8 @@ body{
 
 <div class="container">
   <div class="glass">
+    <div class="clock" id="clock">00:00:00</div>
+    
     <div class="info">NOMER ANTREAN</div>
     <div class="nomor" id="nomor">---</div>
     <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
@@ -178,7 +180,19 @@ function speak(text){
 function ding(){
   new Audio("./sounds/ding.mp3").play();
 }
+function updateClock(){
 
+  const now = new Date();
+
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+
+  document.getElementById("clock").innerText = `${h}:${m}:${s}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
 /* FIREBASE LISTENER */
 onValue(ref(db,"current_call"), (snap)=>{
 
