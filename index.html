@@ -22,6 +22,14 @@ body{
   backdrop-filter: blur(10px);
 }
 
+.logo{
+  position:absolute;
+  top:20px;
+  left:20px;
+  width:120px;
+  z-index:10;
+}
+
 .container{
   position:relative;
   z-index:2;
@@ -41,7 +49,7 @@ body{
 }
 
 .nomor{
-  font-size:160px;
+  font-size:170px;
   font-weight:900;
   color:#00ff99;
   text-shadow:0 0 30px rgba(0,255,153,0.5);
@@ -50,6 +58,7 @@ body{
 .info{
   font-size:22px;
   margin-top:10px;
+  color:#e2e8f0;
 }
 </style>
 </head>
@@ -57,6 +66,9 @@ body{
 <body>
 
 <div class="overlay"></div>
+
+<!-- ✅ LOGO FIX -->
+<img src="./assets/logo.png" class="logo" onerror="this.style.display='none'">
 
 <div class="container">
   <div class="glass">
@@ -84,7 +96,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ================= PETUGAS LOKET ================= */
+/* ================= PETUGAS ================= */
 const petugas = {
   A: "Bapak Rahmad",
   B: "Bapak Bayu",
@@ -107,22 +119,25 @@ document.body.addEventListener("click", () => {
   new Audio("./sounds/ding.mp3").play().catch(()=>{});
 }, { once:true });
 
-/* ================= FORMAT ================= */
-function formatAnnouncement(loket, angka){
+/* ================= FORMAT ANNOUNCEMENT ================= */
+function formatAnnouncement(loket, angka, nama){
 
   const digit = angka.split("").join(" ");
-  const nama = petugas[loket] || "petugas layanan";
 
   const id =
-    `Nomor antrean ${loket} ${digit}, silakan menuju loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
+`Nomor antrean ${loket} ${digit}.
+Silakan menuju loket pelayanan Verifikasi SPMB tahun 2026.
+Meja ${nama}.`;
 
   const en =
-    `Queue number ${loket} ${digit}, please proceed to SPMB 2026 verification service at ${nama} desk.`;
+`Queue number ${loket} ${digit}.
+Please proceed to SPMB 2026 verification service counter.
+Service desk ${nama}.`;
 
-  return id + " . " + en;
+  return id + " " + en;
 }
 
-/* ================= VOICE ENGINE (AIRPORT / BANK STYLE) ================= */
+/* ================= VOICE ENGINE (BANK / AIRPORT STYLE) ================= */
 function speak(text){
 
   const u = new SpeechSynthesisUtterance(text);
@@ -131,21 +146,22 @@ function speak(text){
 
   const voice =
     voices.find(v => v.lang.includes("en") && v.name.toLowerCase().includes("female")) ||
+    voices.find(v => v.lang.includes("en")) ||
     voices.find(v => v.lang.includes("id")) ||
     voices[0];
 
   if(voice) u.voice = voice;
 
   u.lang = "en-US";
-  u.rate = 0.9;   // airport slow
-  u.pitch = 1.0;  // formal
+  u.rate = 0.85;   // airport slow clear
+  u.pitch = 0.95;  // neutral professional
   u.volume = 1;
 
   speechSynthesis.cancel();
 
   setTimeout(()=>{
     speechSynthesis.speak(u);
-  }, 120);
+  }, 150);
 }
 
 /* ================= SOUND ================= */
@@ -160,27 +176,22 @@ onValue(ref(db,"current_call"), (snap)=>{
   if(!data) return;
 
   const nomor = data.nomor;
-  const type = data.callType || "NEXT";
-
-  el.innerText = nomor;
 
   if(nomor !== lastNomor){
 
     lastNomor = nomor;
+    el.innerText = nomor;
 
     setTimeout(()=>{
 
       ding();
 
       const [loket, angka] = nomor.split("-");
+      const nama = petugas[loket] || "petugas layanan";
 
-      const text = formatAnnouncement(loket, angka);
+      const text = formatAnnouncement(loket, angka, nama);
 
-      if(type === "RECALL"){
-        speak("Pengulangan panggilan. " + text);
-      } else {
-        speak(text);
-      }
+      speak(text);
 
     }, 500);
   }
