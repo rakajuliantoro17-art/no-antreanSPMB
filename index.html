@@ -3,77 +3,123 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DISPLAY ANTREAN SPMB</title>
+<title>ANTREAN BANK STYLE</title>
 
 <style>
+/* ================= BACKGROUND ================= */
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Arial, Helvetica, sans-serif;
   overflow:hidden;
   color:white;
   background:url("./assets/bg.jpg") no-repeat center center fixed;
   background-size:cover;
 }
 
+/* overlay gelap + blur */
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+}
+
+/* logo */
 .logo{
   position:absolute;
   top:20px;
   left:20px;
   width:120px;
   z-index:10;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.6));
 }
 
+/* container glass */
 .container{
+  position:relative;
+  z-index:2;
   width:100vw;
   height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
+}
+
+/* glass card */
+.glass{
+  padding:50px 80px;
+  border-radius:30px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  backdrop-filter: blur(20px);
   text-align:center;
 }
 
+/* label */
 .label{
-  font-size:45px;
-  font-weight:bold;
-  color:#94a3b8;
+  font-size:28px;
+  letter-spacing:4px;
+  color:#cbd5e1;
+  margin-bottom:20px;
 }
 
+/* nomor besar */
 .nomor{
-  font-size:180px;
+  font-size:160px;
   font-weight:900;
   color:#00ff99;
-  text-shadow:0 0 30px rgba(0,255,153,.7);
+  text-shadow:
+    0 0 20px rgba(0,255,153,0.6),
+    0 0 40px rgba(0,255,153,0.4);
 }
 
+/* info */
 .info{
-  font-size:28px;
-  color:#cbd5e1;
+  margin-top:20px;
+  font-size:22px;
+  color:#e2e8f0;
 }
 
+/* animasi halus */
 .blink{
-  animation:blink .8s infinite alternate;
+  animation:blink 1s infinite alternate;
 }
 
 @keyframes blink{
   from{opacity:1}
-  to{opacity:.4}
+  to{opacity:0.6}
 }
 </style>
 </head>
 
 <body>
 
+<div class="overlay"></div>
+
 <img src="./assets/logo.png" class="logo">
 
 <div class="container">
-  <div class="label">NOMOR ANTREAN</div>
-  <div class="nomor blink" id="nomor">---</div>
-  <div class="info">HARAP MENUJU LOKET PELAYANAN</div>
+
+  <div class="glass">
+
+    <div class="label">NOMOR ANTREAN</div>
+
+    <div class="nomor blink" id="nomor">---</div>
+
+    <div class="info">SILAHKAN MENUJU LOKET PELAYANAN</div>
+
+  </div>
+
 </div>
 
 <script type="module">
 
+// ================= FIREBASE =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -90,39 +136,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ================= ELEMENT =================
 const nomorEl = document.getElementById("nomor");
 let lastNomor = "";
 
-// unlock audio browser
+// ================= AUDIO UNLOCK =================
 document.body.addEventListener("click", () => {
-  new Audio("./sounds/ding.mp3").play().catch(()=>{});
+  const a = new Audio("./sounds/ding.mp3");
+  a.play().catch(()=>{});
 }, { once:true });
 
-// suara text
+// ================= VOICE =================
 function speak(text){
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "id-ID";
+  u.rate = 0.9;
   speechSynthesis.speak(u);
 }
 
-// format suara
-function suaraAntrean(nomor){
+// ================= FORMAT =================
+function formatNomor(nomor){
   if(!nomor || !nomor.includes("-")) return "";
 
   const [huruf, angka] = nomor.split("-");
-  const angkaText = parseInt(angka).toString().split("").join(" ");
+  const angkaText = angka.split("").join(" ");
 
-  return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan Verifikasi PIN SPMB 2026`;
+  return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan`;
 }
 
-// ding sound
+// ================= SOUND =================
 function playDing(){
   const audio = new Audio("./sounds/ding.mp3");
   audio.play();
 }
 
-// realtime listener
+// ================= REALTIME =================
 onValue(ref(db, "current_call"), (snap)=>{
 
   const data = snap.val();
@@ -135,7 +184,7 @@ onValue(ref(db, "current_call"), (snap)=>{
     lastNomor = nomor;
 
     setTimeout(()=>{
-      speak(suaraAntrean(nomor));
+      speak(formatNomor(nomor));
       playDing();
     }, 500);
   }
