@@ -1,61 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>DISPLAY ANTRIAN</title>
-  <style>
-    body {
-      background: black;
-      color: white;
-      text-align: center;
-      font-family: Arial;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      flex-direction: column;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DISPLAY ANTREAN SPMB</title>
 
-    .nomor {
-      font-size: 120px;
-      font-weight: bold;
-      color: #00ff99;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    .label {
-      font-size: 30px;
-      margin-bottom: 20px;
-    }
-  </style>
+body{
+  background:#020617;
+  font-family:Arial, Helvetica, sans-serif;
+  overflow:hidden;
+  color:white;
+}
+
+.container{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.label{
+  font-size:45px;
+  font-weight:bold;
+  letter-spacing:3px;
+  margin-bottom:20px;
+  color:#94a3b8;
+}
+
+.nomor{
+  font-size:180px;
+  font-weight:900;
+  color:#00ff99;
+  text-shadow:
+    0 0 20px rgba(0,255,153,.7),
+    0 0 40px rgba(0,255,153,.5);
+}
+
+.info{
+  margin-top:30px;
+  font-size:28px;
+  color:#cbd5e1;
+}
+
+.blink{
+  animation:blink .8s infinite alternate;
+}
+
+@keyframes blink{
+  from{opacity:1}
+  to{opacity:.4}
+}
+</style>
 </head>
+
 <body>
 
-<div class="label">SEDANG DIPANGGIL</div>
-<div class="nomor" id="nomor">---</div>
+<div class="container">
+
+  <div class="label">
+    NOMOR ANTREAN
+  </div>
+
+  <div class="nomor blink" id="nomor">
+    ---
+  </div>
+
+  <div class="info">
+    HARAP MENUJU LOKET PELAYANAN
+  </div>
+
+</div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+// ================= FIREBASE =================
 
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  databaseURL: "YOUR_DB_URL",
-  projectId: "YOUR_ID"
+
+  apiKey: "YOUR_API_KEY",
+
+  authDomain: "YOUR_AUTH_DOMAIN",
+
+  databaseURL: "YOUR_DATABASE_URL",
+
+  projectId: "YOUR_PROJECT_ID",
+
+  storageBucket: "YOUR_STORAGE_BUCKET",
+
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+
+  appId: "YOUR_APP_ID"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+
+
+// ================= DISPLAY =================
 
 const nomorEl = document.getElementById("nomor");
 
-onValue(ref(db, "current_call"), (snap) => {
-  const data = snap.val();
-  if (data && data.nomor) {
-    nomorEl.innerText = data.nomor;
-  } else {
-    nomorEl.innerText = "---";
+let lastNomor = "";
+
+
+// ================= UNLOCK AUDIO =================
+
+document.body.addEventListener("click", () => {
+
+  const unlock = new SpeechSynthesisUtterance("");
+
+  speechSynthesis.speak(unlock);
+
+}, { once:true });
+
+
+// ================= SUARA =================
+
+function speak(text){
+
+  window.speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.lang = "id-ID";
+
+  speech.rate = 0.9;
+
+  speech.pitch = 1;
+
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+}
+
+
+// ================= FORMAT SUARA =================
+
+function suaraAntrean(nomor){
+
+  const parts = nomor.split("-");
+
+  const huruf = parts[0];
+
+  const angka = parseInt(parts[1]);
+
+  const angkaText = angka
+    .toString()
+    .split("")
+    .join(" ");
+
+  return `Nomor antrean ${huruf} ${angkaText}, silahkan menuju loket pelayanan`;
+
+}
+
+
+// ================= REALTIME =================
+
+onValue(ref(db, "current_call"), (snapshot)=>{
+
+  const data = snapshot.val();
+
+  if(!data) return;
+
+  const nomor = data.nomor || "---";
+
+  nomorEl.innerText = nomor;
+
+  // hindari suara berulang
+  if(nomor !== lastNomor){
+
+    lastNomor = nomor;
+
+    setTimeout(()=>{
+
+      speak(
+        suaraAntrean(nomor)
+      );
+
+    },500);
+
   }
+
 });
+
 </script>
 
 </body>
