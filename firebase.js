@@ -1,8 +1,14 @@
-// Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  update,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// Firebase Config
+// ================= CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
@@ -10,12 +16,19 @@ const firebaseConfig = {
   projectId: "no-antrean-spmb",
   storageBucket: "no-antrean-spmb.firebasestorage.app",
   messagingSenderId: "357121462512",
-  appId: "1:357121462512:web:8fd937bc2a8d2a3894b235"
+  appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
-// Init Firebase
+// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Export minimal (CLEAN ARCHITECTURE)
-export { db };
+// ================= CORE EXPORT =================
+export {
+  db,
+  ref,
+  set,
+  get,
+  update,
+  onValue
+};
