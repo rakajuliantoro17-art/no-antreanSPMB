@@ -25,9 +25,11 @@ body{
 .logo{
   position:absolute;
   top:20px;
-  left:20px;
-  width:120px;
+  left:50%;
+  transform:translateX(-50%);
+  width:clamp(70px, 12vw, 140px);
   z-index:10;
+  object-fit:contain;
 }
   
 .clock{
