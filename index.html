@@ -6,49 +6,56 @@
 <title>VIDEOTRON ANTREAN SPMB 2026</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-font-family:Segoe UI,Arial,sans-serif;
-background:url("./assets/th.jpg") center/cover no-repeat fixed;
-height:100vh;
-color:#fff;
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
 overflow:hidden;
+font-family:Segoe UI,Arial,sans-serif;
+background:url("./assets/th.jpg") center/cover no-repeat;
 }
 
+/* DARK LAYER */
 .overlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.6);
+background:rgba(0,0,0,0.65);
 backdrop-filter:blur(6px);
 }
 
+/* LOGO */
 .logo{
 position:absolute;
-top:10px;
+top:20px;
 left:50%;
 transform:translateX(-50%);
-width:150px;
-z-index:5;
+width:160px;
+z-index:10;
 }
 
+/* MAIN WRAPPER */
 .wrapper{
 position:relative;
 z-index:2;
-height:100vh;
+width:100%;
+height:100%;
 display:flex;
 flex-direction:column;
 align-items:center;
-padding-top:120px;
+justify-content:flex-start;
+padding-top:140px;
 }
 
+/* CLOCK */
 .clock{
-font-size:64px;
+font-size:72px;
 font-weight:900;
 background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 animation:rgb 4s linear infinite;
+margin-bottom:20px;
 }
 
 @keyframes rgb{
@@ -56,46 +63,53 @@ from{filter:hue-rotate(0)}
 to{filter:hue-rotate(360deg)}
 }
 
+/* MAIN BOX */
 .main{
-width:94%;
-max-width:1800px;
-padding:40px;
+width:85%;
+max-width:1600px;
 text-align:center;
-background:rgba(255,255,255,.08);
-border:2px solid rgba(255,255,255,.2);
-backdrop-filter:blur(20px);
+padding:50px;
 border-radius:40px;
+background:rgba(255,255,255,0.08);
+border:2px solid rgba(255,255,255,0.2);
+backdrop-filter:blur(18px);
 }
 
-.info{font-size:34px}
+/* TEXT */
+.info{
+font-size:42px;
+font-weight:600;
+margin-bottom:10px;
+}
 
 .nomor{
-font-size:280px;
+font-size:320px;
 font-weight:900;
-letter-spacing:8px;
 color:#00ff99;
-text-shadow:0 0 20px #00ff99,0 0 40px #00ff99,0 0 80px #00ff99;
+text-shadow:0 0 25px #00ff99,0 0 60px #00ff99;
+letter-spacing:10px;
 transition:all .3s ease;
 }
 
+/* MARQUEE */
 .marquee{
 position:absolute;
 bottom:0;
 left:0;
 width:100%;
-background:#0008;
-padding:10px;
-font-size:28px;
+background:rgba(0,0,0,0.75);
+padding:14px;
+font-size:32px;
 font-weight:700;
 white-space:nowrap;
 overflow:hidden;
+color:#fff;
 }
 
-.marquee::after{
-content:"SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO";
+.marquee span{
 display:inline-block;
 padding-left:100%;
-animation:marquee 20s linear infinite;
+animation:marquee 18s linear infinite;
 }
 
 @keyframes marquee{
@@ -103,39 +117,37 @@ from{transform:translateX(0)}
 to{transform:translateX(-100%)}
 }
 
+/* CARDS */
 .cards{
 position:absolute;
-bottom:60px;
+bottom:90px;
 left:50%;
 transform:translateX(-50%);
-width:98%;
+width:96%;
 display:grid;
 grid-template-columns:repeat(10,1fr);
-gap:12px;
+gap:14px;
 }
 
 .card{
-padding:16px;
-border-radius:22px;
+padding:18px;
+border-radius:20px;
+background:rgba(255,255,255,0.12);
+border:1px solid rgba(255,255,255,0.2);
 text-align:center;
-font-weight:700;
-background:rgba(255,255,255,.12);
+color:white;
 backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.2);
 }
 
-.card .meja{font-size:18px}
-.card .antri{font-size:48px;font-weight:900}
-.card .petugas{font-size:15px}
+.card .meja{font-size:20px;font-weight:600}
+.card .antri{font-size:52px;font-weight:900}
+.card .petugas{font-size:14px}
 
 .active{
-animation:pulse 1s infinite;
 border:3px solid #fff;
-box-shadow:0 0 20px #fff,0 0 40px #fff;
-}
-
-@keyframes pulse{
-50%{transform:scale(1.05)}
+box-shadow:0 0 25px #fff,0 0 60px #fff;
+transform:scale(1.05);
+transition:all .3s ease;
 }
 </style>
 </head>
@@ -153,16 +165,19 @@ box-shadow:0 0 20px #fff,0 0 40px #fff;
     <div class="nomor" id="nomor">---</div>
     <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
   </div>
-
-  <div class="marquee"></div>
 </div>
 
 <div class="cards" id="cards"></div>
+
+<div class="marquee">
+  <span>SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO</span>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
 authDomain:"no-antrean-spmb.firebaseapp.com",
@@ -176,59 +191,47 @@ appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* =========================
-   STATE
-========================= */
+/* STATE */
 let audioUnlocked = false;
 let lastCall = "";
 
-/* unlock audio */
+/* UNLOCK AUDIO */
 document.body.addEventListener("click", () => {
   speechSynthesis.speak(new SpeechSynthesisUtterance(" "));
   audioUnlocked = true;
-}, { once: true });
+}, { once:true });
 
-/* =========================
-   DATA PETUGAS
-========================= */
+/* DATA */
 const petugas = {
-A:"Bapak Rahmad",B:"Bapak Bayu",C:"Bapak Sunariyadi",D:"Ibu Tasya",E:"Ibu Eva",
-F:"Bapak Mujib",G:"Ibu Ria",H:"Bapak Raka",I:"Bapak Chozin",J:"Ibu Ita"
+A:"Rahmad",B:"Bayu",C:"Sunariyadi",D:"Tasya",E:"Eva",
+F:"Mujib",G:"Ria",H:"Raka",I:"Chozin",J:"Ita"
 };
 
 const colors=["#ef4444","#f97316","#eab308","#22c55e","#14b8a6","#06b6d4","#3b82f6","#8b5cf6","#d946ef","#ec4899"];
 
-/* =========================
-   BUILD CARD
-========================= */
+/* BUILD CARDS */
 const cards = document.getElementById("cards");
 
 Object.keys(petugas).forEach((m,i)=>{
  const d=document.createElement("div");
  d.className="card";
  d.id="card"+m;
- d.style.background=colors[i]+"88";
-
+ d.style.background=colors[i]+"55";
  d.innerHTML=`
  <div class="meja">MEJA ${m}</div>
  <div class="antri" id="n${m}">000</div>
  <div class="petugas">${petugas[m]}</div>
  `;
-
  cards.appendChild(d);
 });
 
-/* =========================
-   CLOCK
-========================= */
+/* CLOCK */
 setInterval(()=>{
  document.getElementById("clock").textContent =
  new Date().toLocaleTimeString("id-ID");
 },1000);
 
-/* =========================
-   SOUND
-========================= */
+/* SOUND */
 function ding(){
  new Audio("./sounds/ding.mp3").play();
 }
@@ -241,10 +244,7 @@ function speak(text){
  const u = new SpeechSynthesisUtterance(text);
  const voices = speechSynthesis.getVoices();
 
- u.voice =
- voices.find(v=>v.lang.includes("id")) ||
- voices[0];
-
+ u.voice = voices.find(v=>v.lang.includes("id")) || voices[0];
  u.lang="id-ID";
  u.rate=0.85;
  u.pitch=1.05;
@@ -252,32 +252,26 @@ function speak(text){
  speechSynthesis.speak(u);
 }
 
-/* =========================
-   FORMAT TEXT
-========================= */
-function buildCallText(data){
- const loket = data.loket;
+/* TEXT BUILDER */
+function buildCall(data){
  const nomor = data.nomor || "";
-
  const angka = nomor.includes("-") ? nomor.split("-")[1] : nomor;
- const nama = petugas[loket] || "petugas layanan";
+ const nama = petugas[data.loket] || "petugas layanan";
 
- return `Nomor antrean ${angka}. Silakan menuju meja ${loket}. Dilayani oleh ${nama}.`;
+ return `Nomor antrean ${angka}. Silakan menuju meja ${data.loket}. Dilayani oleh ${nama}.`;
 }
 
-/* =========================
-   FIREBASE LISTENER
-========================= */
+/* FIREBASE */
 onValue(ref(db,"loket"),snap=>{
  const data=snap.val()||{};
  Object.keys(petugas).forEach(k=>{
-   const el=document.getElementById("n"+k);
-   if(el) el.textContent=data[k]||"000";
+  const el=document.getElementById("n"+k);
+  if(el) el.textContent=data[k]||"000";
  });
 });
 
-onValue(ref(db,"current_call"),(snap)=>{
- const data = snap.val();
+onValue(ref(db,"current_call"),snap=>{
+ const data=snap.val();
  if(!data) return;
 
  document.getElementById("nomor").innerText = data.nomor || "---";
@@ -289,16 +283,14 @@ onValue(ref(db,"current_call"),(snap)=>{
  }
 
  const key = data.nomor + "_" + data.updatedAt;
-
  if(key === lastCall) return;
  lastCall = key;
 
  setTimeout(()=>{
   ding();
-  speak(buildCallText(data));
- },500);
+  speak(buildCall(data));
+ },600);
 });
-
 </script>
 
 </body>
