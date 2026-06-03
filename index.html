@@ -245,9 +245,11 @@ function speak(text){
  const voices = speechSynthesis.getVoices();
 
  u.voice = voices.find(v=>v.lang.includes("id")) || voices[0];
+
  u.lang="id-ID";
- u.rate=0.85;
- u.pitch=1.05;
+ u.rate=0.78;   // lebih pelan = lebih jelas di speaker besar
+ u.pitch=1.0;
+ u.volume=1;
 
  speechSynthesis.speak(u);
 }
@@ -256,9 +258,14 @@ function speak(text){
 function buildCall(data){
  const nomor = data.nomor || "";
  const angka = nomor.includes("-") ? nomor.split("-")[1] : nomor;
- const nama = petugas[data.loket] || "petugas layanan";
 
- return `Nomor antrean ${angka}. Silakan melakukan Verifikasi Spmb 2026  ${data.loket}. di meja ${nama}.`;
+ const loket = data.loket;
+ const petugasNama = petugas[loket] || "petugas layanan";
+
+ return `Nomor antrean ${angka}. 
+Silakan menuju meja ${loket}. 
+Untuk verifikasi S P M B 2026. 
+Dilayani oleh ${petugasNama}.`;
 }
 
 /* FIREBASE */
