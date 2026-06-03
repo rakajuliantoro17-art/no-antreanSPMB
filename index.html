@@ -260,15 +260,20 @@ function processQueue(){
    FORMAT VOICE BANDARA STYLE
 ========================= */
 function buildVoice(data){
- const nomor = data.nomor || "";
- const angka = nomor.includes("-") ? nomor.split("-")[1] : nomor;
 
- const loket = data.loket;
- const nama = petugas[loket] || "petugas layanan";
+  const nomorFull = data.nomor || ""; // contoh: A-001
 
- return `
+  const [kodeLoket, angka] = nomorFull.includes("-")
+    ? nomorFull.split("-")
+    : ["", nomorFull];
+
+  const loket = data.loket || kodeLoket;
+
+  const nama = petugas[loket] || "petugas layanan";
+
+  return `
 Perhatian.
-Nomor antrian ${angka}.
+Nomor antrean ${nomorFull}.
 Silakan menuju meja ${loket}.
 Untuk layanan verifikasi S P M B dua ribu dua enam.
 Dilayani oleh ${nama}.
