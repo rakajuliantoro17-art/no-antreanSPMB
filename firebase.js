@@ -4,14 +4,13 @@ import {
   ref,
   update,
   onValue,
-  serverTimestamp
+  get,
+  set
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ===============================
-   FIREBASE CONFIG
-================================ */
+/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = {
-  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDC5QqwJe3GQ",
+  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "no-antrean-spmb",
@@ -20,52 +19,34 @@ const firebaseConfig = {
   appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
-/* ===============================
-   INIT FIREBASE
-================================ */
+/* ================= INIT ================= */
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+export const db = getDatabase(app);
 
-/* ===============================
-   DEFAULT STRUCTURE (SOURCE OF TRUTH)
-================================ */
+/* ================= DEFAULT STATE ================= */
 export const DEFAULT_DISPLAY = {
   current: {
     loket: "-",
     nomor: 0,
     petugas: "-"
   },
-
   counters: {
-    A: 0,
-    B: 0,
-    C: 0,
-    D: 0,
-    E: 0,
-    F: 0,
-    G: 0,
-    H: 0,
-    I: 0,
-    J: 0
+    A: 0, B: 0, C: 0, D: 0, E: 0,
+    F: 0, G: 0, H: 0, I: 0, J: 0
   },
-
-  lastUpdate: Date.now()
+  lastUpdate: 0
 };
 
-/* ===============================
-   EXPORT CORE FIREBASE
-================================ */
-export {
-  db,
-  ref,
-  update,
-  onValue,
-  serverTimestamp
-};
+/* ================= INIT CHECK (AUTO CREATE IF EMPTY) ================= */
+export async function initSystem() {
+  const snap = await get(ref(db, "display"));
 
-/* ===============================
-   1. UPDATE DISPLAY (UNTUK OPERATOR)
-================================ */
+  if (!snap.exists()) {
+    await set(ref(db, "display"), DEFAULT_DISPLAY);
+  }
+}
+
+/* ================= UPDATE DISPLAY (SAFE MERGE) ================= */
 export async function updateDisplay(payload) {
   await update(ref(db, "display"), {
     ...payload,
@@ -73,21 +54,26 @@ export async function updateDisplay(payload) {
   });
 }
 
-/* ===============================
-   2. LISTENER DISPLAY (UNTUK INDEX & ADMIN)
-================================ */
+/* ================= LISTENER REALTIME ================= */
 export function listenDisplay(callback) {
   onValue(ref(db, "display"), (snapshot) => {
-    const data = snapshot.val();
-    callback(data);
+    callback(snapshot.val());
   });
 }
 
-/* ===============================
-   3. RESET SYSTEM (ADMIN)
-================================ */
+/* ================= RESET SYSTEM ================= */
 export async function resetDisplay() {
-  await update(ref(db), {
-    display: DEFAULT_DISPLAY
+  await set(ref(db, "display"), {
+    ...DEFAULT_DISPLAY,
+    lastUpdate: Date.now()
   });
 }
+
+/* ================= EXPORT CORE ================= */
+export {
+  ref,
+  update,
+  onValue,
+  get,
+  set
+};
