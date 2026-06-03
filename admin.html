@@ -1,37 +1,405 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>ADMIN PANEL</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ADMIN CONTROL CENTER</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+h1{
+text-align:center;
+margin-bottom:25px;
+}
+
+.panel{
+
+max-width:1200px;
+margin:auto;
+
+background:#1e293b;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:
+0 0 20px rgba(0,0,0,.4);
+
+}
+
+.top{
+
+display:flex;
+gap:10px;
+justify-content:center;
+margin-bottom:25px;
+flex-wrap:wrap;
+
+}
+
+.btn{
+
+padding:15px 25px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+font-size:16px;
+
+}
+
+.danger{
+background:#ef4444;
+color:white;
+}
+
+.warning{
+background:#f59e0b;
+color:white;
+}
+
+.success{
+background:#22c55e;
+color:white;
+}
+
+.monitor{
+
+display:grid;
+
+grid-template-columns:
+repeat(5,1fr);
+
+gap:12px;
+
+margin-top:20px;
+
+}
+
+.card{
+
+background:#334155;
+
+border-radius:15px;
+
+padding:15px;
+
+text-align:center;
+
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+.nomor{
+
+font-size:36px;
+font-weight:bold;
+
+color:#00ff99;
+
+}
+
+.current{
+
+margin-top:25px;
+
+background:#111827;
+
+padding:20px;
+
+border-radius:15px;
+
+text-align:center;
+
+}
+
+.current h2{
+
+margin-bottom:10px;
+
+}
+
+.currentNumber{
+
+font-size:72px;
+
+font-weight:900;
+
+color:#00ff99;
+
+}
+
+.status{
+
+margin-top:15px;
+font-size:18px;
+
+}
+
+</style>
 </head>
 
 <body>
 
 <h1>ADMIN CONTROL CENTER</h1>
 
-<button class="btn danger" onclick="resetAll()">RESET SEMUA LOKET</button>
+<div class="panel">
 
-<div id="log"></div>
+<div class="top">
+
+<button class="btn danger"
+onclick="resetAll()">
+
+RESET SEMUA
+
+</button>
+
+<button class="btn warning"
+onclick="resetCurrentCall()">
+
+RESET DISPLAY
+
+</button>
+
+</div>
+
+<div class="current">
+
+<h2>ANTREAN TERPANGGIL</h2>
+
+<div
+id="currentNumber"
+class="currentNumber">
+
+---
+
+</div>
+
+<div
+id="currentStatus"
+class="status">
+
+Menunggu panggilan...
+
+</div>
+
+</div>
+
+<div
+class="monitor"
+id="monitor">
+
+</div>
+
+</div>
 
 <script type="module">
 
-import { db } from "./firebase.js";
-import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-// RESET ALL
-window.resetAll = async function(){
-  if(confirm("Reset semua antrean?")){
-    await set(ref(db, "counter"), {});
-    await set(ref(db, "current_call"), {nomor:"---"});
-    alert("RESET DONE");
-  }
+import {
+
+getDatabase,
+ref,
+set,
+update,
+onValue
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
+authDomain:"no-antrean-spmb.firebaseapp.com",
+databaseURL:"https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"no-antrean-spmb",
+storageBucket:"no-antrean-spmb.firebasestorage.app",
+messagingSenderId:"357121462512",
+appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
+
 };
 
-// MONITOR
-onValue(ref(db, "current_call"), (snap)=>{
-  document.getElementById("log").innerText =
-    "CALL: " + (snap.val()?.nomor || "---");
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* ==========================
+   MONITOR CURRENT CALL
+========================== */
+
+onValue(
+ref(db,"current_call"),
+snap=>{
+
+const data = snap.val();
+
+if(!data) return;
+
+document
+.getElementById("currentNumber")
+.innerText =
+data.nomor || "---";
+
+document
+.getElementById("currentStatus")
+.innerText =
+data.callType || "-";
+
 });
+
+/* ==========================
+   MONITOR LOKET
+========================== */
+
+onValue(
+ref(db,"loket"),
+snap=>{
+
+const data =
+snap.val() || {};
+
+const monitor =
+document.getElementById(
+"monitor"
+);
+
+monitor.innerHTML="";
+
+const loket =
+["A","B","C","D","E",
+ "F","G","H","I","J"];
+
+loket.forEach(k=>{
+
+const nomor =
+data[k] || "000";
+
+monitor.innerHTML += `
+
+<div class="card">
+
+<h3>MEJA ${k}</h3>
+
+<div class="nomor">
+${k}-${nomor}
+</div>
+
+</div>
+
+`;
+
+});
+
+});
+
+/* ==========================
+   RESET ALL
+========================== */
+
+window.resetAll =
+async ()=>{
+
+if(
+!confirm(
+"Reset seluruh antrean?"
+)
+) return;
+
+await set(
+ref(db,"counter"),
+{
+A:0,
+B:0,
+C:0,
+D:0,
+E:0,
+F:0,
+G:0,
+H:0,
+I:0,
+J:0
+}
+);
+
+await set(
+ref(db,"loket"),
+{
+A:"000",
+B:"000",
+C:"000",
+D:"000",
+E:"000",
+F:"000",
+G:"000",
+H:"000",
+I:"000",
+J:"000"
+}
+);
+
+await set(
+ref(db,"current_call"),
+{
+nomor:"---",
+callType:"RESET",
+updatedAt:Date.now()
+}
+);
+
+alert(
+"Semua antrean berhasil direset"
+);
+
+};
+
+/* ==========================
+   RESET DISPLAY
+========================== */
+
+window.resetCurrentCall =
+async ()=>{
+
+await update(
+ref(db),
+{
+
+"current_call/nomor":
+"---",
+
+"current_call/callType":
+"RESET",
+
+"current_call/updatedAt":
+Date.now()
+
+}
+
+);
+
+};
 
 </script>
 
