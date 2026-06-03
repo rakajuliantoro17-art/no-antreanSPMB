@@ -160,111 +160,68 @@ Realtime Firebase Connected
 <script type="module">
 import { db, ref, get, update } from "./firebase.js";
 
-/* ================= STATE ================= */
 let loket = "-";
 let counter = 0;
 
-/* ================= UI ================= */
-function updateUI() {
+/* UI */
+function ui() {
   document.getElementById("current").innerText =
-    `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3, "0")}`;
+    `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3,"0")}`;
 }
 
-/* ================= HIGHLIGHT ================= */
 function highlight() {
-  document.querySelectorAll(".loket")
-    .forEach(b => b.classList.remove("active"));
-
+  document.querySelectorAll(".loket").forEach(b => b.classList.remove("active"));
   const btn = document.getElementById("btn" + loket);
   if (btn) btn.classList.add("active");
 }
 
-/* ================= PILIH LOKET ================= */
+/* PILIH LOKET */
 window.setLoket = async (l) => {
   loket = l;
 
-  // langsung ambil dari display (bukan counter lama)
-  try {
-    const snap = await get(ref(db, `display/counters/${loket}`));
-    counter = snap.exists() ? snap.val() : 0;
-  } catch (e) {
-    console.error(e);
-    counter = 0;
-  }
+  const snap = await get(ref(db, `display/counters/${loket}`));
+  counter = snap.exists() ? snap.val() : 0;
 
-  updateUI();
+  ui();
   highlight();
 };
-console.log("Operator loaded OK");
-/* ================= NEXT ================= */
+
+/* NEXT */
 window.next = async () => {
-  if (loket === "-") {
-    alert("Pilih loket dulu!");
-    return;
-  }
+  if (loket === "-") return alert("Pilih loket dulu!");
 
   counter++;
 
-  const payload = {
-    "display/current": {
+  await update(ref(db, "display"), {
+    current: {
       loket,
       nomor: counter,
       petugas: "-"
     },
-    [`display/counters/${loket}`]: counter,
+    [`counters/${loket}`]: counter,
     lastUpdate: Date.now()
-  };
+  });
 
-  console.log("SEND TO FIREBASE:", payload);
-
-  try {
-    await update(ref(db), payload);
-    console.log("SUCCESS UPDATE");
-  } catch (e) {
-    console.error("FIREBASE ERROR:", e);
-    alert("Firebase gagal update");
-  }
-
-  updateUI();
-  highlight();
-};
-console.log("NEXT CLICKED", loket);
-  
-/* ================= RECALL ================= */
-window.recall = () => {
-  alert("Recall tidak diperlukan (display realtime sudah otomatis)");
+  ui();
 };
 
-/* ================= RESET ================= */
+/* RESET */
 window.resetCounter = async () => {
-  if (!confirm("Reset semua antrean?")) return;
+  if (!confirm("Reset semua?")) return;
 
-  try {
-    await update(ref(db), {
-      display: {
-        current: {
-          loket: "-",
-          nomor: 0,
-          petugas: "-"
-        },
-        counters: {
-          A: 0, B: 0, C: 0, D: 0, E: 0,
-          F: 0, G: 0, H: 0, I: 0, J: 0
-        },
-        lastUpdate: Date.now()
-      }
-    });
-  } catch (e) {
-    console.error(e);
-  }
+  await update(ref(db, "display"), {
+    current: { loket: "-", nomor: 0, petugas: "-" },
+    counters: {
+      A:0,B:0,C:0,D:0,E:0,
+      F:0,G:0,H:0,I:0,J:0
+    },
+    lastUpdate: Date.now()
+  });
 
   loket = "-";
   counter = 0;
-
-  updateUI();
-  highlight();
+  ui();
 };
 
-/* ================= INIT ================= */
-updateUI();
+ui();
 </script>
