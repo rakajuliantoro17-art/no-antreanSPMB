@@ -120,15 +120,42 @@ to{transform:translateX(-100%)}
 /* CARDS */
 .cards{
 position:absolute;
-bottom:90px;
+bottom:40px;
 left:50%;
 transform:translateX(-50%);
 width:96%;
 display:grid;
-grid-template-columns:repeat(10,1fr);
+grid-template-columns:repeat(5,1fr);
 gap:14px;
 }
 
+@media (min-width:1600px){
+.cards{
+grid-template-columns:repeat(10,1fr);
+}
+}
+.card{
+d.innerHTML=`
+ <div class="meja">MEJA ${m}</div>
+ <div class="antri" id="n${m}">000</div>
+ <div class="petugas">${petugas[m]}</div>
+ <div style="font-size:12px;margin-top:6px;opacity:0.7">
+   ${m === "A" ? "LOKET UTAMA" : "LAYANAN"}
+ </div>
+`;
+     padding:18px;
+border-radius:20px;
+background:rgba(255,255,255,0.10);
+border:1px solid rgba(255,255,255,0.2);
+text-align:center;
+color:white;
+backdrop-filter:blur(10px);
+transition:all .3s ease;
+}
+
+.card:hover{
+transform:scale(1.03);
+}
 .card{
 padding:18px;
 border-radius:20px;
@@ -286,9 +313,24 @@ Terima kasih.
 ========================= */
 onValue(ref(db,"loket"),snap=>{
  const data=snap.val()||{};
+
  Object.keys(petugas).forEach(k=>{
   const el=document.getElementById("n"+k);
   if(el) el.textContent=data[k]||"000";
+
+  const card = document.getElementById("card"+k);
+  if(card){
+    const val = data[k] || "000";
+
+    card.dataset.value = val;
+
+    // optional visual state
+    if(val === "000"){
+      card.style.opacity = "0.5";
+    } else {
+      card.style.opacity = "1";
+    }
+  }
  });
 });
 
