@@ -1,24 +1,246 @@
-body{
+/* =========================
+   GLOBAL
+========================= */
+
+*{
   margin:0;
-  font-family:Arial;
-  background:#0f172a;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b,
+      #0f172a
+    );
   color:white;
 }
 
-.btn{
-  padding:15px 20px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
+/* =========================
+   PANEL
+========================= */
+
+.panel{
+  max-width:1400px;
+  margin:auto;
+  padding:25px;
 }
 
-.primary{ background:#2563eb; }
-.success{ background:#22c55e; }
-.warning{ background:#f59e0b; }
-.danger{ background:#ef4444; }
+.glass{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:20px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.3);
+}
+
+/* =========================
+   TITLE
+========================= */
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  font-size:42px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+
+h2{
+  margin-bottom:10px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:15px 24px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:700;
+  transition:.25s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+}
+
+.btn:active{
+  transform:scale(.98);
+}
+
+.success{
+  background:#22c55e;
+  color:white;
+}
+
+.warning{
+  background:#f59e0b;
+  color:white;
+}
+
+.danger{
+  background:#ef4444;
+  color:white;
+}
+
+.primary{
+  background:#2563eb;
+  color:white;
+}
+
+/* =========================
+   CURRENT CALL
+========================= */
+
+.current{
+  padding:25px;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.currentNumber{
+  font-size:90px;
+  font-weight:900;
+  color:#00ff99;
+  text-shadow:
+    0 0 20px rgba(0,255,153,.5);
+}
+
+.status{
+  margin-top:10px;
+  font-size:18px;
+  color:#cbd5e1;
+}
+
+/* =========================
+   GRID CARD
+========================= */
+
+.monitor{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+}
+
+.card{
+  background:#1e293b;
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.08);
+
+  transition:.25s;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.nomor{
+  font-size:38px;
+  font-weight:900;
+  color:#00ff99;
+}
+
+/* =========================
+   OPERATOR
+========================= */
 
 .grid{
   display:grid;
-  gap:10px;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+.loket{
+  background:#2563eb;
+  color:white;
+}
+
+.active{
+  background:#00ff99 !important;
+  color:black !important;
+}
+
+/* =========================
+   HEADER ACTION
+========================= */
+
+.top{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+/* =========================
+   LOG
+========================= */
+
+#log{
+  margin-top:20px;
+  padding:15px;
+  background:#111827;
+  border-radius:12px;
+  font-size:18px;
+  text-align:center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1200px){
+
+  .monitor{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:768px){
+
+  .monitor{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .currentNumber{
+    font-size:60px;
+  }
+
+  h1{
+    font-size:30px;
+  }
+
+}
+
+@media(max-width:480px){
+
+  .monitor{
+    grid-template-columns:1fr;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
 }
