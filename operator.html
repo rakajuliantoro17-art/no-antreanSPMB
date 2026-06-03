@@ -157,7 +157,6 @@ Realtime Firebase Connected
 
 </div>
 
-<!-- ================= FIREBASE MODULE ================= -->
 <script type="module">
 import { db, ref, get, update } from "./firebase.js";
 
@@ -174,12 +173,10 @@ function updateUI() {
 /* ================= HIGHLIGHT ================= */
 function highlight() {
   document.querySelectorAll(".loket")
-    .forEach(btn => btn.classList.remove("active"));
+    .forEach(b => b.classList.remove("active"));
 
-  if (loket !== "-") {
-    const btn = document.getElementById("btn" + loket);
-    if (btn) btn.classList.add("active");
-  }
+  const btn = document.getElementById("btn" + loket);
+  if (btn) btn.classList.add("active");
 }
 
 /* ================= PILIH LOKET ================= */
@@ -198,10 +195,10 @@ window.setLoket = async (l) => {
   highlight();
 };
 
-/* ================= NEXT ANTRIAN ================= */
+/* ================= NEXT ================= */
 window.next = async () => {
   if (loket === "-") {
-    alert("Pilih loket terlebih dahulu!");
+    alert("Pilih loket dulu!");
     return;
   }
 
@@ -210,7 +207,7 @@ window.next = async () => {
   try {
     await update(ref(db), {
       "display/current": {
-        loket: loket,
+        loket,
         nomor: counter,
         petugas: "-"
       },
@@ -219,22 +216,21 @@ window.next = async () => {
     });
   } catch (e) {
     console.error(e);
-    alert("Gagal update Firebase");
+    alert("Firebase error");
     return;
   }
 
   updateUI();
-  highlight();
 };
 
 /* ================= RECALL ================= */
 window.recall = () => {
-  alert("Recall otomatis dilakukan dari display utama (index.html)");
+  alert("Recall tidak diperlukan (display realtime sudah otomatis)");
 };
 
 /* ================= RESET ================= */
 window.resetCounter = async () => {
-  if (!confirm("Reset semua data antrean?")) return;
+  if (!confirm("Reset semua antrean?")) return;
 
   try {
     await update(ref(db), {
@@ -253,8 +249,6 @@ window.resetCounter = async () => {
     });
   } catch (e) {
     console.error(e);
-    alert("Reset gagal");
-    return;
   }
 
   loket = "-";
@@ -266,8 +260,4 @@ window.resetCounter = async () => {
 
 /* ================= INIT ================= */
 updateUI();
-
 </script>
-
-</body>
-</html>
