@@ -86,12 +86,6 @@ button:hover{
   margin-top:10px;
 }
 
-.recall{
-  background:#f59e0b;
-  width:220px;
-  margin-top:10px;
-}
-
 .reset{
   background:#ef4444;
   width:220px;
@@ -124,6 +118,7 @@ button:hover{
 LOKET : - | NOMOR : ---
 </div>
 
+<!-- LOKET -->
 <div class="grid">
 
 <button id="btnA" class="loket" onclick="setLoket('A')">MEJA A</button>
@@ -140,10 +135,10 @@ LOKET : - | NOMOR : ---
 
 </div>
 
+<!-- ACTION -->
 <div class="action">
 
 <button class="next" onclick="next()">▶ NEXT</button>
-<button class="recall" onclick="recall()">🔊 RECALL</button>
 <br>
 <button class="reset" onclick="resetCounter()">⛔ RESET</button>
 
@@ -157,71 +152,94 @@ Realtime Firebase Connected
 
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
 import { db, ref, get, update } from "./firebase.js";
 
+/* ================= STATE ================= */
 let loket = "-";
 let counter = 0;
 
-/* UI */
-function ui() {
+/* ================= UI ================= */
+function renderUI(){
   document.getElementById("current").innerText =
     `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3,"0")}`;
 }
 
-function highlight() {
-  document.querySelectorAll(".loket").forEach(b => b.classList.remove("active"));
-  const btn = document.getElementById("btn" + loket);
-  if (btn) btn.classList.add("active");
+/* ================= HIGHLIGHT ================= */
+function highlight(){
+  document.querySelectorAll(".loket").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  const btn = document.getElementById("btn"+loket);
+  if(btn) btn.classList.add("active");
 }
 
-/* PILIH LOKET */
-window.setLoket = async (l) => {
+/* ================= PILIH LOKET ================= */
+window.setLoket = async (l)=>{
   loket = l;
 
-  const snap = await get(ref(db, `display/counters/${loket}`));
-  counter = snap.exists() ? snap.val() : 0;
+  try{
+    const snap = await get(ref(db,"display/counters/"+loket));
+    counter = snap.exists() ? snap.val() : 0;
+  }catch(e){
+    counter = 0;
+  }
 
-  ui();
+  renderUI();
   highlight();
 };
 
-/* NEXT */
-window.next = async () => {
-  if (loket === "-") return alert("Pilih loket dulu!");
+/* ================= NEXT ================= */
+window.next = async ()=>{
+  if(loket === "-"){
+    alert("Pilih loket dulu!");
+    return;
+  }
 
   counter++;
 
-  await update(ref(db, "display"), {
-    current: {
+  await update(ref(db,"display"),{
+    current:{
       loket,
-      nomor: counter,
-      petugas: "-"
+      nomor:counter,
+      petugas:"-"
     },
-    [`counters/${loket}`]: counter,
-    lastUpdate: Date.now()
+    [`counters/${loket}`]:counter,
+    lastUpdate:Date.now()
   });
 
-  ui();
+  renderUI();
 };
 
-/* RESET */
-window.resetCounter = async () => {
-  if (!confirm("Reset semua?")) return;
+/* ================= RESET ================= */
+window.resetCounter = async ()=>{
+  if(!confirm("Reset semua antrean?")) return;
 
-  await update(ref(db, "display"), {
-    current: { loket: "-", nomor: 0, petugas: "-" },
-    counters: {
+  await update(ref(db,"display"),{
+    current:{
+      loket:"-",
+      nomor:0,
+      petugas:"-"
+    },
+    counters:{
       A:0,B:0,C:0,D:0,E:0,
       F:0,G:0,H:0,I:0,J:0
     },
-    lastUpdate: Date.now()
+    lastUpdate:Date.now()
   });
 
   loket = "-";
   counter = 0;
-  ui();
+
+  renderUI();
+  highlight();
 };
 
-ui();
+/* INIT */
+renderUI();
 </script>
+
+</body>
+</html>
