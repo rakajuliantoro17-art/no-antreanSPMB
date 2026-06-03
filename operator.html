@@ -2,105 +2,228 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>OPERATOR ANTREAN SPMB</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:url("./assets/bg.jpg") no-repeat center center fixed;
-  background-size:cover;
-  overflow:hidden;
-  color:white;
+background:url("./assets/bg.jpg") no-repeat center center fixed;
+background-size:cover;
+min-height:100vh;
+overflow:hidden;
+color:white;
 }
 
 .overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(10px);
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(10px);
 }
 
 .container{
-  position:relative;
-  z-index:2;
-  padding:20px;
-  text-align:center;
+position:relative;
+z-index:2;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
 }
 
-.glass{
-  max-width:900px;
-  margin:20px auto;
-  padding:25px;
-  border-radius:25px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.2);
-  backdrop-filter:blur(20px);
+.panel{
+
+width:100%;
+max-width:1100px;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.15);
+
+border-radius:30px;
+
+padding:30px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,.4);
+
 }
 
-h2{
-  margin-bottom:20px;
+.title{
+
+text-align:center;
+
+font-size:38px;
+
+font-weight:800;
+
+margin-bottom:25px;
+
+letter-spacing:2px;
+
 }
 
 .display{
-  font-size:30px;
-  margin-bottom:25px;
-  color:#00ff99;
-  font-weight:bold;
+
+text-align:center;
+
+padding:20px;
+
+border-radius:20px;
+
+background:rgba(0,0,0,.25);
+
+margin-bottom:25px;
+
+}
+
+.display h2{
+
+font-size:24px;
+
+margin-bottom:10px;
+
+}
+
+.nomor{
+
+font-size:90px;
+
+font-weight:900;
+
+color:#00ff99;
+
+text-shadow:
+0 0 25px rgba(0,255,153,.5);
+
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-}
 
-button{
-  padding:18px;
-  font-size:18px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:bold;
-  transition:.25s;
-}
+display:grid;
 
-button:hover{
-  transform:scale(1.05);
+grid-template-columns:
+repeat(5,1fr);
+
+gap:15px;
+
+margin-bottom:25px;
+
 }
 
 .loket{
-  background:#2563eb;
-  color:white;
+
+border:none;
+
+padding:20px;
+
+font-size:22px;
+
+font-weight:bold;
+
+border-radius:15px;
+
+cursor:pointer;
+
+background:#2563eb;
+
+color:white;
+
+transition:.25s;
+
+}
+
+.loket:hover{
+
+transform:translateY(-3px);
+
 }
 
 .active{
-  background:#00ff99 !important;
-  color:black !important;
+
+background:#00ff99 !important;
+
+color:black !important;
+
+box-shadow:
+0 0 20px rgba(0,255,153,.5);
+
+}
+
+.actions{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+.btn{
+
+border:none;
+
+padding:18px 35px;
+
+font-size:20px;
+
+font-weight:bold;
+
+border-radius:15px;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.btn:hover{
+
+transform:scale(1.05);
+
 }
 
 .next{
-  background:#22c55e;
-  width:220px;
-  margin-top:10px;
+background:#22c55e;
+color:white;
+}
+
+.recall{
+background:#f59e0b;
+color:white;
 }
 
 .reset{
-  background:#ef4444;
-  width:220px;
-  margin-top:10px;
-}
-
-.action{
-  margin-top:25px;
+background:#ef4444;
+color:white;
 }
 
 .status{
-  margin-top:15px;
-  font-size:18px;
-  color:#ccc;
+
+margin-top:20px;
+
+text-align:center;
+
+font-size:18px;
+
+color:#cbd5e1;
+
 }
+
 </style>
 </head>
 
@@ -110,15 +233,22 @@ button:hover{
 
 <div class="container">
 
-<div class="glass">
+<div class="panel">
 
-<h2>OPERATOR PANEL ANTREAN SPMB</h2>
-
-<div class="display" id="current">
-LOKET : - | NOMOR : ---
+<div class="title">
+OPERATOR ANTREAN SPMB 2026
 </div>
 
-<!-- LOKET -->
+<div class="display">
+
+<h2>LOKET AKTIF</h2>
+
+<div class="nomor" id="current">
+---
+</div>
+
+</div>
+
 <div class="grid">
 
 <button id="btnA" class="loket" onclick="setLoket('A')">MEJA A</button>
@@ -135,110 +265,205 @@ LOKET : - | NOMOR : ---
 
 </div>
 
-<!-- ACTION -->
-<div class="action">
+<div class="actions">
 
-<button class="next" onclick="next()">▶ NEXT</button>
-<br>
-<button class="reset" onclick="resetCounter()">⛔ RESET</button>
+<button class="btn next"
+onclick="nextCallOperator()">
+▶ NEXT
+</button>
+
+<button class="btn recall"
+onclick="recallCallOperator()">
+🔊 RECALL
+</button>
+
+<button class="btn reset"
+onclick="resetOperator()">
+⛔ RESET
+</button>
 
 </div>
 
 <div class="status">
-Realtime Firebase Connected
+Realtime Connected To Firebase
 </div>
 
 </div>
 
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
-import { db, ref, get, update } from "./firebase.js";
 
-/* ================= STATE ================= */
-let loket = "-";
-let counter = 0;
+import {
 
-/* ================= UI ================= */
-function renderUI(){
-  document.getElementById("current").innerText =
-    `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3,"0")}`;
+nextCall,
+recallCall,
+resetLoket,
+getCounter,
+playSound
+
+}
+from "./app.js";
+
+let loket="-";
+let counter=0;
+
+const current =
+document.getElementById(
+"current"
+);
+
+/* ==========================
+DISPLAY
+========================== */
+
+function updateDisplay(){
+
+if(loket=="-"){
+
+current.innerText="---";
+return;
+
 }
 
-/* ================= HIGHLIGHT ================= */
+current.innerText =
+`${loket}-${String(counter)
+.padStart(3,"0")}`;
+
+}
+
+/* ==========================
+HIGHLIGHT
+========================== */
+
 function highlight(){
-  document.querySelectorAll(".loket").forEach(b=>{
-    b.classList.remove("active");
-  });
 
-  const btn = document.getElementById("btn"+loket);
-  if(btn) btn.classList.add("active");
+document
+.querySelectorAll(".loket")
+.forEach(btn=>{
+
+btn.classList.remove(
+"active"
+);
+
+});
+
+if(loket!=="-"){
+
+document
+.getElementById(
+"btn"+loket
+)
+.classList.add(
+"active"
+);
+
 }
 
-/* ================= PILIH LOKET ================= */
-window.setLoket = async (l)=>{
-  loket = l;
+}
 
-  try{
-    const snap = await get(ref(db,"display/counters/"+loket));
-    counter = snap.exists() ? snap.val() : 0;
-  }catch(e){
-    counter = 0;
-  }
+/* ==========================
+SET LOKET
+========================== */
 
-  renderUI();
-  highlight();
+window.setLoket =
+async function(l){
+
+loket = l;
+
+counter =
+await getCounter(
+loket
+);
+
+updateDisplay();
+
+highlight();
+
 };
 
-/* ================= NEXT ================= */
-window.next = async ()=>{
-  if(loket === "-"){
-    alert("Pilih loket dulu!");
-    return;
-  }
+/* ==========================
+NEXT
+========================== */
 
-  counter++;
+window.nextCallOperator =
+async function(){
 
-  await update(ref(db,"display"),{
-    current:{
-      loket,
-      nomor:counter,
-      petugas:"-"
-    },
-    [`counters/${loket}`]:counter,
-    lastUpdate:Date.now()
-  });
+if(loket=="-"){
 
-  renderUI();
+alert(
+"Pilih meja terlebih dahulu"
+);
+
+return;
+
+}
+
+const nomor =
+await nextCall(
+loket
+);
+
+counter++;
+
+updateDisplay();
+
+playSound(
+"./sounds/ding.mp3"
+);
+
 };
 
-/* ================= RESET ================= */
-window.resetCounter = async ()=>{
-  if(!confirm("Reset semua antrean?")) return;
+/* ==========================
+RECALL
+========================== */
 
-  await update(ref(db,"display"),{
-    current:{
-      loket:"-",
-      nomor:0,
-      petugas:"-"
-    },
-    counters:{
-      A:0,B:0,C:0,D:0,E:0,
-      F:0,G:0,H:0,I:0,J:0
-    },
-    lastUpdate:Date.now()
-  });
+window.recallCallOperator =
+async function(){
 
-  loket = "-";
-  counter = 0;
+await recallCall();
 
-  renderUI();
-  highlight();
+playSound(
+"./sounds/panggilan.mp3"
+);
+
 };
 
-/* INIT */
-renderUI();
+/* ==========================
+RESET
+========================== */
+
+window.resetOperator =
+async function(){
+
+if(loket=="-"){
+
+alert(
+"Pilih meja terlebih dahulu"
+);
+
+return;
+
+}
+
+if(
+!confirm(
+`Reset meja ${loket}?`
+)
+) return;
+
+await resetLoket(
+loket
+);
+
+counter = 0;
+
+updateDisplay();
+
+};
+
+updateDisplay();
+
 </script>
 
 </body>
