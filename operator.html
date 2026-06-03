@@ -6,7 +6,6 @@
 <title>OPERATOR ANTREAN SPMB</title>
 
 <style>
-
 body{
   margin:0;
   font-family:Arial,sans-serif;
@@ -84,11 +83,13 @@ button:hover{
 .next{
   background:#22c55e;
   width:220px;
+  margin-top:10px;
 }
 
 .recall{
   background:#f59e0b;
   width:220px;
+  margin-top:10px;
 }
 
 .reset{
@@ -106,7 +107,6 @@ button:hover{
   font-size:18px;
   color:#ccc;
 }
-
 </style>
 </head>
 
@@ -142,19 +142,10 @@ LOKET : - | NOMOR : ---
 
 <div class="action">
 
-<button class="next" onclick="next()">
-▶ NEXT
-</button>
-
-<button class="recall" onclick="recall()">
-🔊 RECALL
-</button>
-
+<button class="next" onclick="next()">▶ NEXT</button>
+<button class="recall" onclick="recall()">🔊 RECALL</button>
 <br>
-
-<button class="reset" onclick="resetCounter()">
-⛔ RESET
-</button>
+<button class="reset" onclick="resetCounter()">⛔ RESET</button>
 
 </div>
 
@@ -166,244 +157,115 @@ Realtime Firebase Connected
 
 </div>
 
+<!-- ================= FIREBASE MODULE ================= -->
 <script type="module">
+import { db, ref, get, update } from "./firebase.js";
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+/* ================= STATE ================= */
+let loket = "-";
+let counter = 0;
 
-import {
-  getDatabase,
-  ref,
-  set,
-  get,
-  update
+/* ================= UI ================= */
+function updateUI() {
+  document.getElementById("current").innerText =
+    `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3, "0")}`;
 }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* FIREBASE */
+/* ================= HIGHLIGHT ================= */
+function highlight() {
+  document.querySelectorAll(".loket")
+    .forEach(btn => btn.classList.remove("active"));
 
-const firebaseConfig = {
-
-  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
-  authDomain: "no-antrean-spmb.firebaseapp.com",
-  databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "no-antrean-spmb",
-  storageBucket: "no-antrean-spmb.firebasestorage.app",
-  messagingSenderId: "357121462512",
-  appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
-
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-/* INIT LOKET */
-
-const defaultLoket = {
-
-A:"000",
-B:"000",
-C:"000",
-D:"000",
-E:"000",
-
-F:"000",
-G:"000",
-H:"000",
-I:"000",
-J:"000"
-
-};
-
-get(ref(db,"loket"))
-.then(snap=>{
-
-  if(!snap.exists()){
-
-    set(
-      ref(db,"loket"),
-      defaultLoket
-    );
-
+  if (loket !== "-") {
+    const btn = document.getElementById("btn" + loket);
+    if (btn) btn.classList.add("active");
   }
-
-});
-
-/* VARIABLE */
-
-let loket="-";
-let counter=0;
-
-/* SOUND */
-
-function playSound(path){
-
-  new Audio(path)
-    .play()
-    .catch(()=>{});
-
 }
 
-/* UPDATE DISPLAY */
-
-function updateDisplay(){
-
-  document.getElementById("current")
-  .innerText =
-  `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3,"0")}`;
-
-}
-
-/* HIGHLIGHT */
-
-function highlightButton(){
-
-  document
-    .querySelectorAll(".loket")
-    .forEach(btn=>
-      btn.classList.remove("active")
-    );
-
-  if(loket!=="-"){
-
-    document
-      .getElementById("btn"+loket)
-      .classList.add("active");
-
-  }
-
-}
-
-/* PILIH LOKET */
-
-window.setLoket = async (l)=>{
-
+/* ================= PILIH LOKET ================= */
+window.setLoket = async (l) => {
   loket = l;
 
-  const snap =
-    await get(
-      ref(db,"counter/"+loket)
-    );
+  try {
+    const snap = await get(ref(db, `display/counters/${loket}`));
+    counter = snap.exists() ? snap.val() : 0;
+  } catch (e) {
+    console.error(e);
+    counter = 0;
+  }
 
-  counter =
-    snap.exists()
-    ? snap.val()
-    : 0;
-
-  updateDisplay();
-  highlightButton();
-
+  updateUI();
+  highlight();
 };
 
-/* NEXT */
-
-window.next = async ()=>{
-
-  if(loket=="-"){
-
-    alert("Pilih loket terlebih dahulu");
+/* ================= NEXT ANTRIAN ================= */
+window.next = async () => {
+  if (loket === "-") {
+    alert("Pilih loket terlebih dahulu!");
     return;
-
   }
 
   counter++;
 
-  const nomor =
-  `${loket}-${String(counter).padStart(3,"0")}`;
-
-  await update(ref(db),{
-
-    "current_call/nomor":nomor,
-    "current_call/loket":loket,
-    "current_call/counter":counter,
-    "current_call/callType":"NEXT",
-    "current_call/updatedAt":Date.now(),
-
-    [`counter/${loket}`]:
-      counter,
-
-    [`loket/${loket}`]:
-      String(counter)
-      .padStart(3,"0")
-
-  });
-
-  playSound("./sounds/ding.mp3");
-
-  updateDisplay();
-
-};
-
-/* RECALL */
-
-window.recall = async ()=>{
-
-  const snap =
-    await get(
-      ref(db,"current_call")
-    );
-
-  if(!snap.exists()) return;
-
-  const data = snap.val();
-
-  await update(ref(db),{
-
-    "current_call/nomor":
-      data.nomor,
-
-    "current_call/loket":
-      data.loket,
-
-    "current_call/counter":
-      data.counter,
-
-    "current_call/callType":
-      "RECALL",
-
-    "current_call/updatedAt":
-      Date.now()
-
-  });
-
-  playSound("./sounds/panggilan.mp3");
-
-};
-
-/* RESET */
-
-window.resetCounter = async ()=>{
-
-  if(loket=="-"){
-
-    alert("Pilih loket terlebih dahulu");
+  try {
+    await update(ref(db), {
+      "display/current": {
+        loket: loket,
+        nomor: counter,
+        petugas: "-"
+      },
+      [`display/counters/${loket}`]: counter,
+      lastUpdate: Date.now()
+    });
+  } catch (e) {
+    console.error(e);
+    alert("Gagal update Firebase");
     return;
-
   }
 
-  if(
-    !confirm(
-      `Reset loket ${loket} ?`
-    )
-  ) return;
-
-  counter = 0;
-
-  await update(ref(db),{
-
-    [`counter/${loket}`]:0,
-
-    [`loket/${loket}`]:"000"
-
-  });
-
-  updateDisplay();
-
+  updateUI();
+  highlight();
 };
 
-/* INIT */
+/* ================= RECALL ================= */
+window.recall = () => {
+  alert("Recall otomatis dilakukan dari display utama (index.html)");
+};
 
-updateDisplay();
+/* ================= RESET ================= */
+window.resetCounter = async () => {
+  if (!confirm("Reset semua data antrean?")) return;
+
+  try {
+    await update(ref(db), {
+      display: {
+        current: {
+          loket: "-",
+          nomor: 0,
+          petugas: "-"
+        },
+        counters: {
+          A: 0, B: 0, C: 0, D: 0, E: 0,
+          F: 0, G: 0, H: 0, I: 0, J: 0
+        },
+        lastUpdate: Date.now()
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    alert("Reset gagal");
+    return;
+  }
+
+  loket = "-";
+  counter = 0;
+
+  updateUI();
+  highlight();
+};
+
+/* ================= INIT ================= */
+updateUI();
 
 </script>
 
