@@ -427,3 +427,80 @@ document.getElementById("petugasAktif")
 </body>
 </html>
 ```
+import { initSystem } from "./firebase.js";
+initSystem();
+import { listenDisplay } from "./firebase.js";
+
+listenDisplay((data) => {
+  if (!data) return;
+
+  document.getElementById("nomor").innerText =
+    data.current.loket + "-" + String(data.current.nomor).padStart(3,"0");
+
+  document.getElementById("petugasAktif").innerText =
+    "LOKET " + data.current.loket + " SIAP MELAYANI";
+});
+<script type="module">
+import { initSystem, listenDisplay } from "./firebase.js";
+
+/* INIT SYSTEM (AUTO CREATE DB IF EMPTY) */
+await initSystem();
+
+/* CLOCK */
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").innerText =
+    String(now.getHours()).padStart(2,"0") + ":" +
+    String(now.getMinutes()).padStart(2,"0") + ":" +
+    String(now.getSeconds()).padStart(2,"0");
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* REALTIME LISTENER */
+listenDisplay((data) => {
+  if (!data || !data.current) return;
+
+  const nomorEl = document.getElementById("nomor");
+  const petugasEl = document.getElementById("petugasAktif");
+
+  nomorEl.innerText =
+    data.current.loket + "-" + String(data.current.nomor).padStart(3,"0");
+
+  petugasEl.innerText =
+    "LOKET " + data.current.loket + " SIAP MELAYANI";
+
+  /* UPDATE GRID COUNTER */
+  renderRealtimeCounters(data);
+});
+
+/* COUNTER GRID UPDATE */
+function renderRealtimeCounters(data) {
+  const grid = document.getElementById("counterGrid");
+  grid.innerHTML = "";
+
+  const petugas = {
+    A:"Bapak Rahmad", B:"Bapak Bayu", C:"Bapak Sunariyadi",
+    D:"Ibu Tasya", E:"Ibu Eva",
+    F:"Bapak Mujib", G:"Ibu Ria", H:"Bapak Raka",
+    I:"Bapak Chozin", J:"Ibu Ita"
+  };
+
+  Object.keys(data.counters || {}).forEach(k => {
+    const card = document.createElement("div");
+    card.className = "counter-card " + "card-" + k;
+
+    if (data.current.loket === k) {
+      card.classList.add("active");
+    }
+
+    card.innerHTML = `
+      <div class="counter-loket">MEJA ${k}</div>
+      <div class="counter-number">${k}-${String(data.counters[k]).padStart(3,"0")}</div>
+      <div class="counter-petugas">${petugas[k]}</div>
+    `;
+
+    grid.appendChild(card);
+  });
+});
+</script>
