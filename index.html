@@ -4,37 +4,80 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIDEOTRON ANTREAN SPMB 2026</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+
 body{
 font-family:Segoe UI,Arial,sans-serif;
 background:url("./assets/th.jpg") center/cover no-repeat fixed;
-height:100vh;color:#fff;overflow:hidden}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
-.logo{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:150px;z-index:5}
-.wrapper{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:120px}
+height:100vh;
+color:#fff;
+overflow:hidden;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+backdrop-filter:blur(6px);
+}
+
+.logo{
+position:absolute;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+width:150px;
+z-index:5;
+}
+
+.wrapper{
+position:relative;
+z-index:2;
+height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:120px;
+}
+
 .clock{
 font-size:64px;
 font-weight:900;
-background:linear-gradient(
-90deg,
-#ff00ff,
-#00ffff,
-#39ff14,
-#ffcc00
-);
--webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 4s linear infinite}
-@keyframes rgb{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
+background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:rgb 4s linear infinite;
+}
+
+@keyframes rgb{
+from{filter:hue-rotate(0)}
+to{filter:hue-rotate(360deg)}
+}
+
 .main{
-width:90%;max-width:1600px;text-align:center;
-background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);
-backdrop-filter:blur(20px);border-radius:40px;padding:30px}
- .main{
 width:94%;
 max-width:1800px;
 padding:40px;
+text-align:center;
+background:rgba(255,255,255,.08);
+border:2px solid rgba(255,255,255,.2);
+backdrop-filter:blur(20px);
+border-radius:40px;
 }
+
 .info{font-size:34px}
+
+.nomor{
+font-size:280px;
+font-weight:900;
+letter-spacing:8px;
+color:#00ff99;
+text-shadow:0 0 20px #00ff99,0 0 40px #00ff99,0 0 80px #00ff99;
+transition:all .3s ease;
+}
+
 .marquee{
 position:absolute;
 bottom:0;
@@ -49,125 +92,78 @@ overflow:hidden;
 }
 
 .marquee::after{
-
-content:
-"SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO";
-
+content:"SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO";
 display:inline-block;
-
 padding-left:100%;
-
-animation:
-marquee 20s linear infinite;
-
+animation:marquee 20s linear infinite;
 }
 
 @keyframes marquee{
-
-from{
-transform:
-translateX(0);
+from{transform:translateX(0)}
+to{transform:translateX(-100%)}
 }
 
-to{
-transform:
-translateX(-100%);
-}
-
-} 
-.nomor{
-font-size:280px;
-font-weight:900;
-letter-spacing:8px;
-color:#00ff99;
-text-shadow:
-0 0 20px #00ff99,
-0 0 40px #00ff99,
-0 0 80px #00ff99;
-}
-.cards{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
-width:98%;display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
- .cards{
+.cards{
+position:absolute;
 bottom:60px;
+left:50%;
+transform:translateX(-50%);
+width:98%;
+display:grid;
+grid-template-columns:repeat(10,1fr);
 gap:12px;
 }
+
 .card{
 padding:16px;
 border-radius:22px;
-color:#fff;
 text-align:center;
 font-weight:700;
 background:rgba(255,255,255,.12);
 backdrop-filter:blur(10px);
 border:1px solid rgba(255,255,255,.2);
 }
+
 .card .meja{font-size:18px}
-.card .antri{
-font-size:48px;
-font-weight:900;
-}
-.card .petugas{
-font-size:15px;
-font-weight:600;
-}
+.card .antri{font-size:48px;font-weight:900}
+.card .petugas{font-size:15px}
+
 .active{
-
-animation:
-pulse 1s infinite,
-glow 2s infinite;
-
-border:3px solid white;
-
-box-shadow:
-0 0 20px white,
-0 0 40px white;
-
+animation:pulse 1s infinite;
+border:3px solid #fff;
+box-shadow:0 0 20px #fff,0 0 40px #fff;
 }
 
-@keyframes glow{
-
-0%{
-box-shadow:
-0 0 10px white;
+@keyframes pulse{
+50%{transform:scale(1.05)}
 }
-
-50%{
-box-shadow:
-0 0 40px white,
-0 0 80px white;
-}
-
-100%{
-box-shadow:
-0 0 10px white;
-}
-
-} 
-.active{animation:pulse 1s infinite;border:3px solid #fff}
-@keyframes pulse{50%{transform:scale(1.05)}}
 </style>
 </head>
+
 <body>
+
 <div class="overlay"></div>
 <img src="./assets/logo.png" class="logo">
+
 <div class="wrapper">
-<div class="clock" id="clock"></div>
-<div class="main">
-<div class="info">NOMOR ANTREAN</div>
-<div class="nomor" id="nomor">---</div>
-<div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
+  <div class="clock" id="clock"></div>
+
+  <div class="main">
+    <div class="info">NOMOR ANTREAN</div>
+    <div class="nomor" id="nomor">---</div>
+    <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
+  </div>
+
+  <div class="marquee"></div>
 </div>
-<div class="marquee">
-SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO
-</div> 
-</div>
+
 <div class="cards" id="cards"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-const firebaseConfig={
+const firebaseConfig = {
 apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
 authDomain:"no-antrean-spmb.firebaseapp.com",
 databaseURL:"https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -176,42 +172,102 @@ storageBucket:"no-antrean-spmb.firebasestorage.app",
 messagingSenderId:"357121462512",
 appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
- 
-speechSynthesis.getVoices();
 
-speechSynthesis.onvoiceschanged = ()=>{
-  speechSynthesis.getVoices();
-};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-document.body.addEventListener("click",()=>{
+/* =========================
+   STATE
+========================= */
+let audioUnlocked = false;
+let lastCall = "";
 
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance("")
-  );
-
+/* unlock audio */
+document.body.addEventListener("click", () => {
+  speechSynthesis.speak(new SpeechSynthesisUtterance(" "));
   audioUnlocked = true;
+}, { once: true });
 
-  console.log("Audio Unlocked");
-
-},{once:true});
-const petugas={
+/* =========================
+   DATA PETUGAS
+========================= */
+const petugas = {
 A:"Bapak Rahmad",B:"Bapak Bayu",C:"Bapak Sunariyadi",D:"Ibu Tasya",E:"Ibu Eva",
 F:"Bapak Mujib",G:"Ibu Ria",H:"Bapak Raka",I:"Bapak Chozin",J:"Ibu Ita"
 };
 
 const colors=["#ef4444","#f97316","#eab308","#22c55e","#14b8a6","#06b6d4","#3b82f6","#8b5cf6","#d946ef","#ec4899"];
-const cards=document.getElementById("cards");
-["A","B","C","D","E","F","G","H","I","J"].forEach((m,i)=>{
+
+/* =========================
+   BUILD CARD
+========================= */
+const cards = document.getElementById("cards");
+
+Object.keys(petugas).forEach((m,i)=>{
  const d=document.createElement("div");
- d.className="card"; d.id="card"+m;
+ d.className="card";
+ d.id="card"+m;
  d.style.background=colors[i]+"88";
- d.innerHTML=`<div class=meja>MEJA ${m}</div><div class=antri id=n${m}>000</div><div class=petugas>${petugas[m]}</div>`;
+
+ d.innerHTML=`
+ <div class="meja">MEJA ${m}</div>
+ <div class="antri" id="n${m}">000</div>
+ <div class="petugas">${petugas[m]}</div>
+ `;
+
  cards.appendChild(d);
 });
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+/* =========================
+   CLOCK
+========================= */
+setInterval(()=>{
+ document.getElementById("clock").textContent =
+ new Date().toLocaleTimeString("id-ID");
+},1000);
 
+/* =========================
+   SOUND
+========================= */
+function ding(){
+ new Audio("./sounds/ding.mp3").play();
+}
+
+function speak(text){
+ if(!audioUnlocked) return;
+
+ speechSynthesis.cancel();
+
+ const u = new SpeechSynthesisUtterance(text);
+ const voices = speechSynthesis.getVoices();
+
+ u.voice =
+ voices.find(v=>v.lang.includes("id")) ||
+ voices[0];
+
+ u.lang="id-ID";
+ u.rate=0.85;
+ u.pitch=1.05;
+
+ speechSynthesis.speak(u);
+}
+
+/* =========================
+   FORMAT TEXT
+========================= */
+function buildCallText(data){
+ const loket = data.loket;
+ const nomor = data.nomor || "";
+
+ const angka = nomor.includes("-") ? nomor.split("-")[1] : nomor;
+ const nama = petugas[loket] || "petugas layanan";
+
+ return `Nomor antrean ${angka}. Silakan menuju meja ${loket}. Dilayani oleh ${nama}.`;
+}
+
+/* =========================
+   FIREBASE LISTENER
+========================= */
 onValue(ref(db,"loket"),snap=>{
  const data=snap.val()||{};
  Object.keys(petugas).forEach(k=>{
@@ -219,179 +275,31 @@ onValue(ref(db,"loket"),snap=>{
    if(el) el.textContent=data[k]||"000";
  });
 });
-function ding(){
 
-new Audio(
-"./sounds/ding.mp3"
-).play();
+onValue(ref(db,"current_call"),(snap)=>{
+ const data = snap.val();
+ if(!data) return;
 
-}
- function speak(text){
+ document.getElementById("nomor").innerText = data.nomor || "---";
 
-  if(!audioUnlocked) return;
+ document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 
-  speechSynthesis.cancel();
+ if(data.loket){
+  document.getElementById("card"+data.loket)?.classList.add("active");
+ }
 
-  const u =
-  new SpeechSynthesisUtterance(text);
+ const key = data.nomor + "_" + data.updatedAt;
 
-  const voices =
-  speechSynthesis.getVoices();
+ if(key === lastCall) return;
+ lastCall = key;
 
-  const voice =
-
-    voices.find(v=>v.lang==="id-ID") ||
-
-    voices.find(v=>v.lang.startsWith("id")) ||
-
-    voices.find(v=>v.lang==="en-US") ||
-
-    voices[0];
-
-  if(voice)
-    u.voice = voice;
-
-  u.lang = "id-ID";
-  u.rate = 0.82;
-  u.pitch = 1.05;
-  u.volume = 1;
-
-  speechSynthesis.speak(u);
-
-}
-function formatCall(
-loket,
-nomor,
-nama
-){
-
-const digit =
-nomor.split("").join(" ");
-
-let lastCall = "";
-
-onValue(
-ref(db,"current_call"),
-(snap)=>{
-
-const data = snap.val();
-
-if(!data) return;
-
-document
-.getElementById("nomor")
-.innerText =
-data.nomor || "---";
-
-document
-.querySelectorAll(".card")
-.forEach(c=>
-c.classList.remove("active")
-);
-
-if(data.loket){
-
-const card =
-document.getElementById(
-"card"+data.loket
-);
-
-if(card)
-card.classList.add("active");
-
-}
-
-const currentKey =
-data.nomor + "_" +
-data.updatedAt;
-
-if(currentKey !== lastCall){
-
-setTimeout(()=>{
-
-ding();
-
-if(data.callType==="RECALL"){
-
-speak(
-"Perhatian. Pengulangan panggilan. " +
-formatCall(
-data.loket,
-angka,
-nama
-)
-);
-
-}else{
-
-speak(
-formatCall(
-data.loket,
-angka,
-nama
-)
-);
-
-lastCall = currentKey;
-
-const nama =
-petugas[data.loket] ||
-"petugas layanan";
-
-const angka =
-data.nomor.split("-")[1];
-
-setTimeout(()=>{
-
-ding();
-
-if(data.callType==="RECALL"){
-
-speak(
-
-"Perhatian. Pengulangan panggilan. " +
-
-formatCall(
-data.loket,
-angka,
-nama
-)
-
-);
-
-}else{
-
-speak(
-formatCall(
-data.loket,
-angka,
-nama
-)
-);
-
-}
-
-},500);
-
-speak(
-formatCall(
-data.loket,
-angka,
-nama
-)
-);
-
-},500);
-
-}
-
+ setTimeout(()=>{
+  ding();
+  speak(buildCallText(data));
+ },500);
 });
- 
-setInterval(()=>{
- const n=new Date();
- document.getElementById("clock").textContent =
-n.toLocaleTimeString("id-ID");n.toLocaleTimeString("id-ID");
-},1000);
+
 </script>
+
 </body>
 </html>
