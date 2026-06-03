@@ -16,7 +16,7 @@ font-family:Segoe UI,Arial,sans-serif;
 background:url("./assets/th.jpg") center/cover no-repeat;
 }
 
-/* DARK LAYER */
+/* ================= OVERLAY ================= */
 .overlay{
 position:fixed;
 inset:0;
@@ -24,17 +24,36 @@ background:rgba(0,0,0,0.65);
 backdrop-filter:blur(6px);
 }
 
-/* LOGO */
+/* ================= LOGO ================= */
 .logo{
 position:absolute;
 top:20px;
 left:50%;
 transform:translateX(-50%);
-width:160px;
+width:150px;
 z-index:10;
 }
 
-/* MAIN WRAPPER */
+/* ================= CLOCK ================= */
+.clock{
+font-size:64px;
+font-weight:900;
+text-align:center;
+margin-top:20px;
+
+background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:rgb 4s linear infinite;
+}
+
+@keyframes rgb{
+from{filter:hue-rotate(0)}
+to{filter:hue-rotate(360deg)}
+}
+
+/* ================= MAIN CENTER ================= */
 .wrapper{
 position:relative;
 z-index:2;
@@ -43,27 +62,9 @@ height:100%;
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:flex-start;
-padding-top:140px;
+padding-top:120px;
 }
 
-/* CLOCK */
-.clock{
-font-size:72px;
-font-weight:900;
-background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation:rgb 4s linear infinite;
-margin-bottom:20px;
-}
-
-@keyframes rgb{
-from{filter:hue-rotate(0)}
-to{filter:hue-rotate(360deg)}
-}
-
-/* MAIN BOX */
 .main{
 width:85%;
 max-width:1600px;
@@ -75,7 +76,6 @@ border:2px solid rgba(255,255,255,0.2);
 backdrop-filter:blur(18px);
 }
 
-/* TEXT */
 .info{
 font-size:42px;
 font-weight:600;
@@ -83,15 +83,72 @@ margin-bottom:10px;
 }
 
 .nomor{
-font-size:320px;
+font-size:300px;
 font-weight:900;
 color:#00ff99;
 text-shadow:0 0 25px #00ff99,0 0 60px #00ff99;
 letter-spacing:10px;
-transition:all .3s ease;
 }
 
-/* MARQUEE */
+/* ================= GRID ================= */
+.cards{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+width:96%;
+
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:14px;
+}
+
+@media(min-width:1600px){
+.cards{
+grid-template-columns:repeat(10,1fr);
+}
+}
+
+/* ================= CARD ================= */
+.card{
+padding:18px;
+border-radius:20px;
+background:rgba(255,255,255,0.10);
+border:1px solid rgba(255,255,255,0.2);
+text-align:center;
+color:white;
+backdrop-filter:blur(10px);
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.05);
+}
+
+.card .meja{
+font-size:20px;
+font-weight:600;
+}
+
+.card .antri{
+font-size:52px;
+font-weight:900;
+margin:5px 0;
+}
+
+.card .petugas{
+font-size:14px;
+opacity:0.9;
+}
+
+/* ACTIVE */
+.active{
+border:3px solid #fff;
+box-shadow:0 0 25px #fff,0 0 60px #fff;
+transform:scale(1.08);
+}
+
+/* ================= MARQUEE ================= */
 .marquee{
 position:absolute;
 bottom:0;
@@ -99,7 +156,7 @@ left:0;
 width:100%;
 background:rgba(0,0,0,0.75);
 padding:14px;
-font-size:32px;
+font-size:28px;
 font-weight:700;
 white-space:nowrap;
 overflow:hidden;
@@ -116,66 +173,6 @@ animation:marquee 18s linear infinite;
 from{transform:translateX(0)}
 to{transform:translateX(-100%)}
 }
-
-/* CARDS */
-.cards{
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
-width:96%;
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:14px;
-}
-
-@media(min-width:1600px){
-.cards{
-grid-template-columns:repeat(10,1fr);
-}
-}
-.card{
-d.innerHTML=`
- <div class="meja">MEJA ${m}</div>
- <div class="antri" id="n${m}">000</div>
- <div class="petugas">${petugas[m]}</div>
- <div style="font-size:12px;margin-top:6px;opacity:0.7">
-   ${m === "A" ? "LOKET UTAMA" : "LAYANAN"}
- </div>
-`;
-     padding:18px;
-border-radius:20px;
-background:rgba(255,255,255,0.10);
-border:1px solid rgba(255,255,255,0.2);
-text-align:center;
-color:white;
-backdrop-filter:blur(10px);
-transition:all .3s ease;
-}
-
-.card:hover{
-transform:scale(1.03);
-}
-.card{
-padding:18px;
-border-radius:20px;
-background:rgba(255,255,255,0.12);
-border:1px solid rgba(255,255,255,0.2);
-text-align:center;
-color:white;
-backdrop-filter:blur(10px);
-}
-
-.card .meja{font-size:20px;font-weight:600}
-.card .antri{font-size:52px;font-weight:900}
-.card .petugas{font-size:14px}
-
-.active{
-border:3px solid #fff;
-box-shadow:0 0 25px #fff,0 0 60px #fff;
-transform:scale(1.05);
-transition:all .3s ease;
-}
 </style>
 </head>
 
@@ -183,7 +180,6 @@ transition:all .3s ease;
 
 <div class="overlay"></div>
 <img src="./assets/logo.png" class="logo">
-<div class="info">Tim.IT-SMAN 1 Sooko</div> 
 
 <div class="wrapper">
   <div class="clock" id="clock"></div>
@@ -200,6 +196,9 @@ transition:all .3s ease;
 <div class="marquee">
   <span>SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO</span>
 </div>
+
+</body>
+</html>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
