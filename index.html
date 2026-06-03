@@ -203,8 +203,8 @@ document.body.addEventListener("click", () => {
 
 /* DATA */
 const petugas = {
-A:"Rahmad",B:"Bayu",C:"Sunariyadi",D:"Tasya",E:"Eva",
-F:"Mujib",G:"Ria",H:"Raka",I:"Chozin",J:"Ita"
+A:"Pak Rahmad",B:"Pak Bayu",C:"Pak Sunariyadi",D:"Bu Tasya",E:"Bu Eva",
+F:"Pak Mujib",G:"Bu Ria",H:"Pak Raka",I:"Pak Chozin",J:"Bu Ita"
 };
 
 const colors=["#ef4444","#f97316","#eab308","#22c55e","#14b8a6","#06b6d4","#3b82f6","#8b5cf6","#d946ef","#ec4899"];
@@ -258,7 +258,7 @@ function buildCall(data){
  const angka = nomor.includes("-") ? nomor.split("-")[1] : nomor;
  const nama = petugas[data.loket] || "petugas layanan";
 
- return `Nomor antrean ${angka}. Silakan menuju meja ${data.loket}. Dilayani oleh ${nama}.`;
+ return `Nomor antrean ${angka}. Silakan melakukan Verifikasi Spmb 2026  ${data.loket}. di meja ${nama}.`;
 }
 
 /* FIREBASE */
