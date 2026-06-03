@@ -183,6 +183,7 @@ function highlight() {
 window.setLoket = async (l) => {
   loket = l;
 
+  // langsung ambil dari display (bukan counter lama)
   try {
     const snap = await get(ref(db, `display/counters/${loket}`));
     counter = snap.exists() ? snap.val() : 0;
@@ -194,7 +195,7 @@ window.setLoket = async (l) => {
   updateUI();
   highlight();
 };
-
+console.log("Operator loaded OK");
 /* ================= NEXT ================= */
 window.next = async () => {
   if (loket === "-") {
@@ -204,25 +205,31 @@ window.next = async () => {
 
   counter++;
 
+  const payload = {
+    "display/current": {
+      loket,
+      nomor: counter,
+      petugas: "-"
+    },
+    [`display/counters/${loket}`]: counter,
+    lastUpdate: Date.now()
+  };
+
+  console.log("SEND TO FIREBASE:", payload);
+
   try {
-    await update(ref(db), {
-      "display/current": {
-        loket,
-        nomor: counter,
-        petugas: "-"
-      },
-      [`display/counters/${loket}`]: counter,
-      lastUpdate: Date.now()
-    });
+    await update(ref(db), payload);
+    console.log("SUCCESS UPDATE");
   } catch (e) {
-    console.error(e);
-    alert("Firebase error");
-    return;
+    console.error("FIREBASE ERROR:", e);
+    alert("Firebase gagal update");
   }
 
   updateUI();
+  highlight();
 };
-
+console.log("NEXT CLICKED", loket);
+  
 /* ================= RECALL ================= */
 window.recall = () => {
   alert("Recall tidak diperlukan (display realtime sudah otomatis)");
