@@ -321,161 +321,30 @@ SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB SMAN 1 SOOKO • SIAPKAN BERKAS ASLI D
 </div>
 
 <script type="module">
-
-/* TEMPELKAN FIREBASE CONFIG MILIK ANDA DI SINI */
-
-const petugas = {
-A:"Bapak Rahmad",
-B:"Bapak Bayu",
-C:"Bapak Sunariyadi",
-D:"Ibu Tasya",
-E:"Ibu Eva",
-F:"Bapak Mujib",
-G:"Ibu Ria",
-H:"Bapak Raka",
-I:"Bapak Chozin",
-J:"Ibu Ita"
-};
-
-const counters = {
-A:"000",
-B:"000",
-C:"000",
-D:"000",
-E:"000",
-F:"000",
-G:"000",
-H:"000",
-I:"000",
-J:"000"
-};
-
-function renderCounters(active=""){
-
-const grid =
-document.getElementById("counterGrid");
-
-grid.innerHTML="";
-
-Object.keys(counters).forEach(k=>{
-
-const card =
-document.createElement("div");
-
-card.className =
-`counter-card card-${k} ${
-active===k ? "active" : ""
-}`;
-
-card.innerHTML=`
-<div class="counter-loket">MEJA ${k}</div>
-<div class="counter-number">${k}-${counters[k]}</div>
-<div class="counter-petugas">${petugas[k]}</div>
-`;
-
-grid.appendChild(card);
-
-});
-
-}
-
-renderCounters();
-
-/* JAM */
-
-function updateClock(){
-
-const now = new Date();
-
-const h =
-String(now.getHours()).padStart(2,"0");
-
-const m =
-String(now.getMinutes()).padStart(2,"0");
-
-const s =
-String(now.getSeconds()).padStart(2,"0");
-
-document.getElementById("clock")
-.innerText =
-`${h}:${m}:${s}`;
-
-}
-
-setInterval(updateClock,1000);
-updateClock();
-
-/*
-DI LISTENER FIREBASE ANDA
-TAMBAHKAN:
-
-counters[loket] = angka;
-
-renderCounters(loket);
-
-document.getElementById("nomor")
-.innerText = nomor;
-
-document.getElementById("petugasAktif")
-.innerText =
-"Silahkan menuju meja " + nama;
-
-*/
-
-</script>
-
-</body>
-</html>
-```
-import { initSystem } from "./firebase.js";
-initSystem();
 import { listenDisplay } from "./firebase.js";
 
-listenDisplay((data) => {
-  if (!data) return;
-
-  document.getElementById("nomor").innerText =
-    data.current.loket + "-" + String(data.current.nomor).padStart(3,"0");
-
-  document.getElementById("petugasAktif").innerText =
-    "LOKET " + data.current.loket + " SIAP MELAYANI";
-});
-<script type="module">
-import { initSystem, listenDisplay } from "./firebase.js";
-
-/* INIT SYSTEM (AUTO CREATE DB IF EMPTY) */
-await initSystem();
-
-/* CLOCK */
-function updateClock() {
+function updateClock(){
   const now = new Date();
   document.getElementById("clock").innerText =
     String(now.getHours()).padStart(2,"0") + ":" +
     String(now.getMinutes()).padStart(2,"0") + ":" +
     String(now.getSeconds()).padStart(2,"0");
 }
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
-/* REALTIME LISTENER */
 listenDisplay((data) => {
   if (!data || !data.current) return;
 
-  const nomorEl = document.getElementById("nomor");
-  const petugasEl = document.getElementById("petugasAktif");
+  const c = data.current;
 
-  nomorEl.innerText =
-    data.current.loket + "-" + String(data.current.nomor).padStart(3,"0");
+  document.getElementById("nomor").innerText =
+    c.loket + "-" + String(c.nomor).padStart(3,"0");
 
-  petugasEl.innerText =
-    "LOKET " + data.current.loket + " SIAP MELAYANI";
+  document.getElementById("petugasAktif").innerText =
+    "LOKET " + c.loket + " SIAP MELAYANI";
 
-  /* UPDATE GRID COUNTER */
-  renderRealtimeCounters(data);
-});
-
-/* COUNTER GRID UPDATE */
-function renderRealtimeCounters(data) {
+  /* GRID */
   const grid = document.getElementById("counterGrid");
   grid.innerHTML = "";
 
@@ -486,21 +355,19 @@ function renderRealtimeCounters(data) {
     I:"Bapak Chozin", J:"Ibu Ita"
   };
 
-  Object.keys(data.counters || {}).forEach(k => {
-    const card = document.createElement("div");
-    card.className = "counter-card " + "card-" + k;
+  Object.keys(data.counters).forEach(k => {
+    const div = document.createElement("div");
+    div.className = "counter-card card-" + k;
 
-    if (data.current.loket === k) {
-      card.classList.add("active");
-    }
+    if (c.loket === k) div.classList.add("active");
 
-    card.innerHTML = `
+    div.innerHTML = `
       <div class="counter-loket">MEJA ${k}</div>
       <div class="counter-number">${k}-${String(data.counters[k]).padStart(3,"0")}</div>
       <div class="counter-petugas">${petugas[k]}</div>
     `;
 
-    grid.appendChild(card);
+    grid.appendChild(div);
   });
 });
 </script>
