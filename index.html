@@ -1,215 +1,73 @@
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DISPLAY ANTREAN SPMB 2026</title>
+<title>DISPLAY ANTREAN SPMB</title>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
+/* tambahan layout frame utama */
+.frame {
+  width: 95vw;
+  height: 85vh;
+  margin: 90px auto 0;
+  padding: 20px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2);
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-body{
-font-family:Arial, sans-serif;
-background:url("./assets/th.jpg") center center no-repeat fixed;
-background-size:cover;
-overflow:hidden;
-color:white;
+.top-info {
+  text-align: center;
 }
 
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.65);
-backdrop-filter:blur(6px);
-z-index:0;
+.nomor {
+  font-size: 220px;
+  font-weight: 900;
+  color: #00ff99;
+  text-shadow: 0 0 40px rgba(0,255,153,0.6);
 }
 
-/* ================= HEADER ================= */
-
-.header{
-position:absolute;
-top:10px;
-left:0;
-width:100%;
-text-align:center;
-z-index:5;
+.petugasAktif {
+  font-size: 42px;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-.logo{
-width:140px;
-height:auto;
-margin-bottom:8px;
+/* GRID 10 MEJA */
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.title{
-font-size:42px;
-font-weight:900;
-letter-spacing:2px;
-text-shadow:0 0 20px rgba(255,255,255,.4);
+.counter-card {
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  font-weight: bold;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: 0.2s;
 }
 
-.subtitle{
-font-size:20px;
-opacity:.9;
-}
-
-.clock{
-margin-top:10px;
-font-size:64px;
-font-weight:900;
-
-background:linear-gradient(
-90deg,
-#ff00ff,
-#00ffff,
-#39ff14,
-#ffcc00,
-#ff00ff
-);
-
-background-size:400% 400%;
-
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-animation:rgbmove 6s linear infinite;
-}
-
-@keyframes rgbmove{
-0%{background-position:0% 50%}
-100%{background-position:100% 50%}
-}
-
-/* ================= MAIN ================= */
-
-.main{
-position:relative;
-z-index:2;
-
-width:95vw;
-height:88vh;
-
-margin:auto;
-margin-top:90px;
-
-border-radius:40px;
-
-background:rgba(255,255,255,.08);
-
-backdrop-filter:blur(20px);
-
-border:2px solid rgba(255,255,255,.2);
-
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-
-padding:25px;
-}
-
-/* ================= NOMOR ================= */
-
-.center{
-text-align:center;
-}
-
-.label{
-font-size:52px;
-font-weight:700;
-letter-spacing:4px;
-}
-
-.nomor{
-font-size:320px;
-font-weight:900;
-line-height:1;
-
-color:#00ff99;
-
-text-shadow:
-0 0 20px rgba(0,255,153,.7),
-0 0 60px rgba(0,255,153,.6),
-0 0 120px rgba(0,255,153,.3);
-
-animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-0%,100%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.03);
-}
-}
-
-.petugasAktif{
-font-size:48px;
-font-weight:700;
-margin-top:10px;
-}
-
-/* ================= GRID KONTER ================= */
-
-.counter-grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(10,1fr);
-
-gap:10px;
-
-margin-top:10px;
-}
-
-.counter-card{
-
-height:170px;
-
-border-radius:20px;
-
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-
-font-weight:700;
-
-transition:.4s;
-
-box-shadow:
-0 8px 20px rgba(0,0,0,.35);
-}
-
-.counter-card.active{
-
-transform:scale(1.12);
-
-border:4px solid white;
-
-box-shadow:
-0 0 25px white,
-0 0 60px white;
-
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-0%{opacity:1}
-50%{opacity:.65}
-100%{opacity:1}
+.counter-card.active {
+  transform: scale(1.08);
+  border: 2px solid #fff;
+  box-shadow: 0 0 20px #fff;
 }
 
 .card-A{background:#e74c3c;}
 .card-B{background:#e67e22;}
-.card-C{background:#f1c40f;color:#111;}
+.card-C{background:#f1c40f;color:black;}
 .card-D{background:#2ecc71;}
 .card-E{background:#1abc9c;}
 .card-F{background:#3498db;}
@@ -218,55 +76,6 @@ animation:blink 1s infinite;
 .card-I{background:#e84393;}
 .card-J{background:#636e72;}
 
-.counter-loket{
-font-size:22px;
-}
-
-.counter-number{
-font-size:52px;
-font-weight:900;
-margin:5px 0;
-}
-
-.counter-petugas{
-font-size:18px;
-text-align:center;
-padding:0 5px;
-}
-
-/* ================= RUNNING TEXT ================= */
-
-.marquee{
-
-height:60px;
-
-overflow:hidden;
-
-border-radius:15px;
-
-background:rgba(0,0,0,.5);
-
-display:flex;
-align-items:center;
-}
-
-.marquee span{
-
-white-space:nowrap;
-
-font-size:28px;
-font-weight:700;
-
-padding-left:100%;
-
-animation:running 25s linear infinite;
-}
-
-@keyframes running{
-0%{transform:translateX(0)}
-100%{transform:translateX(-100%)}
-}
-
 </style>
 </head>
 
@@ -274,100 +83,99 @@ animation:running 25s linear infinite;
 
 <div class="overlay"></div>
 
+<!-- HEADER -->
 <div class="header">
-
-<img src="./assets/logo.png" class="logo">
-
-<div class="title">
-VERIFIKASI SPMB SMAN 1 SOOKO
+  <img src="./assets/logo.png" class="logo">
+  <div class="title">VERIFIKASI SPMB SMAN 1 SOOKO</div>
+  <div class="subtitle">TAHUN PELAJARAN 2026/2027</div>
+  <div class="clock" id="clock">00:00:00</div>
 </div>
 
-<div class="subtitle">
-TAHUN PELAJARAN 2026/2027
-</div>
+<!-- FRAME UTAMA -->
+<div class="frame">
 
-<div class="clock" id="clock">
-00:00:00
-</div>
+  <!-- TOP INFO -->
+  <div class="top-info">
+    <div class="label">NOMOR ANTREAN</div>
+    <div class="nomor" id="nomor">---</div>
+    <div class="petugasAktif" id="petugasAktif">
+      SILAHKAN MENUJU MEJA PELAYANAN
+    </div>
+  </div>
 
-</div>
+  <!-- GRID 10 MEJA -->
+  <div class="counter-grid" id="counterGrid"></div>
 
-<div class="main">
-
-<div class="center">
-
-<div class="label">
-NOMOR ANTREAN
-</div>
-
-<div class="nomor" id="nomor">
----
-</div>
-
-<div class="petugasAktif" id="petugasAktif">
-SILAHKAN MENUJU MEJA PELAYANAN
-</div>
-
-</div>
-
-<div class="counter-grid" id="counterGrid"></div>
-
-<div class="marquee">
-<span>
-SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB SMAN 1 SOOKO • SIAPKAN BERKAS ASLI DAN FOTOKOPI • IKUTI PETUNJUK PETUGAS •
-</span>
-</div>
+  <!-- RUNNING TEXT -->
+  <div class="marquee">
+    <span>
+      SELAMAT DATANG • SIAPKAN BERKAS ASLI • IKUTI PETUGAS • LAYANAN SPMB SMAN 1 SOOKO •
+    </span>
+  </div>
 
 </div>
 
 <script type="module">
-import { listenDisplay } from "./firebase.js";
+import { listenDisplay, initSystem } from "./firebase.js";
 
-function updateClock(){
+/* INIT SYSTEM */
+await initSystem();
+
+/* CLOCK */
+function updateClock() {
   const now = new Date();
   document.getElementById("clock").innerText =
     String(now.getHours()).padStart(2,"0") + ":" +
     String(now.getMinutes()).padStart(2,"0") + ":" +
     String(now.getSeconds()).padStart(2,"0");
 }
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 updateClock();
 
+/* PETUGAS FIX */
+const petugas = {
+  A:"Rahmad", B:"Bayu", C:"Sunariyadi",
+  D:"Tasya", E:"Eva",
+  F:"Mujib", G:"Ria", H:"Raka",
+  I:"Chozin", J:"Ita"
+};
+
+/* REALTIME LISTENER */
 listenDisplay((data) => {
   if (!data || !data.current) return;
 
   const c = data.current;
 
+  /* NOMOR UTAMA */
   document.getElementById("nomor").innerText =
-    c.loket + "-" + String(c.nomor).padStart(3,"0");
+    `${c.loket}-${String(c.nomor).padStart(3,"0")}`;
 
   document.getElementById("petugasAktif").innerText =
-    "LOKET " + c.loket + " SIAP MELAYANI";
+    `LOKET ${c.loket} SIAP MELAYANI`;
 
-  /* GRID */
+  /* GRID UPDATE */
   const grid = document.getElementById("counterGrid");
   grid.innerHTML = "";
 
-  const petugas = {
-    A:"Bapak Rahmad", B:"Bapak Bayu", C:"Bapak Sunariyadi",
-    D:"Ibu Tasya", E:"Ibu Eva",
-    F:"Bapak Mujib", G:"Ibu Ria", H:"Bapak Raka",
-    I:"Bapak Chozin", J:"Ibu Ita"
-  };
+  const counters = data.counters || {};
 
-  Object.keys(data.counters).forEach(k => {
+  Object.keys(petugas).forEach(k => {
     const div = document.createElement("div");
+
     div.className = "counter-card card-" + k;
 
     if (c.loket === k) div.classList.add("active");
 
     div.innerHTML = `
-      <div class="counter-loket">MEJA ${k}</div>
-      <div class="counter-number">${k}-${String(data.counters[k]).padStart(3,"0")}</div>
-      <div class="counter-petugas">${petugas[k]}</div>
+      <div>MEJA ${k}</div>
+      <div>${k}-${String(counters[k] || 0).padStart(3,"0")}</div>
+      <div>${petugas[k]}</div>
     `;
 
     grid.appendChild(div);
   });
 });
 </script>
+
+</body>
+</html>
