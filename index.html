@@ -20,6 +20,18 @@ height:100vh;color:#fff;overflow:hidden}
 width:90%;max-width:1600px;text-align:center;
 background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);
 backdrop-filter:blur(20px);border-radius:40px;padding:30px}
+#unlockAudio{
+position:fixed;
+inset:0;
+background:black;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
+font-weight:bold;
+z-index:9999;
+cursor:pointer;
+}
 .info{font-size:34px}
 .nomor{font-size:220px;font-weight:900;color:#00ff99;text-shadow:0 0 30px #00ff99}
 .cards{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
@@ -44,7 +56,9 @@ background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgb
 <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
 </div>
 </div>
-
+<div id="unlockAudio">
+KLIK UNTUK MENGAKTIFKAN SUARA
+</div>
 <div class="cards" id="cards"></div>
 
 <script type="module">
@@ -60,7 +74,20 @@ storageBucket:"no-antrean-spmb.firebasestorage.app",
 messagingSenderId:"357121462512",
 appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
+ 
+let audioUnlocked = false;
 
+document.body.addEventListener("click",()=>{
+
+  speechSynthesis.speak(
+    new SpeechSynthesisUtterance("")
+  );
+
+  audioUnlocked = true;
+
+  console.log("Audio Unlocked");
+
+},{once:true});
 const petugas={
 A:"Bapak Rahmad",B:"Bapak Bayu",C:"Bapak Sunariyadi",D:"Ibu Tasya",E:"Ibu Eva",
 F:"Bapak Mujib",G:"Ibu Ria",H:"Bapak Raka",I:"Bapak Chozin",J:"Ibu Ita"
@@ -87,8 +114,126 @@ onValue(ref(db,"loket"),snap=>{
  });
 });
 
-let last="";
-onValue(ref(db,"current_call"),snap=>{
+ function speak(text){
+
+  if(!audioUnlocked) return;
+
+  speechSynthesis.cancel();
+
+  const u =
+  new SpeechSynthesisUtterance(text);
+
+  const voices =
+  speechSynthesis.getVoices();
+
+  const voice =
+
+    voices.find(v=>v.lang==="id-ID") ||
+
+    voices.find(v=>v.lang.startsWith("id")) ||
+
+    voices.find(v=>v.lang==="en-US") ||
+
+    voices[0];
+
+  if(voice)
+    u.voice = voice;
+
+  u.lang = "id-ID";
+  u.rate = 0.9;
+  u.pitch = 1.0;
+  u.volume = 1;
+
+  speechSynthesis.speak(u);
+
+}
+function formatCall(
+  loket,
+  nomor,
+  nama
+){
+
+return `
+
+Nomor antrean
+
+${loket}
+
+${nomor.split("").join(" ")}
+
+Silakan menuju meja pelayanan
+
+${nama}
+
+`;
+
+}
+ 
+let lastCall = "";
+
+onValue(
+ref(db,"current_call"),
+(snap)=>{
+
+const data = snap.val();
+
+if(!data) return;
+
+document
+.getElementById("nomor")
+.innerText =
+data.nomor || "---";
+
+document
+.querySelectorAll(".card")
+.forEach(c=>
+c.classList.remove("active")
+);
+
+if(data.loket){
+
+const card =
+document.getElementById(
+"card"+data.loket
+);
+
+if(card)
+card.classList.add("active");
+
+}
+
+const currentKey =
+data.nomor + "_" +
+data.updatedAt;
+
+if(
+currentKey !== lastCall
+){
+
+lastCall = currentKey;
+
+const nama =
+petugas[data.loket] ||
+"petugas layanan";
+
+const angka =
+data.nomor.split("-")[1];
+
+setTimeout(()=>{
+
+speak(
+formatCall(
+data.loket,
+angka,
+nama
+)
+);
+
+},500);
+
+}
+
+});
  const d=snap.val(); if(!d) return;
  document.getElementById("nomor").textContent=d.nomor||"---";
  document.querySelectorAll(".card").forEach(x=>x.classList.remove("active"));
@@ -101,6 +246,36 @@ onValue(ref(db,"current_call"),snap=>{
  }
 });
 
+ if(data.callType==="RECALL"){
+
+speak(
+
+"Pengulangan panggilan. " +
+
+formatCall(
+data.loket,
+angka,
+nama
+)
+
+);
+
+}
+document
+.getElementById("unlockAudio")
+.onclick=()=>{
+
+speechSynthesis.speak(
+new SpeechSynthesisUtterance("")
+);
+
+audioUnlocked=true;
+
+document
+.getElementById("unlockAudio")
+.remove();
+
+}; 
 setInterval(()=>{
  const n=new Date();
  clock.textContent=n.toLocaleTimeString("id-ID");
