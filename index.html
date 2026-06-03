@@ -13,7 +13,10 @@ height:100vh;color:#fff;overflow:hidden}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
 .logo{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:150px;z-index:5}
 .wrapper{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:120px}
-.clock{font-size:48px;font-weight:800;background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+.clock{
+font-size:64px;
+font-weight:900;
+}font-weight:800;background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
 -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 4s linear infinite}
 @keyframes rgb{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
 .main{
@@ -33,14 +36,105 @@ z-index:9999;
 cursor:pointer;
 }
 .info{font-size:34px}
-.nomor{font-size:220px;font-weight:900;color:#00ff99;text-shadow:0 0 30px #00ff99}
+.marquee{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+background:#0008;
+padding:10px;
+font-size:28px;
+font-weight:700;
+white-space:nowrap;
+overflow:hidden;
+}
+
+.marquee::after{
+
+content:
+"SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO";
+
+display:inline-block;
+
+padding-left:100%;
+
+animation:
+marquee 20s linear infinite;
+
+}
+
+@keyframes marquee{
+
+from{
+transform:
+translateX(0);
+}
+
+to{
+transform:
+translateX(-100%);
+}
+
+} 
+.nomor{
+font-size:280px;
+font-weight:900;
+letter-spacing:8px;
+color:#00ff99;
+text-shadow:
+0 0 20px #00ff99,
+0 0 40px #00ff99,
+0 0 80px #00ff99;
+}
 .cards{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
 width:98%;display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
-.card{border-radius:18px;padding:10px;color:#fff;text-align:center;font-weight:700;
+.card{
+padding:16px;
+border-radius:22px;
+}color:#fff;text-align:center;font-weight:700;
 background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2)}
 .card .meja{font-size:18px}
-.card .antri{font-size:32px}
-.card .petugas{font-size:12px}
+.card .antri{
+font-size:48px;
+font-weight:900;
+}
+.card .petugas{
+font-size:15px;
+font-weight:600;
+}
+.active{
+
+animation:
+pulse 1s infinite,
+glow 2s infinite;
+
+border:3px solid white;
+
+box-shadow:
+0 0 20px white,
+0 0 40px white;
+
+}
+
+@keyframes glow{
+
+0%{
+box-shadow:
+0 0 10px white;
+}
+
+50%{
+box-shadow:
+0 0 40px white,
+0 0 80px white;
+}
+
+100%{
+box-shadow:
+0 0 10px white;
+}
+
+} 
 .active{animation:pulse 1s infinite;border:3px solid #fff}
 @keyframes pulse{50%{transform:scale(1.05)}}
 </style>
@@ -55,6 +149,9 @@ background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgb
 <div class="nomor" id="nomor">---</div>
 <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
 </div>
+<div class="marquee">
+SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO
+</div> 
 </div>
 <div id="unlockAudio">
 KLIK UNTUK MENGAKTIFKAN SUARA
@@ -113,7 +210,13 @@ onValue(ref(db,"loket"),snap=>{
    if(el) el.textContent=data[k]||"000";
  });
 });
+function ding(){
 
+new Audio(
+"./sounds/ding.mp3"
+).play();
+
+}
  function speak(text){
 
   if(!audioUnlocked) return;
@@ -140,18 +243,40 @@ onValue(ref(db,"loket"),snap=>{
     u.voice = voice;
 
   u.lang = "id-ID";
-  u.rate = 0.9;
-  u.pitch = 1.0;
+  u.rate = 0.82;
+  u.pitch = 1.05;
   u.volume = 1;
 
   speechSynthesis.speak(u);
 
 }
 function formatCall(
-  loket,
-  nomor,
-  nama
+loket,
+nomor,
+nama
 ){
+
+const digit =
+nomor.split("").join(" ");
+
+return `
+
+Nomor antrean
+
+${loket}
+
+${digit}
+
+Silakan menuju
+
+meja pelayanan
+
+${nama}
+
+`;
+
+}
+ 
 
 return `
 
@@ -221,6 +346,36 @@ data.nomor.split("-")[1];
 
 setTimeout(()=>{
 
+ding();
+
+if(data.callType==="RECALL"){
+
+speak(
+
+"Perhatian. Pengulangan panggilan. " +
+
+formatCall(
+data.loket,
+angka,
+nama
+)
+
+);
+
+}else{
+
+speak(
+formatCall(
+data.loket,
+angka,
+nama
+)
+);
+
+}
+
+},500);
+
 speak(
 formatCall(
 data.loket,
@@ -234,33 +389,7 @@ nama
 }
 
 });
- const d=snap.val(); if(!d) return;
- document.getElementById("nomor").textContent=d.nomor||"---";
- document.querySelectorAll(".card").forEach(x=>x.classList.remove("active"));
- if(d.loket){
-   const c=document.getElementById("card"+d.loket);
-   if(c) c.classList.add("active");
- }
- if(d.nomor && d.nomor!==last){
-   last=d.nomor;
- }
-});
-
- if(data.callType==="RECALL"){
-
-speak(
-
-"Pengulangan panggilan. " +
-
-formatCall(
-data.loket,
-angka,
-nama
-)
-
-);
-
-}
+ 
 document
 .getElementById("unlockAudio")
 .onclick=()=>{
