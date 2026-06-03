@@ -244,9 +244,9 @@ function processQueue(){
 
  u.voice = voices.find(v=>v.lang.includes("id")) || voices[0];
  u.lang = "id-ID";
- u.rate = 0.78;
- u.pitch = 1.02;
- u.volume = 1;
+u.rate = 0.75;
+u.pitch = 1.0;
+u.volume = 1;
 
  u.onend = ()=>{
   isSpeaking = false;
@@ -272,11 +272,12 @@ function buildVoice(data){
   const nama = petugas[loket] || "petugas layanan";
 
   return `
-Perhatian.
+Perhatian, harap perhatian.
 Nomor antrean ${nomorFull}.
 Silakan menuju meja ${loket}.
-Untuk layanan verifikasi S P M B dua ribu dua enam.
+Untuk layanan verifikasi PIN S P M B dua ribu dua enam.
 Dilayani oleh ${nama}.
+Terima kasih.
 `;
 }
 
