@@ -1,246 +1,320 @@
-/* =========================
-   GLOBAL
-========================= */
+/* =====================================================
+   GLOBAL RESET
+===================================================== */
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Segoe UI',Arial,sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-body{
-  min-height:100vh;
-  background:
-    linear-gradient(
-      135deg,
-      #0f172a,
-      #1e293b,
-      #0f172a
-    );
-  color:white;
+body {
+  min-height: 100vh;
+  color: white;
+  background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
 }
 
-/* =========================
-   PANEL
-========================= */
+/* =====================================================
+   GLASS PANEL BASE
+===================================================== */
 
-.panel{
-  max-width:1400px;
-  margin:auto;
-  padding:25px;
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.glass{
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(15px);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:20px;
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.3);
+/* =====================================================
+   BUTTON SYSTEM
+===================================================== */
+
+.btn {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 15px;
 }
 
-/* =========================
-   TITLE
-========================= */
-
-h1{
-  text-align:center;
-  margin-bottom:25px;
-  font-size:42px;
-  font-weight:800;
-  letter-spacing:2px;
+.btn:hover {
+  transform: translateY(-2px);
 }
 
-h2{
-  margin-bottom:10px;
+.btn:active {
+  transform: scale(0.97);
 }
 
-/* =========================
-   BUTTON
-========================= */
+.success { background: #22c55e; color: white; }
+.warning { background: #f59e0b; color: white; }
+.danger  { background: #ef4444; color: white; }
+.primary { background: #2563eb; color: white; }
 
-.btn{
-  border:none;
-  border-radius:12px;
-  padding:15px 24px;
-  cursor:pointer;
-  font-size:16px;
-  font-weight:700;
-  transition:.25s;
+/* =====================================================
+   OPERATOR PAGE
+===================================================== */
+
+.container {
+  padding: 20px;
+  text-align: center;
 }
 
-.btn:hover{
-  transform:translateY(-2px);
+.display {
+  font-size: 30px;
+  font-weight: 800;
+  color: #00ff99;
+  margin-bottom: 20px;
 }
 
-.btn:active{
-  transform:scale(.98);
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 15px;
 }
 
-.success{
-  background:#22c55e;
-  color:white;
+.loket {
+  padding: 18px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.warning{
-  background:#f59e0b;
-  color:white;
+.loket:hover {
+  transform: scale(1.05);
 }
 
-.danger{
-  background:#ef4444;
-  color:white;
+.active {
+  background: #00ff99 !important;
+  color: black !important;
+  box-shadow: 0 0 15px #00ff99;
 }
 
-.primary{
-  background:#2563eb;
-  color:white;
+.action {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* =========================
-   CURRENT CALL
-========================= */
-
-.current{
-  padding:25px;
-  text-align:center;
-  margin-bottom:20px;
+.next {
+  background: #22c55e;
+  width: 200px;
 }
 
-.currentNumber{
-  font-size:90px;
-  font-weight:900;
-  color:#00ff99;
-  text-shadow:
-    0 0 20px rgba(0,255,153,.5);
+.recall {
+  background: #f59e0b;
+  width: 200px;
 }
 
-.status{
-  margin-top:10px;
-  font-size:18px;
-  color:#cbd5e1;
+.reset {
+  background: #ef4444;
+  width: 200px;
 }
 
-/* =========================
-   GRID CARD
-========================= */
-
-.monitor{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:15px;
+.status {
+  margin-top: 15px;
+  color: #cbd5e1;
 }
 
-.card{
-  background:#1e293b;
-  border-radius:18px;
-  padding:20px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,.08);
+/* =====================================================
+   INDEX (DISPLAY SCREEN)
+===================================================== */
 
-  transition:.25s;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
 }
 
-.card:hover{
-  transform:translateY(-3px);
+.header {
+  text-align: center;
+  padding-top: 15px;
 }
 
-.card h3{
-  margin-bottom:10px;
+.logo {
+  width: 120px;
+  margin-bottom: 5px;
 }
 
-.nomor{
-  font-size:38px;
-  font-weight:900;
-  color:#00ff99;
+.title {
+  font-size: 36px;
+  font-weight: 900;
 }
 
-/* =========================
-   OPERATOR
-========================= */
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
+.subtitle {
+  font-size: 18px;
+  opacity: 0.9;
 }
 
-.loket{
-  background:#2563eb;
-  color:white;
+.clock {
+  font-size: 50px;
+  font-weight: 900;
+  margin-top: 10px;
+  background: linear-gradient(90deg, #ff00ff, #00ffff, #39ff14, #ffcc00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rgb 6s infinite linear;
 }
 
-.active{
-  background:#00ff99 !important;
-  color:black !important;
+@keyframes rgb {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
-/* =========================
-   HEADER ACTION
-========================= */
-
-.top{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
+.main {
+  margin: 80px auto 0;
+  width: 95vw;
+  height: 85vh;
+  padding: 20px;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* =========================
-   LOG
-========================= */
-
-#log{
-  margin-top:20px;
-  padding:15px;
-  background:#111827;
-  border-radius:12px;
-  font-size:18px;
-  text-align:center;
+.center {
+  text-align: center;
 }
 
-/* =========================
+.label {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.nomor {
+  font-size: 220px;
+  font-weight: 900;
+  color: #00ff99;
+  text-shadow: 0 0 40px rgba(0,255,153,0.6);
+}
+
+.petugasAktif {
+  font-size: 40px;
+  margin-top: 10px;
+}
+
+/* =====================================================
+   COUNTER GRID DISPLAY
+===================================================== */
+
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.counter-card {
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  font-weight: bold;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: 0.2s;
+}
+
+.counter-card.active {
+  transform: scale(1.08);
+  border: 2px solid #fff;
+  box-shadow: 0 0 15px #fff;
+}
+
+/* warna loket */
+.card-A { background: #e74c3c; }
+.card-B { background: #e67e22; }
+.card-C { background: #f1c40f; color: black; }
+.card-D { background: #2ecc71; }
+.card-E { background: #1abc9c; }
+.card-F { background: #3498db; }
+.card-G { background: #6c5ce7; }
+.card-H { background: #9b59b6; }
+.card-I { background: #e84393; }
+.card-J { background: #636e72; }
+
+/* =====================================================
+   ADMIN PANEL
+===================================================== */
+
+.panel {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.monitor {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+}
+
+.nomor {
+  font-size: 34px;
+  font-weight: 900;
+  color: #00ff99;
+}
+
+.currentNumber {
+  font-size: 70px;
+  font-weight: 900;
+  color: #00ff99;
+}
+
+/* =====================================================
    RESPONSIVE
-========================= */
+===================================================== */
 
-@media(max-width:1200px){
-
-  .monitor{
-    grid-template-columns:repeat(3,1fr);
+@media (max-width: 1024px) {
+  .monitor {
+    grid-template-columns: repeat(3, 1fr);
   }
-
+  .counter-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-@media(max-width:768px){
-
-  .monitor{
-    grid-template-columns:repeat(2,1fr);
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .grid{
-    grid-template-columns:repeat(2,1fr);
+  .nomor {
+    font-size: 140px;
   }
 
-  .currentNumber{
-    font-size:60px;
+  .monitor {
+    grid-template-columns: repeat(2, 1fr);
   }
-
-  h1{
-    font-size:30px;
-  }
-
 }
 
-@media(max-width:480px){
-
-  .monitor{
-    grid-template-columns:1fr;
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 
-  .grid{
-    grid-template-columns:1fr;
+  .counter-grid {
+    grid-template-columns: 1fr;
   }
 
+  .nomor {
+    font-size: 100px;
+  }
 }
