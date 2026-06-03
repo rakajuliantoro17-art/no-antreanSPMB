@@ -16,7 +16,13 @@ height:100vh;color:#fff;overflow:hidden}
 .clock{
 font-size:64px;
 font-weight:900;
-background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+background:linear-gradient(
+90deg,
+#ff00ff,
+#00ffff,
+#39ff14,
+#ffcc00
+);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 animation:rgb 4s linear infinite;
@@ -31,18 +37,6 @@ backdrop-filter:blur(20px);border-radius:40px;padding:30px}
 width:94%;
 max-width:1800px;
 padding:40px;
-}
-#unlockAudio{
-position:fixed;
-inset:0;
-background:black;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:40px;
-font-weight:bold;
-z-index:9999;
-cursor:pointer;
 }
 .info{font-size:34px}
 .marquee{
@@ -171,8 +165,6 @@ box-shadow:
 <div class="marquee">
 SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO
 </div> 
-</div>
-<div id="unlockAudio">
 </div>
 <div class="cards" id="cards"></div>
 
@@ -336,15 +328,6 @@ data.updatedAt;
 
 if(currentKey !== lastCall){
 
-lastCall = currentKey;
-
-const nama =
-petugas[data.loket] ||
-"petugas layanan";
-
-const angka =
-data.nomor.split("-")[1];
-
 setTimeout(()=>{
 
 ding();
@@ -431,24 +414,6 @@ nama
 
 });
  
-document
-.getElementById("unlockAudio")
-.onclick=()=>{
-
-const unlock =
-new SpeechSynthesisUtterance(" ");
-
-unlock.volume = 0;
-
-speechSynthesis.speak(unlock);
-
-audioUnlocked=true;
-
-document
-.getElementById("unlockAudio")
-.remove();
-
-}; 
 setInterval(()=>{
  const n=new Date();
  document.getElementById("clock").textContent =
