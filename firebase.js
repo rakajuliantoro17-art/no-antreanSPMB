@@ -1,14 +1,8 @@
-```javascript
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
   getDatabase,
   ref,
-  set,
-  get,
   update,
-  push,
-  remove,
   onValue,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -16,9 +10,8 @@ import {
 /* ===============================
    FIREBASE CONFIG
 ================================ */
-
 const firebaseConfig = {
-  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
+  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDC5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "no-antrean-spmb",
@@ -28,181 +21,73 @@ const firebaseConfig = {
 };
 
 /* ===============================
-   INIT APP
+   INIT FIREBASE
 ================================ */
-
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 /* ===============================
-   DEFAULT LOKET
+   DEFAULT STRUCTURE (SOURCE OF TRUTH)
 ================================ */
+export const DEFAULT_DISPLAY = {
+  current: {
+    loket: "-",
+    nomor: 0,
+    petugas: "-"
+  },
 
-export const DEFAULT_LOKET = {
-  A: "000",
-  B: "000",
-  C: "000",
-  D: "000",
-  E: "000",
-  F: "000",
-  G: "000",
-  H: "000",
-  I: "000",
-  J: "000"
+  counters: {
+    A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+    E: 0,
+    F: 0,
+    G: 0,
+    H: 0,
+    I: 0,
+    J: 0
+  },
+
+  lastUpdate: Date.now()
 };
 
 /* ===============================
-   PETUGAS
+   EXPORT CORE FIREBASE
 ================================ */
-
-export const PETUGAS = {
-
-  A: "Bapak Rahmad",
-  B: "Bapak Bayu",
-  C: "Bapak Sunariyadi",
-  D: "Ibu Tasya",
-  E: "Ibu Eva",
-
-  F: "Bapak Mujib",
-  G: "Ibu Ria",
-  H: "Bapak Raka",
-  I: "Bapak Chozin",
-  J: "Ibu Ita"
-
-};
-
-/* ===============================
-   EXPORT FIREBASE CORE
-================================ */
-
 export {
   db,
   ref,
-  set,
-  get,
   update,
-  push,
-  remove,
   onValue,
   serverTimestamp
 };
 
 /* ===============================
-   HELPER
+   1. UPDATE DISPLAY (UNTUK OPERATOR)
 ================================ */
-
-/*
-Update current call
-*/
-
-export async function updateCurrentCall(
-  nomor,
-  callType = "NEXT"
-){
-
-  await update(ref(db),{
-
-    "current_call/nomor":
-      nomor,
-
-    "current_call/callType":
-      callType,
-
-    "current_call/time":
-      Date.now()
-
+export async function updateDisplay(payload) {
+  await update(ref(db, "display"), {
+    ...payload,
+    lastUpdate: Date.now()
   });
-
 }
 
-/*
-Update nomor loket
-*/
-
-export async function updateLoket(
-  loket,
-  nomor
-){
-
-  await update(ref(db),{
-
-    [`loket/${loket}`]:
-      nomor
-
+/* ===============================
+   2. LISTENER DISPLAY (UNTUK INDEX & ADMIN)
+================================ */
+export function listenDisplay(callback) {
+  onValue(ref(db, "display"), (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
   });
-
 }
 
-/*
-Update status loket
-*/
-
-export async function updateLoketStatus(
-  loket,
-  status
-){
-
-  await update(ref(db),{
-
-    [`status/${loket}`]:
-      status
-
+/* ===============================
+   3. RESET SYSTEM (ADMIN)
+================================ */
+export async function resetDisplay() {
+  await update(ref(db), {
+    display: DEFAULT_DISPLAY
   });
-
 }
-
-/*
-Reset semua loket
-*/
-
-export async function resetLoket(){
-
-  await update(ref(db),{
-
-    "loket": DEFAULT_LOKET
-
-  });
-
-}
-
-/*
-Reset current call
-*/
-
-export async function resetCurrentCall(){
-
-  await update(ref(db),{
-
-    "current_call/nomor":"---",
-
-    "current_call/callType":"RESET"
-
-  });
-
-}
-
-/*
-Reset sistem penuh
-*/
-
-export async function resetAll(){
-
-  await update(ref(db),{
-
-    "loket": DEFAULT_LOKET,
-
-    "current_call":{
-
-      nomor:"---",
-
-      callType:"RESET",
-
-      time:Date.now()
-
-    }
-
-  });
-
-}
-```
