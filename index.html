@@ -23,10 +23,6 @@ background:linear-gradient(
 #39ff14,
 #ffcc00
 );
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation:rgb 4s linear infinite;
-}
 -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 4s linear infinite}
 @keyframes rgb{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
 .main{
@@ -105,7 +101,6 @@ background:rgba(255,255,255,.12);
 backdrop-filter:blur(10px);
 border:1px solid rgba(255,255,255,.2);
 }
-background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2)}
 .card .meja{font-size:18px}
 .card .antri{
 font-size:48px;
@@ -273,22 +268,6 @@ nama
 const digit =
 nomor.split("").join(" ");
 
-return `
-
-Nomor antrean
-
-${loket}
-
-${nomor.split("").join(" ")}
-
-Silakan menuju meja pelayanan
-
-${nama}
-
-`;
-
-}
- 
 let lastCall = "";
 
 onValue(
@@ -352,12 +331,6 @@ angka,
 nama
 )
 );
-
-}
-
-},500);
-
-}
 
 lastCall = currentKey;
 
