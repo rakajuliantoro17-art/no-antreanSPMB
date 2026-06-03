@@ -1,280 +1,429 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DISPLAY ANTREAN SPMB</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISPLAY ANTREAN SPMB 2026</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-  margin:0;
-  font-family:Army;
-  background:url("./assets/th.jpg") no-repeat center center fixed;
-  background-size:cover;
-  overflow:hidden;
-  color:white;
+font-family:Arial, sans-serif;
+background:url("./assets/th.jpg") center center no-repeat fixed;
+background-size:cover;
+overflow:hidden;
+color:white;
 }
 
 .overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter: blur(5px);
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+backdrop-filter:blur(6px);
+z-index:0;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+position:absolute;
+top:10px;
+left:0;
+width:100%;
+text-align:center;
+z-index:5;
 }
 
 .logo{
-  position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  width:clamp(100px, 12vw, 175px);
-  z-index:10;
-  object-fit:contain;
-
-  /* 🔥 EMBOSS EFFECT */
-  box-shadow:
-    0 6px 15px rgba(0,0,0,0.45),
-    inset 0 2px 4px rgba(255,255,255,0.25),
-    inset 0 -3px 6px rgba(0,0,0,0.35);
-
-  /* ✨ GLOW HALUS */
-  filter:
-    drop-shadow(0 0 8px rgba(0,255,200,0.35))
-    drop-shadow(0 0 18px rgba(0,255,200,0.15));
-
-  /* 💎 sedikit “glass feel” */
-  backdrop-filter: blur(5px);
-
-  transition:0.3s ease;
+width:140px;
+height:auto;
+margin-bottom:8px;
 }
 
-/* hover optional (kalau di TV tidak kepakai, aman) */
-.logo:hover{
-  transform:translateX(-50%) scale(1.03);
-  filter:
-    drop-shadow(0 0 12px rgba(0,255,200,0.5))
-    drop-shadow(0 0 25px rgba(0,255,200,0.2));
+.title{
+font-size:42px;
+font-weight:900;
+letter-spacing:2px;
+text-shadow:0 0 20px rgba(255,255,255,.4);
 }
-  
-/* CLOCK RGB GAMING */
+
+.subtitle{
+font-size:20px;
+opacity:.9;
+}
+
 .clock{
-  font-size:48px;
-  letter-spacing:4px;
-  margin-bottom:15px;
-  font-weight:700;
+margin-top:10px;
+font-size:64px;
+font-weight:900;
 
-  background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+background:linear-gradient(
+90deg,
+#ff00ff,
+#00ffff,
+#39ff14,
+#ffcc00,
+#ff00ff
+);
 
-  animation:rgb 3s infinite linear;
-  text-shadow:0 0 20px rgba(0,255,255,0.4);
+background-size:400% 400%;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:rgbmove 6s linear infinite;
 }
 
-@keyframes rgb{
-  0%{filter:hue-rotate(0deg);}
-  100%{filter:hue-rotate(360deg);}
-}
-  
-.container{
-  position:relative;
-  z-index:2;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+@keyframes rgbmove{
+0%{background-position:0% 50%}
+100%{background-position:100% 50%}
 }
 
-.glass{
-  padding:75px 100px;
-  border-radius:40px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-  text-align:center;
-  border:3px solid rgba(255,255,255,0.2);
+/* ================= MAIN ================= */
+
+.main{
+position:relative;
+z-index:2;
+
+width:95vw;
+height:88vh;
+
+margin:auto;
+margin-top:90px;
+
+border-radius:40px;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+border:2px solid rgba(255,255,255,.2);
+
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+
+padding:25px;
+}
+
+/* ================= NOMOR ================= */
+
+.center{
+text-align:center;
+}
+
+.label{
+font-size:52px;
+font-weight:700;
+letter-spacing:4px;
 }
 
 .nomor{
-  font-size:200px;
-  font-weight:900;
-  color:#00ff99;
-  text-shadow:0 0 30px rgba(0,255,153,0.5);
+font-size:320px;
+font-weight:900;
+line-height:1;
+
+color:#00ff99;
+
+text-shadow:
+0 0 20px rgba(0,255,153,.7),
+0 0 60px rgba(0,255,153,.6),
+0 0 120px rgba(0,255,153,.3);
+
+animation:pulse 2s infinite;
 }
 
-.info{
-  font-size:36px;
-  margin-top:5px;
+@keyframes pulse{
+0%,100%{
+transform:scale(1);
 }
+50%{
+transform:scale(1.03);
+}
+}
+
+.petugasAktif{
+font-size:48px;
+font-weight:700;
+margin-top:10px;
+}
+
+/* ================= GRID KONTER ================= */
+
+.counter-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(10,1fr);
+
+gap:10px;
+
+margin-top:10px;
+}
+
+.counter-card{
+
+height:170px;
+
+border-radius:20px;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+font-weight:700;
+
+transition:.4s;
+
+box-shadow:
+0 8px 20px rgba(0,0,0,.35);
+}
+
+.counter-card.active{
+
+transform:scale(1.12);
+
+border:4px solid white;
+
+box-shadow:
+0 0 25px white,
+0 0 60px white;
+
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+0%{opacity:1}
+50%{opacity:.65}
+100%{opacity:1}
+}
+
+.card-A{background:#e74c3c;}
+.card-B{background:#e67e22;}
+.card-C{background:#f1c40f;color:#111;}
+.card-D{background:#2ecc71;}
+.card-E{background:#1abc9c;}
+.card-F{background:#3498db;}
+.card-G{background:#6c5ce7;}
+.card-H{background:#9b59b6;}
+.card-I{background:#e84393;}
+.card-J{background:#636e72;}
+
+.counter-loket{
+font-size:22px;
+}
+
+.counter-number{
+font-size:52px;
+font-weight:900;
+margin:5px 0;
+}
+
+.counter-petugas{
+font-size:18px;
+text-align:center;
+padding:0 5px;
+}
+
+/* ================= RUNNING TEXT ================= */
+
+.marquee{
+
+height:60px;
+
+overflow:hidden;
+
+border-radius:15px;
+
+background:rgba(0,0,0,.5);
+
+display:flex;
+align-items:center;
+}
+
+.marquee span{
+
+white-space:nowrap;
+
+font-size:28px;
+font-weight:700;
+
+padding-left:100%;
+
+animation:running 25s linear infinite;
+}
+
+@keyframes running{
+0%{transform:translateX(0)}
+100%{transform:translateX(-100%)}
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="overlay"></div>
+
+<div class="header">
+
 <img src="./assets/logo.png" class="logo">
-  
-<div class="container">
-  <div class="glass">
-    <div class="clock" id="clock">00:00:00</div>
-    <div class="info">NOMER ANTREAN</div>
-    <div class="nomor" id="nomor">---</div>
-    <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
-  </div>
+
+<div class="title">
+VERIFIKASI SPMB SMAN 1 SOOKO
+</div>
+
+<div class="subtitle">
+TAHUN PELAJARAN 2026/2027
+</div>
+
+<div class="clock" id="clock">
+00:00:00
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="center">
+
+<div class="label">
+NOMOR ANTREAN
+</div>
+
+<div class="nomor" id="nomor">
+---
+</div>
+
+<div class="petugasAktif" id="petugasAktif">
+SILAHKAN MENUJU MEJA PELAYANAN
+</div>
+
+</div>
+
+<div class="counter-grid" id="counterGrid"></div>
+
+<div class="marquee">
+<span>
+SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB SMAN 1 SOOKO • SIAPKAN BERKAS ASLI DAN FOTOKOPI • IKUTI PETUNJUK PETUGAS •
+</span>
+</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+/* TEMPELKAN FIREBASE CONFIG MILIK ANDA DI SINI */
 
-/* FIREBASE */
-const firebaseConfig = {
-  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
-  authDomain: "no-antrean-spmb.firebaseapp.com",
-  databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "no-antrean-spmb",
-  storageBucket: "no-antrean-spmb.firebasestorage.app",
-  messagingSenderId: "357121462357",
-  appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const el = document.getElementById("nomor");
-let lastNomor = "";
-
-/* PETUGAS */
 const petugas = {
-  A:"Bapak Rahmad",
-  B:"Bapak Bayu",
-  C:"Bapak Sunariyadi",
-  D:"Ibu Tasya",
-  E:"Ibu Eva",
-  F:"Bapak Mujib",
-  G:"Ibu Ria",
-  H:"Bapak Raka",
-  I:"Bapak Chozin",
-  J:"Ibu Ita"
+A:"Bapak Rahmad",
+B:"Bapak Bayu",
+C:"Bapak Sunariyadi",
+D:"Ibu Tasya",
+E:"Ibu Eva",
+F:"Bapak Mujib",
+G:"Ibu Ria",
+H:"Bapak Raka",
+I:"Bapak Chozin",
+J:"Ibu Ita"
 };
 
-/* AUDIO UNLOCK */
-document.body.addEventListener("click", () => {
-  speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-  new Audio("./sounds/ding.mp3").play().catch(()=>{});
-}, { once:true });
+const counters = {
+A:"000",
+B:"000",
+C:"000",
+D:"000",
+E:"000",
+F:"000",
+G:"000",
+H:"000",
+I:"000",
+J:"000"
+};
 
-/* FORMAT ANNOUNCEMENT */
-function format(loket, angka, nama){
+function renderCounters(active=""){
 
-  const digit = angka.split("").join(" ");
+const grid =
+document.getElementById("counterGrid");
 
-  const id =
-`Nomor antrean ${loket} ${digit}.
-Silakan menuju Loket pelayanan Verifikasi SPMB tahun 2026 di meja ${nama}.`;
-  
-  const en =
-`Turn number ${loket} ${digit}.
-Please proceed to SPMB 2026 verification counter at ${nama}.`;
+grid.innerHTML="";
 
-  return id + " ... " + en;
-}
+Object.keys(counters).forEach(k=>{
 
-let voicesReady = false;
+const card =
+document.createElement("div");
 
-/* ================= LOAD VOICE (STABLE) ================= */
-function loadVoice(){
-  speechSynthesis.getVoices();
-  voicesReady = true;
-}
+card.className =
+`counter-card card-${k} ${
+active===k ? "active" : ""
+}`;
 
-speechSynthesis.onvoiceschanged = loadVoice;
-loadVoice();
+card.innerHTML=`
+<div class="counter-loket">MEJA ${k}</div>
+<div class="counter-number">${k}-${counters[k]}</div>
+<div class="counter-petugas">${petugas[k]}</div>
+`;
 
-/* ================= BANK / AIRPORT FEMALE VOICE ================= */
-function speak(text){
-
-  const u = new SpeechSynthesisUtterance(text);
-
-  const voices = speechSynthesis.getVoices();
-
-  // 🔒 FIX: pakai FEMALE default browser (tidak dipaksakan aneh)
-  const voice =
-    voices.find(v => v.lang === "id-ID") ||
-    voices.find(v => v.lang.startsWith("id")) ||
-    voices.find(v => v.lang === "en-US") ||
-    voices.find(v => v.lang.startsWith("en")) ||
-    voices[0];
-
-  if(voice) u.voice = voice;
-
-  // 🎯 STYLE BANK / BANDARA
-  u.lang = "id-ID";
-  u.rate = 0.9;     // jelas, tidak cepat
-  u.pitch = 1.0;    // netral female
-  u.volume = 1;
-
-  speechSynthesis.cancel();
-
-  setTimeout(()=>{
-    speechSynthesis.speak(u);
-  }, 120);
-}
-
-/* DING */
-function ding(){
-  new Audio("./sounds/ding.mp3").play();
-}
-function updateClock(){
-
-  const now = new Date();
-
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-
-  document.getElementById("clock").innerText = `${h}:${m}:${s}`;
-}
-
-setInterval(updateClock, 1000);
-updateClock();
-  
-/* FIREBASE LISTENER */
-onValue(ref(db,"current_call"), (snap)=>{
-
-  const data = snap.val();
-  if(!data) return;
-
-  const nomor = data.nomor;
-  const type = data.callType || "NEXT";
-
-  if(nomor === lastNomor && type !== "RECALL") return;
-
-  lastNomor = nomor;
-  el.innerText = nomor;
-
-  const [loket, angka] = nomor.split("-");
-  const nama = petugas[loket] || "petugas layanan";
-
-  setTimeout(()=>{
-
-    ding();
-
-    if(type === "RECALL"){
-      const recall =
-        "Attention please. Pengulangan panggilan. " +
-        format(loket, angka, nama) +
-        " We repeat the announcement.";
-      speak(recall);
-    } else {
-      speak(format(loket, angka, nama));
-    }
-
-  }, 500);
+grid.appendChild(card);
 
 });
+
+}
+
+renderCounters();
+
+/* JAM */
+
+function updateClock(){
+
+const now = new Date();
+
+const h =
+String(now.getHours()).padStart(2,"0");
+
+const m =
+String(now.getMinutes()).padStart(2,"0");
+
+const s =
+String(now.getSeconds()).padStart(2,"0");
+
+document.getElementById("clock")
+.innerText =
+`${h}:${m}:${s}`;
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+/*
+DI LISTENER FIREBASE ANDA
+TAMBAHKAN:
+
+counters[loket] = angka;
+
+renderCounters(loket);
+
+document.getElementById("nomor")
+.innerText = nomor;
+
+document.getElementById("petugasAktif")
+.innerText =
+"Silahkan menuju meja " + nama;
+
+*/
 
 </script>
 
 </body>
 </html>
+```
