@@ -16,13 +16,22 @@ height:100vh;color:#fff;overflow:hidden}
 .clock{
 font-size:64px;
 font-weight:900;
-}font-weight:800;background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:rgb 4s linear infinite;
+}
 -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 4s linear infinite}
 @keyframes rgb{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
 .main{
 width:90%;max-width:1600px;text-align:center;
 background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);
 backdrop-filter:blur(20px);border-radius:40px;padding:30px}
+ .main{
+width:94%;
+max-width:1800px;
+padding:40px;
+}
 #unlockAudio{
 position:fixed;
 inset:0;
@@ -88,10 +97,20 @@ text-shadow:
 }
 .cards{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
 width:98%;display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+ .cards{
+bottom:60px;
+gap:12px;
+}
 .card{
 padding:16px;
 border-radius:22px;
-}color:#fff;text-align:center;font-weight:700;
+color:#fff;
+text-align:center;
+font-weight:700;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,.2);
+}
 background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2)}
 .card .meja{font-size:18px}
 .card .antri{
@@ -154,7 +173,6 @@ SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO
 </div> 
 </div>
 <div id="unlockAudio">
-KLIK UNTUK MENGAKTIFKAN SUARA
 </div>
 <div class="cards" id="cards"></div>
 
@@ -172,7 +190,11 @@ messagingSenderId:"357121462512",
 appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
  
-let audioUnlocked = false;
+speechSynthesis.getVoices();
+
+speechSynthesis.onvoiceschanged = ()=>{
+  speechSynthesis.getVoices();
+};
 
 document.body.addEventListener("click",()=>{
 
@@ -265,25 +287,6 @@ Nomor antrean
 
 ${loket}
 
-${digit}
-
-Silakan menuju
-
-meja pelayanan
-
-${nama}
-
-`;
-
-}
- 
-
-return `
-
-Nomor antrean
-
-${loket}
-
 ${nomor.split("").join(" ")}
 
 Silakan menuju meja pelayanan
@@ -331,9 +334,47 @@ const currentKey =
 data.nomor + "_" +
 data.updatedAt;
 
-if(
-currentKey !== lastCall
-){
+if(currentKey !== lastCall){
+
+lastCall = currentKey;
+
+const nama =
+petugas[data.loket] ||
+"petugas layanan";
+
+const angka =
+data.nomor.split("-")[1];
+
+setTimeout(()=>{
+
+ding();
+
+if(data.callType==="RECALL"){
+
+speak(
+"Perhatian. Pengulangan panggilan. " +
+formatCall(
+data.loket,
+angka,
+nama
+)
+);
+
+}else{
+
+speak(
+formatCall(
+data.loket,
+angka,
+nama
+)
+);
+
+}
+
+},500);
+
+}
 
 lastCall = currentKey;
 
@@ -394,9 +435,12 @@ document
 .getElementById("unlockAudio")
 .onclick=()=>{
 
-speechSynthesis.speak(
-new SpeechSynthesisUtterance("")
-);
+const unlock =
+new SpeechSynthesisUtterance(" ");
+
+unlock.volume = 0;
+
+speechSynthesis.speak(unlock);
 
 audioUnlocked=true;
 
@@ -407,7 +451,8 @@ document
 }; 
 setInterval(()=>{
  const n=new Date();
- clock.textContent=n.toLocaleTimeString("id-ID");
+ document.getElementById("clock").textContent =
+n.toLocaleTimeString("id-ID");n.toLocaleTimeString("id-ID");
 },1000);
 </script>
 </body>
