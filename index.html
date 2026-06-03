@@ -5,11 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIDEOTRON ANTREAN SPMB 2026</title>
 
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
 
-html,body{
+*{
 margin:0;
 padding:0;
+box-sizing:border-box;
+}
+
+html,body{
 width:100%;
 height:100%;
 overflow:hidden;
@@ -17,7 +22,7 @@ font-family:'Poppins',Segoe UI,Arial,sans-serif;
 background:url("./assets/th.jpg") center/cover no-repeat;
 }
 
-/* ================= OVERLAY ================= */
+/* OVERLAY */
 .overlay{
 position:fixed;
 inset:0;
@@ -25,11 +30,8 @@ background:rgba(0,0,0,0.65);
 backdrop-filter:blur(6px);
 }
 
-/* ================= EMBOSS SYSTEM ================= */
-.emboss,
-.title,
-.subtitle,
-.info{
+/* EMBOSS TEXT */
+.emboss{
 color:#fff;
 text-shadow:
 1px 1px 0 rgba(0,0,0,0.6),
@@ -37,7 +39,7 @@ text-shadow:
 -1px -1px 1px rgba(255,255,255,0.1);
 }
 
-/* ================= LOGO ================= */
+/* LOGO */
 .logo{
 position:absolute;
 top:20px;
@@ -47,7 +49,7 @@ width:150px;
 z-index:10;
 }
 
-/* ================= CLOCK ================= */
+/* CLOCK */
 .clock{
 font-size:64px;
 font-weight:900;
@@ -66,7 +68,7 @@ from{filter:hue-rotate(0)}
 to{filter:hue-rotate(360deg)}
 }
 
-/* ================= WRAPPER ================= */
+/* WRAPPER */
 .wrapper{
 position:relative;
 z-index:2;
@@ -78,7 +80,7 @@ align-items:center;
 padding-top:120px;
 }
 
-/* ================= MAIN ================= */
+/* MAIN */
 .main{
 width:85%;
 max-width:1600px;
@@ -90,19 +92,7 @@ border:2px solid rgba(255,255,255,0.2);
 backdrop-filter:blur(18px);
 }
 
-/* ================= TEXT ================= */
-.title{
-font-size:42px;
-font-weight:900;
-margin-bottom:5px;
-}
-
-.subtitle{
-font-size:22px;
-margin-bottom:20px;
-opacity:0.95;
-}
-
+/* TEXT */
 .info{
 font-size:42px;
 font-weight:600;
@@ -117,29 +107,21 @@ text-shadow:0 0 25px #00ff99,0 0 60px #00ff99;
 letter-spacing:10px;
 }
 
-/* ================= GRID ================= */
+/* GRID 10 MEJA */
 .cards{
 position:absolute;
 bottom:40px;
 left:50%;
 transform:translateX(-50%);
 width:96%;
-
 display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:14px;
-}
-
-@media(min-width:1600px){
-.cards{
 grid-template-columns:repeat(10,1fr);
-}
+gap:12px;
 }
 
-/* ================= CARD ================= */
 .card{
-padding:18px;
-border-radius:20px;
+padding:14px;
+border-radius:16px;
 background:rgba(255,255,255,0.10);
 border:1px solid rgba(255,255,255,0.2);
 text-align:center;
@@ -148,34 +130,19 @@ backdrop-filter:blur(10px);
 transition:0.3s;
 }
 
-.card:hover{
-transform:scale(1.05);
-}
+.card .meja{font-size:18px;font-weight:600}
+.card .antri{font-size:42px;font-weight:900}
+.card .petugas{font-size:12px;opacity:0.9}
 
-.card .meja{
-font-size:20px;
-font-weight:600;
-}
+.card:hover{transform:scale(1.05)}
 
-.card .antri{
-font-size:52px;
-font-weight:900;
-margin:5px 0;
-}
-
-.card .petugas{
-font-size:14px;
-opacity:0.9;
-}
-
-/* ================= ACTIVE ================= */
 .active{
 border:3px solid #fff;
 box-shadow:0 0 25px #fff,0 0 60px #fff;
 transform:scale(1.08);
 }
 
-/* ================= MARQUEE ================= */
+/* MARQUEE */
 .marquee{
 position:absolute;
 bottom:0;
@@ -200,22 +167,21 @@ animation:marquee 18s linear infinite;
 from{transform:translateX(0)}
 to{transform:translateX(-100%)}
 }
+</style>
 </head>
 
 <body>
 
 <div class="overlay"></div>
 <img src="./assets/logo.png" class="logo">
-  
+
 <div class="wrapper">
   <div class="clock" id="clock"></div>
 
   <div class="main">
-    <div class="title emboss">VERIFIKASI SPMB SMAN 1 SOOKO</div>
-    <div class="subtitle emboss">TAHUN PELAJARAN 2026/2027</div>
-    <div class="info">NOMOR ANTREAN</div>
+    <div class="info emboss">NOMOR ANTREAN</div>
     <div class="nomor" id="nomor">---</div>
-    <div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
+    <div class="info emboss">SILAHKAN MENUJU MEJA PELAYANAN</div>
   </div>
 </div>
 
@@ -225,16 +191,11 @@ to{transform:translateX(-100%)}
   <span>SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO</span>
 </div>
 
-</body>
-</html>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* =========================
-   FIREBASE
-========================= */
+/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
 authDomain:"no-antrean-spmb.firebaseapp.com",
@@ -248,177 +209,112 @@ appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* =========================
-   STATE SYSTEM
-========================= */
+/* STATE */
 let audioUnlocked = false;
 let voiceQueue = [];
 let isSpeaking = false;
 let lastCallId = "";
 
-/* =========================
-   UNLOCK AUDIO (Chrome policy)
-========================= */
-document.body.addEventListener("click", () => {
-  speechSynthesis.speak(new SpeechSynthesisUtterance("ready"));
-  audioUnlocked = true;
-}, { once:true });
-
-/* =========================
-   DATA PETUGAS
-========================= */
+/* PETUGAS */
 const petugas = {
 A:"Pak Rahmad",B:"Pak Bayu",C:"Pak Sunariyadi",D:"Bu Tasya",E:"Bu Eva",
 F:"Pak Mujib",G:"Bu Ria",H:"Pak Raka",I:"Pak Chozin",J:"Bu Ita"
 };
+
+/* INIT GRID */
 const cards = document.getElementById("cards");
 
 function initGrid(){
- cards.innerHTML = "";
-
- Object.keys(petugas).forEach((m,i)=>{
-  const d = document.createElement("div");
-  d.className = "card";
-  d.id = "card"+m;
-
-  d.innerHTML = `
-    <div class="meja">MEJA ${m}</div>
-    <div class="antri" id="n${m}">000</div>
-    <div class="petugas">${petugas[m]}</div>
-  `;
-
-  cards.appendChild(d);
- });
+Object.keys(petugas).forEach(k=>{
+const el=document.createElement("div");
+el.className="card";
+el.id="card"+k;
+el.innerHTML=`
+<div class="meja">MEJA ${k}</div>
+<div class="antri" id="n${k}">000</div>
+<div class="petugas">${petugas[k]}</div>
+`;
+cards.appendChild(el);
+});
 }
+initGrid();
 
-initGrid(); // 🔥 WAJIB DIPANGGIL
-/* =========================
-   SOUND EFFECT
-========================= */
-function ding(){
- new Audio("./sounds/ding.mp3").play();
-}
+/* AUDIO UNLOCK */
+document.body.addEventListener("click",()=>{
+speechSynthesis.speak(new SpeechSynthesisUtterance("ready"));
+audioUnlocked=true;
+},{once:true});
 
-/* =========================
-   AI VOICE (QUEUE SYSTEM)
-========================= */
+/* VOICE QUEUE */
 function speakQueue(text){
- voiceQueue.push(text);
- processQueue();
+voiceQueue.push(text);
+processQueue();
 }
 
 function processQueue(){
- if(isSpeaking || !audioUnlocked) return;
- if(voiceQueue.length === 0) return;
+if(isSpeaking || !audioUnlocked) return;
+if(voiceQueue.length===0) return;
 
- isSpeaking = true;
- const text = voiceQueue.shift();
+isSpeaking=true;
+const text=voiceQueue.shift();
 
- const u = new SpeechSynthesisUtterance(text);
- const voices = speechSynthesis.getVoices();
+const u=new SpeechSynthesisUtterance(text);
+const voices=speechSynthesis.getVoices();
 
- u.voice = voices.find(v=>v.lang.includes("id")) || voices[0];
- u.lang = "id-ID";
-u.rate = 0.75;
-u.pitch = 1.0;
-u.volume = 1;
+u.voice=voices.find(v=>v.lang.includes("id"))||voices[0];
+u.lang="id-ID";
+u.rate=0.78;
 
- u.onend = ()=>{
-  isSpeaking = false;
-  setTimeout(processQueue, 600); // delay natural bandara
- };
+u.onend=()=>{
+isSpeaking=false;
+setTimeout(processQueue,500);
+};
 
- speechSynthesis.speak(u);
+speechSynthesis.speak(u);
 }
 
-/* =========================
-   FORMAT VOICE BANDARA STYLE
-========================= */
+/* VOICE FORMAT FIX */
 function buildVoice(data){
+const nomor=data.nomor||"";
+const [loket,angka]=nomor.includes("-")?nomor.split("-"):["",nomor];
+const nama=petugas[data.loket||loket]||"petugas layanan";
 
-  const nomorFull = data.nomor || ""; // contoh: A-001
-
-  const [kodeLoket, angka] = nomorFull.includes("-")
-    ? nomorFull.split("-")
-    : ["", nomorFull];
-
-  const loket = data.loket || kodeLoket;
-
-  const nama = petugas[loket] || "petugas layanan";
-
-  return `
-Perhatian, harap perhatian.
-Nomor antrean ${nomorFull}.
-Silakan menuju meja ${loket}.
-Untuk layanan verifikasi PIN S P M B dua ribu dua enam.
-Dilayani oleh ${nama}.
-Terima kasih.
-`;
+return `Perhatian. Nomor antrean ${nomor}. Silakan menuju meja ${data.loket}. Dilayani oleh ${nama}.`;
 }
 
-/* =========================
-   FIREBASE: UPDATE LOKET
-========================= */
+/* FIREBASE LOKET */
 onValue(ref(db,"loket"),snap=>{
- const data=snap.val()||{};
-
- Object.keys(petugas).forEach(k=>{
-  const el=document.getElementById("n"+k);
-  if(el) el.textContent=data[k]||"000";
-
-  const card = document.getElementById("card"+k);
-  if(card){
-    const val = data[k] || "000";
-
-    card.dataset.value = val;
-
-    // optional visual state
-    if(val === "000"){
-      card.style.opacity = "0.5";
-    } else {
-      card.style.opacity = "1";
-    }
-  }
- });
+const data=snap.val()||{};
+Object.keys(petugas).forEach(k=>{
+document.getElementById("n"+k).textContent=data[k]||"000";
+});
 });
 
-/* =========================
-   FIREBASE: CALL ENGINE
-========================= */
+/* CALL ENGINE */
 onValue(ref(db,"current_call"),snap=>{
- const data = snap.val();
- if(!data) return;
+const data=snap.val();
+if(!data)return;
 
-/* UI UPDATE */
- document.getElementById("nomor").innerText = data.nomor || "---";
+document.getElementById("nomor").textContent=data.nomor||"---";
 
- document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
- if(data.loket){
-  document.getElementById("card"+data.loket)?.classList.add("active");
- }
+document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+if(data.loket){
+document.getElementById("card"+data.loket)?.classList.add("active");
+}
 
-/* =========================
-   ANTI DUPLICATE CALL
-========================= */
- const callId = data.nomor + "_" + data.updatedAt;
- if(callId === lastCallId) return;
- lastCallId = callId;
+const id=data.nomor+"_"+data.updatedAt;
+if(id===lastCallId)return;
+lastCallId=id;
 
-/* =========================
-   QUEUE EXECUTION
-========================= */
- setTimeout(()=>{
-  ding();
-  speakQueue(buildVoice(data));
- },500);
+setTimeout(()=>{
+speakQueue(buildVoice(data));
+},500);
 });
 
-/* =========================
-   CLOCK
-========================= */
+/* CLOCK */
 setInterval(()=>{
- document.getElementById("clock").textContent =
- new Date().toLocaleTimeString("id-ID");
+document.getElementById("clock").textContent=
+new Date().toLocaleTimeString("id-ID");
 },1000);
 
 </script>
