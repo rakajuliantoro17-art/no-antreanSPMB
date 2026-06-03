@@ -3,12 +3,13 @@ import {
   getDatabase,
   ref,
   update,
-  onValue
+  onValue,
+  get
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 /* CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
+  apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDC5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "no-antrean-spmb",
@@ -28,23 +29,35 @@ export const DEFAULT_DISPLAY = {
     petugas: "-"
   },
   counters: {
-    A: 0, B: 0, C: 0, D: 0, E: 0,
-    F: 0, G: 0, H: 0, I: 0, J: 0
+    A:0,B:0,C:0,D:0,E:0,
+    F:0,G:0,H:0,I:0,J:0
   },
   lastUpdate: Date.now()
 };
 
-/* UPDATE */
-export function updateDisplay(data) {
-  return update(ref(db, "display"), {
+/* LISTENER */
+export function listenDisplay(cb){
+  onValue(ref(db,"display"), snap=>{
+    cb(snap.val());
+  });
+}
+
+/* GET */
+export function getDisplay(){
+  return get(ref(db,"display"));
+}
+
+/* UPDATE SIMPLE */
+export function updateDisplay(data){
+  return update(ref(db,"display"), {
     ...data,
     lastUpdate: Date.now()
   });
 }
 
-/* LISTENER */
-export function listenDisplay(cb) {
-  onValue(ref(db, "display"), (snap) => {
-    cb(snap.val());
+/* RESET */
+export function resetDisplay(){
+  return update(ref(db), {
+    display: DEFAULT_DISPLAY
   });
 }
