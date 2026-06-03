@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>ADMIN CONTROL CENTER</title>
 
 <style>
@@ -27,80 +26,77 @@ margin-bottom:25px;
 }
 
 .panel{
-
 max-width:1200px;
 margin:auto;
-
 background:#1e293b;
-
 padding:25px;
-
 border-radius:20px;
-
-box-shadow:
-0 0 20px rgba(0,0,0,.4);
-
+box-shadow:0 0 20px rgba(0,0,0,.4);
 }
 
 .top{
-
 display:flex;
 gap:10px;
 justify-content:center;
 margin-bottom:25px;
 flex-wrap:wrap;
-
 }
 
 .btn{
-
 padding:15px 25px;
 border:none;
 border-radius:10px;
 font-weight:bold;
 cursor:pointer;
 font-size:16px;
-
 }
 
-.danger{
-background:#ef4444;
-color:white;
+.danger{background:#ef4444;color:white;}
+.warning{background:#f59e0b;color:white;}
+.success{background:#22c55e;color:white;}
+
+.current{
+margin-top:10px;
+background:#111827;
+padding:20px;
+border-radius:15px;
+text-align:center;
 }
 
-.warning{
-background:#f59e0b;
-color:white;
+.current h2{
+margin-bottom:10px;
 }
 
-.success{
-background:#22c55e;
-color:white;
+.currentNumber{
+font-size:72px;
+font-weight:900;
+color:#00ff99;
+}
+
+.status{
+margin-top:10px;
+font-size:18px;
+color:#cbd5e1;
 }
 
 .monitor{
-
 display:grid;
-
-grid-template-columns:
-repeat(5,1fr);
-
+grid-template-columns:repeat(5,1fr);
 gap:12px;
-
-margin-top:20px;
-
+margin-top:25px;
 }
 
 .card{
-
 background:#334155;
-
 border-radius:15px;
-
 padding:15px;
-
 text-align:center;
+transition:.3s;
+}
 
+.card.active{
+border:2px solid #00ff99;
+transform:scale(1.05);
 }
 
 .card h3{
@@ -108,49 +104,9 @@ margin-bottom:10px;
 }
 
 .nomor{
-
 font-size:36px;
 font-weight:bold;
-
 color:#00ff99;
-
-}
-
-.current{
-
-margin-top:25px;
-
-background:#111827;
-
-padding:20px;
-
-border-radius:15px;
-
-text-align:center;
-
-}
-
-.current h2{
-
-margin-bottom:10px;
-
-}
-
-.currentNumber{
-
-font-size:72px;
-
-font-weight:900;
-
-color:#00ff99;
-
-}
-
-.status{
-
-margin-top:15px;
-font-size:18px;
-
 }
 
 </style>
@@ -164,18 +120,12 @@ font-size:18px;
 
 <div class="top">
 
-<button class="btn danger"
-onclick="resetAll()">
-
+<button class="btn danger" onclick="resetAll()">
 RESET SEMUA
-
 </button>
 
-<button class="btn warning"
-onclick="resetCurrentCall()">
-
+<button class="btn warning" onclick="resetDisplay()">
 RESET DISPLAY
-
 </button>
 
 </div>
@@ -184,221 +134,102 @@ RESET DISPLAY
 
 <h2>ANTREAN TERPANGGIL</h2>
 
-<div
-id="currentNumber"
-class="currentNumber">
-
----
+<div id="currentNumber" class="currentNumber">---</div>
+<div id="currentStatus" class="status">Menunggu panggilan...</div>
 
 </div>
 
-<div
-id="currentStatus"
-class="status">
-
-Menunggu panggilan...
-
-</div>
-
-</div>
-
-<div
-class="monitor"
-id="monitor">
-
-</div>
+<div class="monitor" id="monitor"></div>
 
 </div>
 
 <script type="module">
+import { db, ref, onValue, update, set } from "./firebase.js";
 
-import {
-initializeApp
+/* ================= REALTIME DISPLAY ================= */
+onValue(ref(db,"display"), snap=>{
+  const data = snap.val();
+  if(!data) return;
+
+  const c = data.current || {};
+  const counters = data.counters || {};
+
+  document.getElementById("currentNumber").innerText =
+    c.loket && c.nomor
+      ? `${c.loket}-${String(c.nomor).padStart(3,"0")}`
+      : "---";
+
+  document.getElementById("currentStatus").innerText =
+    c.loket
+      ? `LOKET ${c.loket} MELAYANI`
+      : "Menunggu panggilan...";
+
+  renderMonitor(counters, c.loket);
+});
+
+/* ================= RENDER MONITOR ================= */
+function renderMonitor(counters, active){
+  const monitor = document.getElementById("monitor");
+  monitor.innerHTML = "";
+
+  const petugas = {
+    A:"Rahmad", B:"Bayu", C:"Sunariyadi",
+    D:"Tasya", E:"Eva",
+    F:"Mujib", G:"Ria", H:"Raka",
+    I:"Chozin", J:"Ita"
+  };
+
+  Object.keys(counters).forEach(k=>{
+    const div = document.createElement("div");
+    div.className = "card";
+
+    if(k === active) div.classList.add("active");
+
+    div.innerHTML = `
+      <h3>MEJA ${k}</h3>
+      <div class="nomor">${k}-${String(counters[k]).padStart(3,"0")}</div>
+      <div>${petugas[k]}</div>
+    `;
+
+    monitor.appendChild(div);
+  });
 }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import {
-
-getDatabase,
-ref,
-set,
-update,
-onValue
-
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-const firebaseConfig = {
-
-apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
-authDomain:"no-antrean-spmb.firebaseapp.com",
-databaseURL:"https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"no-antrean-spmb",
-storageBucket:"no-antrean-spmb.firebasestorage.app",
-messagingSenderId:"357121462512",
-appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
-
+/* ================= RESET DISPLAY ================= */
+window.resetDisplay = async ()=>{
+  await update(ref(db,"display"),{
+    current:{
+      loket:"-",
+      nomor:0,
+      petugas:"-"
+    },
+    counters:{
+      A:0,B:0,C:0,D:0,E:0,
+      F:0,G:0,H:0,I:0,J:0
+    },
+    lastUpdate:Date.now()
+  });
 };
 
-const app =
-initializeApp(firebaseConfig);
+/* ================= RESET TOTAL ================= */
+window.resetAll = async ()=>{
 
-const db =
-getDatabase(app);
+  if(!confirm("Reset seluruh sistem antrean?")) return;
 
-/* ==========================
-   MONITOR CURRENT CALL
-========================== */
+  await set(ref(db,"display"),{
+    current:{
+      loket:"-",
+      nomor:0,
+      petugas:"-"
+    },
+    counters:{
+      A:0,B:0,C:0,D:0,E:0,
+      F:0,G:0,H:0,I:0,J:0
+    },
+    lastUpdate:Date.now()
+  });
 
-onValue(
-ref(db,"current_call"),
-snap=>{
-
-const data = snap.val();
-
-if(!data) return;
-
-document
-.getElementById("currentNumber")
-.innerText =
-data.nomor || "---";
-
-document
-.getElementById("currentStatus")
-.innerText =
-data.callType || "-";
-
-});
-
-/* ==========================
-   MONITOR LOKET
-========================== */
-
-onValue(
-ref(db,"loket"),
-snap=>{
-
-const data =
-snap.val() || {};
-
-const monitor =
-document.getElementById(
-"monitor"
-);
-
-monitor.innerHTML="";
-
-const loket =
-["A","B","C","D","E",
- "F","G","H","I","J"];
-
-loket.forEach(k=>{
-
-const nomor =
-data[k] || "000";
-
-monitor.innerHTML += `
-
-<div class="card">
-
-<h3>MEJA ${k}</h3>
-
-<div class="nomor">
-${k}-${nomor}
-</div>
-
-</div>
-
-`;
-
-});
-
-});
-
-/* ==========================
-   RESET ALL
-========================== */
-
-window.resetAll =
-async ()=>{
-
-if(
-!confirm(
-"Reset seluruh antrean?"
-)
-) return;
-
-await set(
-ref(db,"counter"),
-{
-A:0,
-B:0,
-C:0,
-D:0,
-E:0,
-F:0,
-G:0,
-H:0,
-I:0,
-J:0
-}
-);
-
-await set(
-ref(db,"loket"),
-{
-A:"000",
-B:"000",
-C:"000",
-D:"000",
-E:"000",
-F:"000",
-G:"000",
-H:"000",
-I:"000",
-J:"000"
-}
-);
-
-await set(
-ref(db,"current_call"),
-{
-nomor:"---",
-callType:"RESET",
-updatedAt:Date.now()
-}
-);
-
-alert(
-"Semua antrean berhasil direset"
-);
-
-};
-
-/* ==========================
-   RESET DISPLAY
-========================== */
-
-window.resetCurrentCall =
-async ()=>{
-
-await update(
-ref(db),
-{
-
-"current_call/nomor":
-"---",
-
-"current_call/callType":
-"RESET",
-
-"current_call/updatedAt":
-Date.now()
-
-}
-
-);
-
+  alert("RESET BERHASIL");
 };
 
 </script>
