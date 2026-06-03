@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>OPERATOR ANTREAN SPMB</title>
 
 <style>
+
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Arial,sans-serif;
   background:url("./assets/bg.jpg") no-repeat center center fixed;
   background-size:cover;
   overflow:hidden;
@@ -18,8 +19,8 @@ body{
 .overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(10px);
 }
 
 .container{
@@ -30,25 +31,30 @@ body{
 }
 
 .glass{
-  max-width:800px;
+  max-width:900px;
   margin:20px auto;
-  padding:20px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(20px);
+  padding:25px;
+  border-radius:25px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(20px);
+}
+
+h2{
+  margin-bottom:20px;
 }
 
 .display{
-  font-size:28px;
-  margin-bottom:20px;
+  font-size:30px;
+  margin-bottom:25px;
   color:#00ff99;
+  font-weight:bold;
 }
 
 .grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:10px;
+  gap:12px;
 }
 
 button{
@@ -58,12 +64,49 @@ button{
   border-radius:12px;
   cursor:pointer;
   font-weight:bold;
+  transition:.25s;
 }
 
-.loket{background:#2563eb;color:white;}
-.next{background:#22c55e;width:200px;}
-.recall{background:#f59e0b;width:200px;}
-.reset{background:#ef4444;width:200px;margin-top:10px;}
+button:hover{
+  transform:scale(1.05);
+}
+
+.loket{
+  background:#2563eb;
+  color:white;
+}
+
+.active{
+  background:#00ff99 !important;
+  color:black !important;
+}
+
+.next{
+  background:#22c55e;
+  width:220px;
+}
+
+.recall{
+  background:#f59e0b;
+  width:220px;
+}
+
+.reset{
+  background:#ef4444;
+  width:220px;
+  margin-top:10px;
+}
+
+.action{
+  margin-top:25px;
+}
+
+.status{
+  margin-top:15px;
+  font-size:18px;
+  color:#ccc;
+}
+
 </style>
 </head>
 
@@ -72,41 +115,75 @@ button{
 <div class="overlay"></div>
 
 <div class="container">
+
 <div class="glass">
 
-<h2>OPERATOR PANEL ANTREAN</h2>
+<h2>OPERATOR PANEL ANTREAN SPMB</h2>
 
-<div class="display" id="current">LOKET: - | NOMOR: ---</div>
+<div class="display" id="current">
+LOKET : - | NOMOR : ---
+</div>
 
 <div class="grid">
-<button class="loket" onclick="setLoket('A')">A</button>
-<button class="loket" onclick="setLoket('B')">B</button>
-<button class="loket" onclick="setLoket('C')">C</button>
-<button class="loket" onclick="setLoket('D')">D</button>
-<button class="loket" onclick="setLoket('E')">E</button>
-<button class="loket" onclick="setLoket('F')">F</button>
-<button class="loket" onclick="setLoket('G')">G</button>
-<button class="loket" onclick="setLoket('H')">H</button>
-<button class="loket" onclick="setLoket('I')">I</button>
-<button class="loket" onclick="setLoket('J')">J</button>
+
+<button id="btnA" class="loket" onclick="setLoket('A')">MEJA A</button>
+<button id="btnB" class="loket" onclick="setLoket('B')">MEJA B</button>
+<button id="btnC" class="loket" onclick="setLoket('C')">MEJA C</button>
+<button id="btnD" class="loket" onclick="setLoket('D')">MEJA D</button>
+<button id="btnE" class="loket" onclick="setLoket('E')">MEJA E</button>
+
+<button id="btnF" class="loket" onclick="setLoket('F')">MEJA F</button>
+<button id="btnG" class="loket" onclick="setLoket('G')">MEJA G</button>
+<button id="btnH" class="loket" onclick="setLoket('H')">MEJA H</button>
+<button id="btnI" class="loket" onclick="setLoket('I')">MEJA I</button>
+<button id="btnJ" class="loket" onclick="setLoket('J')">MEJA J</button>
+
 </div>
+
+<div class="action">
+
+<button class="next" onclick="next()">
+▶ NEXT
+</button>
+
+<button class="recall" onclick="recall()">
+🔊 RECALL
+</button>
 
 <br>
 
-<button class="next" onclick="next()">NEXT</button>
-<button class="recall" onclick="recall()">RECALL</button>
-<br>
-<button class="reset" onclick="resetCounter()">RESET</button>
+<button class="reset" onclick="resetCounter()">
+⛔ RESET
+</button>
 
 </div>
+
+<div class="status">
+Realtime Firebase Connected
+</div>
+
+</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  update
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
   authDomain: "no-antrean-spmb.firebaseapp.com",
   databaseURL: "https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -114,81 +191,219 @@ const firebaseConfig = {
   storageBucket: "no-antrean-spmb.firebasestorage.app",
   messagingSenderId: "357121462512",
   appId: "1:3571214628:web:8fd937bc2a8d2a3894b235"
+
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* INIT LOKET */
+
+const defaultLoket = {
+
+A:"000",
+B:"000",
+C:"000",
+D:"000",
+E:"000",
+
+F:"000",
+G:"000",
+H:"000",
+I:"000",
+J:"000"
+
+};
+
+get(ref(db,"loket"))
+.then(snap=>{
+
+  if(!snap.exists()){
+
+    set(
+      ref(db,"loket"),
+      defaultLoket
+    );
+
+  }
+
+});
+
+/* VARIABLE */
+
 let loket="-";
 let counter=0;
 
-// SOUND
-function playSound(p){
-  new Audio(p).play();
+/* SOUND */
+
+function playSound(path){
+
+  new Audio(path)
+    .play()
+    .catch(()=>{});
+
 }
 
-// SET LOKET
+/* UPDATE DISPLAY */
+
+function updateDisplay(){
+
+  document.getElementById("current")
+  .innerText =
+  `LOKET : ${loket} | NOMOR : ${loket}-${String(counter).padStart(3,"0")}`;
+
+}
+
+/* HIGHLIGHT */
+
+function highlightButton(){
+
+  document
+    .querySelectorAll(".loket")
+    .forEach(btn=>
+      btn.classList.remove("active")
+    );
+
+  if(loket!=="-"){
+
+    document
+      .getElementById("btn"+loket)
+      .classList.add("active");
+
+  }
+
+}
+
+/* PILIH LOKET */
+
 window.setLoket = async (l)=>{
+
   loket = l;
-  const snap = await get(ref(db,"counter/"+loket));
-  counter = snap.exists()?snap.val():0;
-  update();
+
+  const snap =
+    await get(
+      ref(db,"counter/"+loket)
+    );
+
+  counter =
+    snap.exists()
+    ? snap.val()
+    : 0;
+
+  updateDisplay();
+  highlightButton();
+
 };
 
-// NEXT
+/* NEXT */
+
 window.next = async ()=>{
 
-  if(loket=="-") return alert("Pilih loket");
+  if(loket=="-"){
+
+    alert("Pilih loket terlebih dahulu");
+    return;
+
+  }
 
   counter++;
 
-  const nomor = `${loket}-${String(counter).padStart(3,"0")}`;
+  const nomor =
+  `${loket}-${String(counter).padStart(3,"0")}`;
 
-  await set(ref(db,"current_call"),{
-    nomor,
-    loket,
-    counter,
-    callType:"NEXT",
-    updatedAt:Date.now()
+  await update(ref(db),{
+
+    "current_call/nomor":nomor,
+    "current_call/loket":loket,
+    "current_call/counter":counter,
+    "current_call/callType":"NEXT",
+    "current_call/updatedAt":Date.now(),
+
+    [`counter/${loket}`]:
+      counter,
+
+    [`loket/${loket}`]:
+      String(counter)
+      .padStart(3,"0")
+
   });
-
-  await set(ref(db,"counter/"+loket),counter);
 
   playSound("./sounds/ding.mp3");
 
-  update();
+  updateDisplay();
+
 };
 
-// RECALL (INI FIX UTAMA)
+/* RECALL */
+
 window.recall = async ()=>{
 
-  const snap = await get(ref(db,"current_call"));
+  const snap =
+    await get(
+      ref(db,"current_call")
+    );
+
   if(!snap.exists()) return;
 
   const data = snap.val();
 
-  await set(ref(db,"current_call"), {
-  ...snap.val(),
-  callType: "RECALL",
-  updatedAt: Date.now()
-});
+  await update(ref(db),{
+
+    "current_call/nomor":
+      data.nomor,
+
+    "current_call/loket":
+      data.loket,
+
+    "current_call/counter":
+      data.counter,
+
+    "current_call/callType":
+      "RECALL",
+
+    "current_call/updatedAt":
+      Date.now()
+
+  });
 
   playSound("./sounds/panggilan.mp3");
+
 };
 
-// RESET
+/* RESET */
+
 window.resetCounter = async ()=>{
-  if(!confirm("Reset?")) return;
-  counter=0;
-  await set(ref(db,"counter/"+loket),0);
-  update();
+
+  if(loket=="-"){
+
+    alert("Pilih loket terlebih dahulu");
+    return;
+
+  }
+
+  if(
+    !confirm(
+      `Reset loket ${loket} ?`
+    )
+  ) return;
+
+  counter = 0;
+
+  await update(ref(db),{
+
+    [`counter/${loket}`]:0,
+
+    [`loket/${loket}`]:"000"
+
+  });
+
+  updateDisplay();
+
 };
 
-// DISPLAY
-function update(){
-  document.getElementById("current").innerText =
-  `LOKET: ${loket} | NOMOR: ${loket}-${String(counter).padStart(3,"0")}`;
-}
+/* INIT */
+
+updateDisplay();
 
 </script>
 
