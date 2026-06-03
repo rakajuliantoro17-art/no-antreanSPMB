@@ -3,179 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DISPLAY ANTREAN SPMB</title>
-
-<link rel="stylesheet" href="style.css">
-
+<title>VIDEOTRON ANTREAN SPMB 2026</title>
 <style>
-/* tambahan layout frame utama */
-.frame {
-  width: 95vw;
-  height: 85vh;
-  margin: 90px auto 0;
-  padding: 20px;
-  border-radius: 30px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.2);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.top-info {
-  text-align: center;
-}
-
-.nomor {
-  font-size: 220px;
-  font-weight: 900;
-  color: #00ff99;
-  text-shadow: 0 0 40px rgba(0,255,153,0.6);
-}
-
-.petugasAktif {
-  font-size: 42px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-/* GRID 10 MEJA */
-.counter-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.counter-card {
-  padding: 15px;
-  border-radius: 15px;
-  text-align: center;
-  font-weight: bold;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: 0.2s;
-}
-
-.counter-card.active {
-  transform: scale(1.08);
-  border: 2px solid #fff;
-  box-shadow: 0 0 20px #fff;
-}
-
-.card-A{background:#e74c3c;}
-.card-B{background:#e67e22;}
-.card-C{background:#f1c40f;color:black;}
-.card-D{background:#2ecc71;}
-.card-E{background:#1abc9c;}
-.card-F{background:#3498db;}
-.card-G{background:#6c5ce7;}
-.card-H{background:#9b59b6;}
-.card-I{background:#e84393;}
-.card-J{background:#636e72;}
-
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:Segoe UI,Arial,sans-serif;
+background:url("./assets/th.jpg") center/cover no-repeat fixed;
+height:100vh;color:#fff;overflow:hidden}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+.logo{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:150px;z-index:5}
+.wrapper{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:120px}
+.clock{font-size:48px;font-weight:800;background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rgb 4s linear infinite}
+@keyframes rgb{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
+.main{
+width:90%;max-width:1600px;text-align:center;
+background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);
+backdrop-filter:blur(20px);border-radius:40px;padding:30px}
+.info{font-size:34px}
+.nomor{font-size:220px;font-weight:900;color:#00ff99;text-shadow:0 0 30px #00ff99}
+.cards{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+width:98%;display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+.card{border-radius:18px;padding:10px;color:#fff;text-align:center;font-weight:700;
+background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2)}
+.card .meja{font-size:18px}
+.card .antri{font-size:32px}
+.card .petugas{font-size:12px}
+.active{animation:pulse 1s infinite;border:3px solid #fff}
+@keyframes pulse{50%{transform:scale(1.05)}}
 </style>
 </head>
-
 <body>
-
 <div class="overlay"></div>
-
-<!-- HEADER -->
-<div class="header">
-  <img src="./assets/logo.png" class="logo">
-  <div class="title">VERIFIKASI SPMB SMAN 1 SOOKO</div>
-  <div class="subtitle">TAHUN PELAJARAN 2026/2027</div>
-  <div class="clock" id="clock">00:00:00</div>
+<img src="./assets/logo.png" class="logo">
+<div class="wrapper">
+<div class="clock" id="clock"></div>
+<div class="main">
+<div class="info">NOMOR ANTREAN</div>
+<div class="nomor" id="nomor">---</div>
+<div class="info">SILAHKAN MENUJU MEJA PELAYANAN</div>
+</div>
 </div>
 
-<!-- FRAME UTAMA -->
-<div class="frame">
-
-  <!-- TOP INFO -->
-  <div class="top-info">
-    <div class="label">NOMOR ANTREAN</div>
-    <div class="nomor" id="nomor">---</div>
-    <div class="petugasAktif" id="petugasAktif">
-      SILAHKAN MENUJU MEJA PELAYANAN
-    </div>
-  </div>
-
-  <!-- GRID 10 MEJA -->
-  <div class="counter-grid" id="counterGrid"></div>
-
-  <!-- RUNNING TEXT -->
-  <div class="marquee">
-    <span>
-      SELAMAT DATANG • SIAPKAN BERKAS ASLI • IKUTI PETUGAS • LAYANAN SPMB SMAN 1 SOOKO •
-    </span>
-  </div>
-
-</div>
+<div class="cards" id="cards"></div>
 
 <script type="module">
-import { listenDisplay, initSystem } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* INIT SYSTEM */
-await initSystem();
-
-/* CLOCK */
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").innerText =
-    String(now.getHours()).padStart(2,"0") + ":" +
-    String(now.getMinutes()).padStart(2,"0") + ":" +
-    String(now.getSeconds()).padStart(2,"0");
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-/* PETUGAS FIX */
-const petugas = {
-  A:"Rahmad", B:"Bayu", C:"Sunariyadi",
-  D:"Tasya", E:"Eva",
-  F:"Mujib", G:"Ria", H:"Raka",
-  I:"Chozin", J:"Ita"
+const firebaseConfig={
+apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
+authDomain:"no-antrean-spmb.firebaseapp.com",
+databaseURL:"https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"no-antrean-spmb",
+storageBucket:"no-antrean-spmb.firebasestorage.app",
+messagingSenderId:"357121462512",
+appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
 };
 
-/* REALTIME LISTENER */
-listenDisplay((data) => {
-  if (!data || !data.current) return;
+const petugas={
+A:"Bapak Rahmad",B:"Bapak Bayu",C:"Bapak Sunariyadi",D:"Ibu Tasya",E:"Ibu Eva",
+F:"Bapak Mujib",G:"Ibu Ria",H:"Bapak Raka",I:"Bapak Chozin",J:"Ibu Ita"
+};
 
-  const c = data.current;
-
-  /* NOMOR UTAMA */
-  document.getElementById("nomor").innerText =
-    `${c.loket}-${String(c.nomor).padStart(3,"0")}`;
-
-  document.getElementById("petugasAktif").innerText =
-    `LOKET ${c.loket} SIAP MELAYANI`;
-
-  /* GRID UPDATE */
-  const grid = document.getElementById("counterGrid");
-  grid.innerHTML = "";
-
-  const counters = data.counters || {};
-
-  Object.keys(petugas).forEach(k => {
-    const div = document.createElement("div");
-
-    div.className = "counter-card card-" + k;
-
-    if (c.loket === k) div.classList.add("active");
-
-    div.innerHTML = `
-      <div>MEJA ${k}</div>
-      <div>${k}-${String(counters[k] || 0).padStart(3,"0")}</div>
-      <div>${petugas[k]}</div>
-    `;
-
-    grid.appendChild(div);
-  });
+const colors=["#ef4444","#f97316","#eab308","#22c55e","#14b8a6","#06b6d4","#3b82f6","#8b5cf6","#d946ef","#ec4899"];
+const cards=document.getElementById("cards");
+["A","B","C","D","E","F","G","H","I","J"].forEach((m,i)=>{
+ const d=document.createElement("div");
+ d.className="card"; d.id="card"+m;
+ d.style.background=colors[i]+"88";
+ d.innerHTML=`<div class=meja>MEJA ${m}</div><div class=antri id=n${m}>000</div><div class=petugas>${petugas[m]}</div>`;
+ cards.appendChild(d);
 });
-</script>
 
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+onValue(ref(db,"loket"),snap=>{
+ const data=snap.val()||{};
+ Object.keys(petugas).forEach(k=>{
+   const el=document.getElementById("n"+k);
+   if(el) el.textContent=data[k]||"000";
+ });
+});
+
+let last="";
+onValue(ref(db,"current_call"),snap=>{
+ const d=snap.val(); if(!d) return;
+ document.getElementById("nomor").textContent=d.nomor||"---";
+ document.querySelectorAll(".card").forEach(x=>x.classList.remove("active"));
+ if(d.loket){
+   const c=document.getElementById("card"+d.loket);
+   if(c) c.classList.add("active");
+ }
+ if(d.nomor && d.nomor!==last){
+   last=d.nomor;
+ }
+});
+
+setInterval(()=>{
+ const n=new Date();
+ clock.textContent=n.toLocaleTimeString("id-ID");
+},1000);
+</script>
 </body>
 </html>
