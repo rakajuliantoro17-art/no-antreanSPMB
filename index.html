@@ -245,7 +245,22 @@ transform:scale(1.08);
 transform:scale(1.13);
 }
 }
+.flash{
+animation:flashCall 1s ease 3;
+}
 
+@keyframes flashCall{
+0%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.08);
+}
+100%{
+transform:scale(1);
+}
+}
+  
 /* MARQUEE */
 .marquee{
 position:absolute;
@@ -395,7 +410,9 @@ const voices=speechSynthesis.getVoices();
 
 u.voice=voices.find(v=>v.lang.includes("id"))||voices[0];
 u.lang="id-ID";
-u.rate=0.78;
+u.rate=0.68;
+u.pitch=1;
+u.volume=1;
 
 u.onend=()=>{
 isSpeaking=false;
@@ -411,8 +428,14 @@ const nomor=data.nomor||"";
 const [loket,angka]=nomor.includes("-")?nomor.split("-"):["",nomor];
 const nama=petugas[data.loket||loket]||"petugas layanan";
 
-return `Perhatian. Nomor antrean ${nomor}. Silakan menuju meja ${data.loket}. Dilayani oleh ${nama}.`;
-}
+return `
+Perhatian.
+Nomor antrean ${nomor}.
+Silakan menuju meja ${data.loket}.
+Untuk layanan verifikasi S P M B dua ribu dua enam.
+Dilayani oleh ${nama}.
+Terima kasih.
+`;
 
 /* FIREBASE LOKET */
 onValue(ref(db,"loket"),snap=>{
@@ -433,7 +456,14 @@ document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 if(data.loket){
 document.getElementById("card"+data.loket)?.classList.add("active");
 }
+  
+const namaPetugas =
+petugas[data.loket] || "-";
 
+document.getElementById("petugasAktif")
+.textContent =
+`MEJA ${data.loket} • ${namaPetugas}`;
+  
 const id=data.nomor+"_"+data.updatedAt;
 if(id===lastCallId)return;
 lastCallId=id;
@@ -443,6 +473,18 @@ speakQueue(buildVoice(data));
 },500);
 });
 
+ const nomorEl =
+document.getElementById("nomor");
+
+nomorEl.classList.remove("flash");
+
+void nomorEl.offsetWidth;
+
+nomorEl.classList.add("flash");
+
+document.getElementById("nomor").textContent=data.nomor||"---";
+
+  
 /* CLOCK */
 setInterval(()=>{
 document.getElementById("clock").textContent=
