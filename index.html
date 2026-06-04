@@ -112,11 +112,19 @@ padding:35px 50px;
 
 border-radius:40px;
 
-background:rgba(255,255,255,.08);
+background:
+linear-gradient(
+180deg,
+rgba(255,255,255,.10),
+rgba(255,255,255,.05)
+);
 
-border:2px solid rgba(255,255,255,.2);
+border:2px solid rgba(255,255,255,.25);
 
-backdrop-filter:blur(18px);
+backdrop-filter:blur(20px);
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.35);
 
 display:flex;
 flex-direction:column;
@@ -132,20 +140,28 @@ margin-bottom:10px;
 }
 
 .nomor{
-font-size:clamp(180px,16vw,280px);
-
+font-size:clamp(140px,12vw,240px);
 font-weight:900;
+line-height:1;
+letter-spacing:8px;
 
 color:#00ff99;
 
-line-height:1;
-
 text-shadow:
-0 0 25px #00ff99,
-0 0 60px #00ff99,
-0 0 120px rgba(0,255,153,.4);
+0 0 20px #00ff99,
+0 0 50px #00ff99,
+0 0 100px rgba(0,255,153,.4);
 
-letter-spacing:8px;
+animation:nomorPulse 2s infinite;
+}
+
+@keyframes nomorPulse{
+0%,100%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.04);
+}
 }
 
 /* GRID 10 MEJA */
@@ -161,7 +177,7 @@ gap:12px;
 }
 
 .card{
-height:120px;
+height:135px;
 
 padding:12px;
 
@@ -180,10 +196,20 @@ align-items:center;
 
 transition:.3s;
 }
-
+  
+#cardA{background:#d63031;}
+#cardB{background:#e17055;}
+#cardC{background:#fdcb6e;color:#111;}
+#cardD{background:#00b894;}
+#cardE{background:#00cec9;}
+#cardF{background:#0984e3;}
+#cardG{background:#6c5ce7;}
+#cardH{background:#8e44ad;}
+#cardI{background:#e84393;}
+#cardJ{background:#636e72;}
 .card .meja{font-size:18px;font-weight:600}
 .card .antri{
-font-size:46px;
+font-size:58px;
 font-weight:900;
 line-height:1;
 }
@@ -280,7 +306,17 @@ to{transform:translateX(-100%)}
     <div class="info emboss">SILAHKAN MENUJU MEJA PELAYANAN</div>
   </div>
 </div>
+<div class="info emboss">SILAHKAN MENUJU MEJA PELAYANAN</div>
 
+<div id="petugasAktif"
+style="
+font-size:32px;
+font-weight:700;
+color:white;
+text-shadow:0 0 15px rgba(255,255,255,.5);
+">
+-
+</div>
 <div class="cards" id="cards"></div>
 
 <div class="marquee">
