@@ -3,227 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>OPERATOR ANTREAN SPMB</title>
 
+<!-- Halaman ini untuk PC desktop operator (bukan videotron). Orientasi landscape. -->
+
 <style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
+body {
+  background: url("./assets/bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  overflow: hidden;
+  color: white;
 }
 
-body{
-background:url("./assets/bg.jpg") no-repeat center center fixed;
-background-size:cover;
-min-height:100vh;
-overflow:hidden;
-color:white;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
 }
 
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(10px);
+.container {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-.container{
-position:relative;
-z-index:2;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
+.panel {
+  width: 100%;
+  max-width: 1100px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.4);
 }
 
-.panel{
-
-width:100%;
-max-width:1100px;
-
-background:rgba(255,255,255,.08);
-
-backdrop-filter:blur(20px);
-
-border:1px solid rgba(255,255,255,.15);
-
-border-radius:30px;
-
-padding:30px;
-
-box-shadow:
-0 10px 40px rgba(0,0,0,.4);
-
+.title {
+  text-align: center;
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  letter-spacing: 2px;
 }
 
-.title{
-
-text-align:center;
-
-font-size:38px;
-
-font-weight:800;
-
-margin-bottom:25px;
-
-letter-spacing:2px;
-
+.display {
+  text-align: center;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(0,0,0,.25);
+  margin-bottom: 25px;
 }
 
-.display{
+.display h2 { font-size: 24px; margin-bottom: 10px; }
 
-text-align:center;
-
-padding:20px;
-
-border-radius:20px;
-
-background:rgba(0,0,0,.25);
-
-margin-bottom:25px;
-
+.nomor {
+  font-size: 90px;
+  font-weight: 900;
+  color: #00ff99;
+  text-shadow: 0 0 25px rgba(0,255,153,.5);
 }
 
-.display h2{
-
-font-size:24px;
-
-margin-bottom:10px;
-
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
-.nomor{
-
-font-size:90px;
-
-font-weight:900;
-
-color:#00ff99;
-
-text-shadow:
-0 0 25px rgba(0,255,153,.5);
-
+.loket {
+  border: none;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  transition: .25s;
 }
 
-.grid{
+.loket:hover { transform: translateY(-3px); }
 
-display:grid;
-
-grid-template-columns:
-repeat(5,1fr);
-
-gap:15px;
-
-margin-bottom:25px;
-
+.active {
+  background: #00ff99 !important;
+  color: black !important;
+  box-shadow: 0 0 20px rgba(0,255,153,.5);
 }
 
-.loket{
+.actions { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
 
-border:none;
-
-padding:20px;
-
-font-size:22px;
-
-font-weight:bold;
-
-border-radius:15px;
-
-cursor:pointer;
-
-background:#2563eb;
-
-color:white;
-
-transition:.25s;
-
+.btn {
+  border: none;
+  padding: 18px 35px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: .25s;
 }
 
-.loket:hover{
+.btn:hover { transform: scale(1.05); }
 
-transform:translateY(-3px);
+.next   { background: #22c55e; color: white; }
+.recall { background: #f59e0b; color: white; }
+.reset  { background: #ef4444; color: white; }
 
+.status {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #cbd5e1;
 }
-
-.active{
-
-background:#00ff99 !important;
-
-color:black !important;
-
-box-shadow:
-0 0 20px rgba(0,255,153,.5);
-
-}
-
-.actions{
-
-display:flex;
-
-justify-content:center;
-
-gap:15px;
-
-flex-wrap:wrap;
-
-}
-
-.btn{
-
-border:none;
-
-padding:18px 35px;
-
-font-size:20px;
-
-font-weight:bold;
-
-border-radius:15px;
-
-cursor:pointer;
-
-transition:.25s;
-
-}
-
-.btn:hover{
-
-transform:scale(1.05);
-
-}
-
-.next{
-background:#22c55e;
-color:white;
-}
-
-.recall{
-background:#f59e0b;
-color:white;
-}
-
-.reset{
-background:#ef4444;
-color:white;
-}
-
-.status{
-
-margin-top:20px;
-
-text-align:center;
-
-font-size:18px;
-
-color:#cbd5e1;
-
-}
-
 </style>
 </head>
 
@@ -232,238 +130,103 @@ color:#cbd5e1;
 <div class="overlay"></div>
 
 <div class="container">
+  <div class="panel">
+    <div class="title">OPERATOR ANTREAN SPMB</div>
 
-<div class="panel">
+    <div class="display">
+      <h2>LOKET AKTIF</h2>
+      <div class="nomor" id="current">---</div>
+    </div>
 
-<div class="title">
-OPERATOR ANTREAN SPMB 2026
-</div>
+    <!-- Tombol loket diisi otomatis dari config.js lewat script di bawah -->
+    <div class="grid" id="gridLoket"></div>
 
-<div class="display">
+    <div class="actions">
+      <button class="btn next" onclick="nextCallOperator()">▶ NEXT</button>
+      <button class="btn recall" onclick="recallCallOperator()">🔊 RECALL</button>
+      <button class="btn reset" onclick="resetOperator()">⛔ RESET</button>
+    </div>
 
-<h2>LOKET AKTIF</h2>
-
-<div class="nomor" id="current">
----
-</div>
-
-</div>
-
-<div class="grid">
-
-<button id="btnA" class="loket" onclick="setLoket('A')">MEJA A</button>
-<button id="btnB" class="loket" onclick="setLoket('B')">MEJA B</button>
-<button id="btnC" class="loket" onclick="setLoket('C')">MEJA C</button>
-<button id="btnD" class="loket" onclick="setLoket('D')">MEJA D</button>
-<button id="btnE" class="loket" onclick="setLoket('E')">MEJA E</button>
-
-<button id="btnF" class="loket" onclick="setLoket('F')">MEJA F</button>
-<button id="btnG" class="loket" onclick="setLoket('G')">MEJA G</button>
-<button id="btnH" class="loket" onclick="setLoket('H')">MEJA H</button>
-<button id="btnI" class="loket" onclick="setLoket('I')">MEJA I</button>
-<button id="btnJ" class="loket" onclick="setLoket('J')">MEJA J</button>
-
-</div>
-
-<div class="actions">
-
-<button class="btn next"
-onclick="nextCallOperator()">
-▶ NEXT
-</button>
-
-<button class="btn recall"
-onclick="recallCallOperator()">
-🔊 RECALL
-</button>
-
-<button class="btn reset"
-onclick="resetOperator()">
-⛔ RESET
-</button>
-
-</div>
-
-<div class="status">
-Realtime Connected To Firebase
-</div>
-
-</div>
-
+    <div class="status">Realtime Connected To Firebase</div>
+  </div>
 </div>
 
 <script type="module">
-
 import {
+  nextCall,
+  recallCall,
+  resetLoket,
+  getCounter,
+  playSound,
+  daftarLoket,
+} from "./js/app.js";
 
-nextCall,
-recallCall,
-resetLoket,
-getCounter,
-playSound
+let loket = "-";
+let counter = 0;
 
-}
-from "./app.js";
+const current = document.getElementById("current");
+const gridLoket = document.getElementById("gridLoket");
 
-let loket="-";
-let counter=0;
-
-const current =
-document.getElementById(
-"current"
-);
-
-/* ==========================
-DISPLAY
-========================== */
-
-function updateDisplay(){
-
-if(loket=="-"){
-
-current.innerText="---";
-return;
-
-}
-
-current.innerText =
-`${loket}-${String(counter)
-.padStart(3,"0")}`;
-
-}
-
-/* ==========================
-HIGHLIGHT
-========================== */
-
-function highlight(){
-
-document
-.querySelectorAll(".loket")
-.forEach(btn=>{
-
-btn.classList.remove(
-"active"
-);
-
+/* BUAT TOMBOL LOKET DARI CONFIG.JS (via app.js) */
+daftarLoket.forEach((k) => {
+  const btn = document.createElement("button");
+  btn.id = "btn" + k;
+  btn.className = "loket";
+  btn.textContent = "MEJA " + k;
+  btn.onclick = () => setLoket(k);
+  gridLoket.appendChild(btn);
 });
 
-if(loket!=="-"){
-
-document
-.getElementById(
-"btn"+loket
-)
-.classList.add(
-"active"
-);
-
+function updateDisplay() {
+  if (loket === "-") {
+    current.innerText = "---";
+    return;
+  }
+  current.innerText = `${loket}-${String(counter).padStart(3, "0")}`;
 }
 
+function highlight() {
+  document.querySelectorAll(".loket").forEach((btn) => btn.classList.remove("active"));
+  if (loket !== "-") {
+    document.getElementById("btn" + loket)?.classList.add("active");
+  }
 }
 
-/* ==========================
-SET LOKET
-========================== */
-
-window.setLoket =
-async function(l){
-
-loket = l;
-
-counter =
-await getCounter(
-loket
-);
-
-updateDisplay();
-
-highlight();
-
+window.setLoket = async function (l) {
+  loket = l;
+  counter = await getCounter(loket);
+  updateDisplay();
+  highlight();
 };
 
-/* ==========================
-NEXT
-========================== */
-
-window.nextCallOperator =
-async function(){
-
-if(loket=="-"){
-
-alert(
-"Pilih meja terlebih dahulu"
-);
-
-return;
-
-}
-
-const nomor =
-await nextCall(
-loket
-);
-
-counter++;
-
-updateDisplay();
-
-playSound(
-"./sounds/ding.mp3"
-);
-
+window.nextCallOperator = async function () {
+  if (loket === "-") {
+    alert("Pilih meja terlebih dahulu");
+    return;
+  }
+  await nextCall(loket);
+  counter++;
+  updateDisplay();
+  playSound("./sounds/ding.mp3");
 };
 
-/* ==========================
-RECALL
-========================== */
-
-window.recallCallOperator =
-async function(){
-
-await recallCall();
-
-playSound(
-"./sounds/panggilan.mp3"
-);
-
+window.recallCallOperator = async function () {
+  await recallCall();
+  playSound("./sounds/panggilan.mp3");
 };
 
-/* ==========================
-RESET
-========================== */
-
-window.resetOperator =
-async function(){
-
-if(loket=="-"){
-
-alert(
-"Pilih meja terlebih dahulu"
-);
-
-return;
-
-}
-
-if(
-!confirm(
-`Reset meja ${loket}?`
-)
-) return;
-
-await resetLoket(
-loket
-);
-
-counter = 0;
-
-updateDisplay();
-
+window.resetOperator = async function () {
+  if (loket === "-") {
+    alert("Pilih meja terlebih dahulu");
+    return;
+  }
+  if (!confirm(`Reset meja ${loket}?`)) return;
+  await resetLoket(loket);
+  counter = 0;
+  updateDisplay();
 };
 
 updateDisplay();
-
 </script>
 
 </body>
