@@ -3,308 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIDEOTRON ANTREAN SPMB 2026</title>
+<title>VIDEOTRON ANTREAN SPMB</title>
+
+<!--
+  HALAMAN INI UNTUK DITAMPILKAN DI PC DESKTOP,
+  LAYAR DI-DUPLICATE/DI-MIRROR KE VIDEOTRON/PROYEKTOR.
+  Orientasi: LANDSCAPE (lebar), didesain untuk resolusi
+  desktop umum (1366x768 s/d 1920x1080).
+  Buka di browser lalu tekan F11 untuk fullscreen.
+-->
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Poppins', Segoe UI, Arial, sans-serif;
+  background: url("./assets/scc.jpg") center/cover no-repeat;
 }
 
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-font-family:'Poppins',Segoe UI,Arial,sans-serif;
-background:url("./assets/scc.jpg") center/cover no-repeat;
-}
-.petugasAktif{
-font-size:34px;
-font-weight:700;
-margin-top:10px;
-color:#fff;
-
-text-shadow:
-0 0 10px rgba(255,255,255,.6),
-0 0 20px rgba(255,255,255,.3);
-}
-/* OVERLAY */
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(6px);
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
 }
 
-/* EMBOSS TEXT */
-.emboss{
-color:#fff;
-text-shadow:
-1px 1px 0 rgba(0,0,0,0.6),
-2px 2px 4px rgba(0,0,0,0.4),
--1px -1px 1px rgba(255,255,255,0.1);
+.emboss {
+  color: #fff;
+  text-shadow:
+    1px 1px 0 rgba(0,0,0,0.6),
+    2px 2px 4px rgba(0,0,0,0.4),
+    -1px -1px 1px rgba(255,255,255,0.1);
 }
 
-/* LOGO */
-.logo{
-position:absolute;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-width:150px;
-z-index:10;
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  z-index: 10;
 }
 
-/* CLOCK */
-.clock{
-font-size:72px;
-font-weight:900;
-
-letter-spacing:4px;
-
-filter:
-drop-shadow(0 0 8px rgba(255,255,255,.4));
-font-weight:900;
-text-align:center;
-margin-top:20px;
-
-background:linear-gradient(90deg,#ff00ff,#00ffff,#39ff14,#ffcc00);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-animation:rgb 4s linear infinite;
+.clock {
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-align: center;
+  margin-top: 20px;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,.4));
+  background: linear-gradient(90deg, #ff00ff, #00ffff, #39ff14, #ffcc00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rgb 4s linear infinite;
 }
 
-@keyframes rgb{
-from{filter:hue-rotate(0)}
-to{filter:hue-rotate(360deg)}
+@keyframes rgb {
+  from { filter: hue-rotate(0); }
+  to   { filter: hue-rotate(360deg); }
 }
 
-/* WRAPPER */
-.wrapper{
-position:relative;
-z-index:2;
-
-width:100%;
-height:100%;
-
-display:flex;
-flex-direction:column;
-align-items:center;
-
-padding-top:110px;
-padding-bottom:180px;
-}
-  
-.title{
-font-size:42px;
-font-weight:900;
-margin-top:15px;
+.wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 110px;
+  padding-bottom: 180px;
 }
 
-.subtitle{
-font-size:22px;
-font-weight:600;
-margin-bottom:20px;
-opacity:.95;
-}
-  
-/* MAIN */
-.main{
-width:92%;
-max-width:1800px;
-
-padding:35px 50px;
-
-border-radius:40px;
-
-background:
-linear-gradient(
-180deg,
-rgba(255,255,255,.10),
-rgba(255,255,255,.05)
-);
-
-border:2px solid rgba(255,255,255,.25);
-
-backdrop-filter:blur(20px);
-
-box-shadow:
-0 20px 50px rgba(0,0,0,.35);
-
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
+.subtitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  opacity: .95;
 }
 
-/* TEXT */
-.info{
-font-size:42px;
-font-weight:600;
-margin-bottom:10px;
+.main {
+  width: 92%;
+  max-width: 1800px;
+  padding: 35px 50px;
+  border-radius: 40px;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  border: 2px solid rgba(255,255,255,.25);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.nomor{
-font-size:clamp(140px,12vw,240px);
-font-weight:900;
-line-height:1;
-letter-spacing:8px;
-
-color:#00ff99;
-
-text-shadow:
-0 0 20px #00ff99,
-0 0 50px #00ff99,
-0 0 100px rgba(0,255,153,.4);
-
-animation:nomorPulse 2s infinite;
+.info {
+  font-size: 42px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-@keyframes nomorPulse{
-0%,100%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.04);
-}
-}
-
-/* GRID 10 MEJA */
-.cards{
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
-width:96%;
-display:grid;
-grid-template-columns:repeat(10,1fr);
-gap:12px;
+.nomor {
+  font-size: clamp(140px, 12vw, 240px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 8px;
+  color: #00ff99;
+  text-shadow:
+    0 0 20px #00ff99,
+    0 0 50px #00ff99,
+    0 0 100px rgba(0,255,153,.4);
+  animation: nomorPulse 2s infinite;
 }
 
-.card{
-height:135px;
-
-padding:12px;
-
-border-radius:16px;
-
-background:rgba(255,255,255,.12);
-
-border:1px solid rgba(255,255,255,.25);
-
-backdrop-filter:blur(12px);
-
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-
-transition:.3s;
-}
-  
-#cardA{background:#d63031;}
-#cardB{background:#e17055;}
-#cardC{background:#fdcb6e;color:#111;}
-#cardD{background:#00b894;}
-#cardE{background:#00cec9;}
-#cardF{background:#0984e3;}
-#cardG{background:#6c5ce7;}
-#cardH{background:#8e44ad;}
-#cardI{background:#e84393;}
-#cardJ{background:#636e72;}
-.card .meja{font-size:18px;font-weight:600}
-.card .antri{
-font-size:58px;
-font-weight:900;
-line-height:1;
-}
-.card .petugas{font-size:12px;opacity:0.9}
-
-.card:hover{transform:scale(1.05)}
-
-.active{
-border:4px solid #fff;
-
-box-shadow:
-0 0 25px #fff,
-0 0 60px #00ff99,
-0 0 100px #00ff99;
-
-filter:brightness(1.3);
-
-transform:scale(1.1);
-
-animation:pulseActive 1s infinite;
+@keyframes nomorPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
 }
 
-@keyframes pulseActive{
-0%,100%{
-transform:scale(1.08);
-}
-50%{
-transform:scale(1.13);
-}
-}
-.flash{
-animation:flashCall 1s ease 3;
+.petugasAktif {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin-top: 10px;
+  text-shadow: 0 0 15px rgba(255,255,255,.5);
 }
 
-@keyframes flashCall{
-0%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.08);
-}
-100%{
-transform:scale(1);
-}
-}
-  
-/* MARQUEE */
-.marquee{
-position:absolute;
-bottom:0;
-left:0;
-width:100%;
-background:rgba(0,0,0,0.75);
-padding:14px;
-font-size:28px;
-font-weight:700;
-white-space:nowrap;
-overflow:hidden;
-color:#fff;
-}
-  
-.marquee{
-height:55px;
-
-display:flex;
-align-items:center;
-
-background:
-linear-gradient(
-90deg,
-rgba(0,0,0,.85),
-rgba(20,20,20,.95),
-rgba(0,0,0,.85)
-);
-
-font-size:24px;
-}
-.marquee span{
-display:inline-block;
-padding-left:100%;
-animation:marquee 18s linear infinite;
+.cards {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
 }
 
-@keyframes marquee{
-from{transform:translateX(0)}
-to{transform:translateX(-100%)}
+.card {
+  height: 135px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: .3s;
+}
+
+#cardA { background: #d63031; }
+#cardB { background: #e17055; }
+#cardC { background: #fdcb6e; color: #111; }
+#cardD { background: #00b894; }
+#cardE { background: #00cec9; }
+#cardF { background: #0984e3; }
+#cardG { background: #6c5ce7; }
+#cardH { background: #8e44ad; }
+#cardI { background: #e84393; }
+#cardJ { background: #636e72; }
+
+.card .meja   { font-size: 18px; font-weight: 600; }
+.card .antri  { font-size: 58px; font-weight: 900; line-height: 1; }
+.card .petugas{ font-size: 12px; opacity: 0.9; }
+
+.card:hover { transform: scale(1.05); }
+
+.active {
+  border: 4px solid #fff;
+  box-shadow: 0 0 25px #fff, 0 0 60px #00ff99, 0 0 100px #00ff99;
+  filter: brightness(1.3);
+  transform: scale(1.1);
+  animation: pulseActive 1s infinite;
+}
+
+@keyframes pulseActive {
+  0%, 100% { transform: scale(1.08); }
+  50%      { transform: scale(1.13); }
+}
+
+.flash { animation: flashCall 1s ease 3; }
+
+@keyframes flashCall {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.marquee {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(0,0,0,.85), rgba(20,20,20,.95), rgba(0,0,0,.85));
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 18s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
 }
 </style>
 </head>
@@ -312,206 +229,131 @@ to{transform:translateX(-100%)}
 <body>
 
 <div class="overlay"></div>
-<img src="./assets/logo.png" class="logo">
+<img src="./assets/logo.png" class="logo" alt="Logo">
 
 <div class="wrapper">
   <div class="clock" id="clock"></div>
 
   <div class="main">
-    <div class="info emboss">VERIFIKASI SPMB SMAN 1 SOOKO</div>
-    <div class="subtitle emboss">TAHUN PELAJARAN 2026/2027</div>
+    <div class="info emboss">VERIFIKASI SPMB <span id="namaInstansi"></span></div>
+    <div class="subtitle emboss">TAHUN PELAJARAN <span id="tahunAjaran"></span></div>
     <div class="info emboss">NOMOR ANTREAN</div>
     <div class="nomor" id="nomor">---</div>
-    <div id="petugasAktif" 
-    style="
-    font-size:32px;
-    font-weight:700;
-    color:white;
-    text-shadow:0 0 15px rgba(255,255,255,.5);
-    ">
-    -
+    <div class="petugasAktif emboss" id="petugasAktif">-</div>
     <div class="info emboss">SILAHKAN MENUJU MEJA PELAYANAN</div>
   </div>
-</div>
-<div class="info emboss">SILAHKAN MENUJU MEJA PELAYANAN</div>
 
-<div id="petugasAktif"
-style="
-font-size:32px;
-font-weight:700;
-color:white;
-text-shadow:0 0 15px rgba(255,255,255,.5);
-">
--
+  <div class="cards" id="cards"></div>
 </div>
-<div class="cards" id="cards"></div>
 
 <div class="marquee">
-  <span>SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB 2026 SMAN 1 SOOKO MOJOKERTO</span>
+  <span id="marqueeText">SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB</span>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  petugas,
+  listenCurrentCall,
+  listenLoket,
+  initGridPetugas,
+  buildVoiceText,
+} from "./js/app.js";
+import { TAHUN_AJARAN, NAMA_INSTANSI } from "./js/config.js";
 
-/* FIREBASE */
-const firebaseConfig = {
-apiKey:"AIzaSyAW_Wh9ttPQ8vnwgnQFUMMEDc5QqwJe3GQ",
-authDomain:"no-antrean-spmb.firebaseapp.com",
-databaseURL:"https://no-antrean-spmb-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"no-antrean-spmb",
-storageBucket:"no-antrean-spmb.firebasestorage.app",
-messagingSenderId:"357121462512",
-appId:"1:3571214628:web:8fd937bc2a8d2a3894b235"
-};
+/* ISI TEKS DARI CONFIG (config.js) */
+document.getElementById("tahunAjaran").textContent = TAHUN_AJARAN;
+document.getElementById("namaInstansi").textContent = NAMA_INSTANSI;
+document.getElementById("marqueeText").textContent =
+  `SELAMAT DATANG DI LAYANAN VERIFIKASI SPMB ${NAMA_INSTANSI}`;
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-/* STATE */
+/* STATE SUARA */
 let audioUnlocked = false;
 let voiceQueue = [];
 let isSpeaking = false;
 let lastCallId = "";
 
-/* PETUGAS */
-const petugas = {
-A:"Pak Rahmad",B:"Pak Bayu",C:"Pak Sunariyadi",D:"Bu Tasya",E:"Bu Eva",
-F:"Pak Mujib",G:"Bu Ria",H:"Pak Raka",I:"Pak Chozin",J:"Bu Ita"
-};
+/* GRID KARTU LOKET (dibangun dari app.js, sumber data: config.js) */
+initGridPetugas(document.getElementById("cards"));
 
-/* INIT GRID */
-const cards = document.getElementById("cards");
-
-function initGrid(){
-Object.keys(petugas).forEach(k=>{
-const el=document.createElement("div");
-el.className="card";
-el.id="card"+k;
-el.innerHTML=`
-<div class="meja">MEJA ${k}</div>
-<div class="antri" id="n${k}">000</div>
-<div class="petugas">${petugas[k]}</div>
-`;
-cards.appendChild(el);
-});
-}
-initGrid();
-
-/* AUDIO UNLOCK */
-document.body.addEventListener("click",()=>{
-speechSynthesis.speak(new SpeechSynthesisUtterance("ready"));
-audioUnlocked=true;
-},{once:true});
+/* AUDIO UNLOCK — browser butuh 1x interaksi user sebelum bisa bicara */
+document.body.addEventListener("click", () => {
+  speechSynthesis.speak(new SpeechSynthesisUtterance("ready"));
+  audioUnlocked = true;
+}, { once: true });
 
 /* VOICE QUEUE */
-function speakQueue(text){
-voiceQueue.push(text);
-processQueue();
+function speakQueue(text) {
+  voiceQueue.push(text);
+  processQueue();
 }
 
-function processQueue(){
-if(isSpeaking || !audioUnlocked) return;
-if(voiceQueue.length===0) return;
+function processQueue() {
+  if (isSpeaking || !audioUnlocked) return;
+  if (voiceQueue.length === 0) return;
 
-isSpeaking=true;
-const text=voiceQueue.shift();
+  isSpeaking = true;
+  const text = voiceQueue.shift();
 
-const u=new SpeechSynthesisUtterance(text);
-const voices=speechSynthesis.getVoices();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
 
-u.voice=voices.find(v=>v.lang.includes("id"))||voices[0];
-u.lang="id-ID";
-u.rate=0.68;
-u.pitch=1;
-u.volume=1;
+  u.voice = voices.find((v) => v.lang.includes("id")) || voices[0];
+  u.lang = "id-ID";
+  u.rate = 0.68;
+  u.pitch = 1;
+  u.volume = 1;
 
-u.onend=()=>{
-isSpeaking=false;
-setTimeout(processQueue,500);
-};
+  u.onend = () => {
+    isSpeaking = false;
+    setTimeout(processQueue, 500);
+  };
 
-speechSynthesis.speak(u);
+  speechSynthesis.speak(u);
 }
 
-/* VOICE FORMAT FIX */
-function buildVoice(data){
-
-const nomor =
-(data.nomor || "")
-.replace("-", " ");
-
-const nama =
-petugas[data.loket] || "petugas layanan";
-
-return `
-Perhatian.
-Nomor antrean ${nomor}.
-Silakan menuju meja ${data.loket}.
-Untuk layanan verifikasi S P M B dua ribu dua enam.
-Dilayani oleh ${nama}.
-Terima kasih.
-`;
-}
-  
-/* FIREBASE LOKET */
-onValue(ref(db,"loket"),snap=>{
-const data=snap.val()||{};
-Object.keys(petugas).forEach(k=>{
-document.getElementById("n"+k).textContent=data[k]||"000";
-});
+/* UPDATE ANGKA DI SETIAP KARTU LOKET */
+listenLoket((data) => {
+  const values = data || {};
+  Object.keys(petugas).forEach((k) => {
+    const el = document.getElementById("n" + k);
+    if (el) el.textContent = values[k] || "000";
+  });
 });
 
-/* CALL ENGINE */
-onValue(ref(db,"current_call"),snap=>{
-const data=snap.val();
-if(!data)return;
+/* CALL ENGINE — panggilan aktif */
+listenCurrentCall((data) => {
+  if (!data) return;
 
-document.getElementById("nomor").textContent=data.nomor||"---";
-const nomorEl =
-document.getElementById("nomor");
+  const nomorEl = document.getElementById("nomor");
+  nomorEl.textContent = data.nomor || "---";
 
-nomorEl.classList.remove("flash");
+  nomorEl.classList.remove("flash");
+  void nomorEl.offsetWidth; // restart animasi flash
+  nomorEl.classList.add("flash");
 
-void nomorEl.offsetWidth;
+  document.querySelectorAll(".card").forEach((c) => c.classList.remove("active"));
+  if (data.loket) {
+    document.getElementById("card" + data.loket)?.classList.add("active");
+  }
 
-nomorEl.classList.add("flash");
-document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
-if(data.loket){
-document.getElementById("card"+data.loket)?.classList.add("active");
-}
-  
-const namaPetugas =
-petugas[data.loket] || "-";
+  const namaPetugas = petugas[data.loket] || "-";
+  document.getElementById("petugasAktif").textContent =
+    data.loket && data.loket !== "-" ? `MEJA ${data.loket} • ${namaPetugas}` : "-";
 
-document.getElementById("petugasAktif")
-.textContent =
-`MEJA ${data.loket} • ${namaPetugas}`;
-  
-const id=data.nomor+"_"+data.updatedAt;
-if(id===lastCallId)return;
-lastCallId=id;
+  const id = data.nomor + "_" + data.updatedAt;
+  if (id === lastCallId) return;
+  lastCallId = id;
 
-setTimeout(()=>{
-speakQueue(buildVoice(data));
-},500);
+  setTimeout(() => {
+    speakQueue(buildVoiceText(data));
+  }, 500);
 });
 
- const nomorEl =
-document.getElementById("nomor");
-
-nomorEl.classList.remove("flash");
-
-void nomorEl.offsetWidth;
-
-nomorEl.classList.add("flash");
-  
 /* CLOCK */
-setInterval(()=>{
-document.getElementById("clock").textContent=
-new Date().toLocaleTimeString("id-ID");
-},1000);
-
+setInterval(() => {
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString("id-ID");
+}, 1000);
 </script>
 
 </body>
