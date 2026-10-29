@@ -3,7 +3,7 @@
 // HELPER ANTREAN SPMB
 // =====================================
 
-import { db, ref, set, get, update, onValue } from "./firebase.js";
+import { db, ref, set, get, update, onValue, runTransaction } from "./firebase.js";
 import { petugas, daftarLoket } from "./config.js";
 
 // Diekspor ulang supaya file lain (index.html, operator.html,
@@ -24,9 +24,17 @@ export async function getCurrentCall() {
 // GET COUNTER LOKET
 // =====================================
 
+function assertLoket(loket) {
+  if (!daftarLoket.includes(loket)) {
+    throw new Error("Kode loket tidak valid.");
+  }
+}
+
 export async function getCounter(loket) {
+  assertLoket(loket);
   const snap = await get(ref(db, `counter/${loket}`));
-  return snap.exists() ? snap.val() : 0;
+  const value = snap.exists() ? snap.val() : 0;
+  return Number.isSafeInteger(value) && value >= 0 ? value : 0;
 }
 
 // =====================================
@@ -34,6 +42,10 @@ export async function getCounter(loket) {
 // =====================================
 
 export async function setCounter(loket, nomor) {
+  assertLoket(loket);
+  if (!Number.isSafeInteger(nomor) || nomor < 0) {
+    throw new Error("Nomor antrean harus berupa bilangan bulat nonnegatif.");
+  }
   await update(ref(db), {
     [`counter/${loket}`]: nomor,
     [`loket/${loket}`]: String(nomor).padStart(3, "0"),
@@ -45,9 +57,20 @@ export async function setCounter(loket, nomor) {
 // =====================================
 
 export async function nextCall(loket) {
-  let counter = await getCounter(loket);
-  counter++;
+  assertLoket(loket);
 
+  // Transaction atomik mencegah dua operator membaca counter lama
+  // lalu menghasilkan nomor antrean yang sama pada loket yang sama.
+  const result = await runTransaction(ref(db, `counter/${loket}`), (current) => {
+    const value = Number.isSafeInteger(current) && current >= 0 ? current : 0;
+    return value + 1;
+  });
+
+  if (!result.committed) {
+    throw new Error("Nomor antrean gagal diperbarui. Silakan coba lagi.");
+  }
+
+  const counter = result.snapshot.val();
   const nomor = `${loket}-${String(counter).padStart(3, "0")}`;
 
   await update(ref(db), {
@@ -56,7 +79,6 @@ export async function nextCall(loket) {
     "current_call/counter": counter,
     "current_call/callType": "NEXT",
     "current_call/updatedAt": Date.now(),
-    [`counter/${loket}`]: counter,
     [`loket/${loket}`]: String(counter).padStart(3, "0"),
   });
 
@@ -82,6 +104,7 @@ export async function recallCall() {
 // =====================================
 
 export async function resetLoket(loket) {
+  assertLoket(loket);
   await update(ref(db), {
     [`counter/${loket}`]: 0,
     [`loket/${loket}`]: "000",
@@ -103,14 +126,18 @@ export async function resetAll() {
     displayData[k] = "000";
   });
 
-  await set(ref(db, "counter"), counterData);
-  await set(ref(db, "loket"), displayData);
-  await set(ref(db, "current_call"), {
-    nomor: "---",
-    loket: "-",
-    counter: 0,
-    callType: "RESET",
-    updatedAt: Date.now(),
+  // Satu multi-location update menghindari keadaan setengah-reset
+  // jika salah satu penulisan terpisah gagal.
+  await update(ref(db), {
+    counter: counterData,
+    loket: displayData,
+    current_call: {
+      nomor: "---",
+      loket: "-",
+      counter: 0,
+      callType: "RESET",
+      updatedAt: Date.now(),
+    },
   });
 }
 
@@ -190,11 +217,21 @@ export function initGridPetugas(containerEl) {
     const el = document.createElement("div");
     el.className = "card";
     el.id = "card" + k;
-    el.innerHTML = `
-      <div class="meja">MEJA ${k}</div>
-      <div class="antri" id="n${k}">000</div>
-      <div class="petugas">${petugas[k]}</div>
-    `;
+
+    const meja = document.createElement("div");
+    meja.className = "meja";
+    meja.textContent = `MEJA ${k}`;
+
+    const antri = document.createElement("div");
+    antri.className = "antri";
+    antri.id = "n" + k;
+    antri.textContent = "000";
+
+    const namaPetugas = document.createElement("div");
+    namaPetugas.className = "petugas";
+    namaPetugas.textContent = petugas[k] || "Petugas";
+
+    el.append(meja, antri, namaPetugas);
     containerEl.appendChild(el);
   });
 }
