@@ -6,7 +6,8 @@ Sistem antrean digital untuk layanan verifikasi SPMB, realtime lewat Firebase Re
 |---|---|---|
 | `index.html` | Pengunjung/peserta | **Videotron / proyektor** — layar PC di-*duplicate* (mirror) ke proyektor. Orientasi landscape. |
 | `operator.html` | Petugas loket | PC desktop operator, untuk memanggil nomor antrean |
-| `admin.html` | Panitia/admin | PC desktop panitia, untuk monitoring statistik & reset antrean |\n| `printer.html` | Petugas pendaftaran | PC yang terhubung ke printer termal 58 mm untuk mengambil dan mencetak tiket |
+| `admin.html` | Panitia/admin | PC desktop panitia, untuk monitoring statistik & reset antrean |
+| `printer.html` | Petugas pendaftaran | PC yang terhubung ke printer termal 58 mm untuk mengambil dan mencetak tiket |
 
 ## Cara Menjalankan
 
@@ -28,7 +29,8 @@ Lalu buka `index.html`, `operator.html`, `admin.html` masing-masing di tab/PC be
 no-antreanSPMB/
 ├── index.html          # Videotron / display utama
 ├── operator.html        # Panel petugas loket
-├── admin.html            # Panel panitia/admin\n├── printer.html          # Ambil nomor & cetak tiket termal
+├── admin.html            # Panel panitia/admin
+├── printer.html          # Ambil nomor & cetak tiket termal
 ├── js/
 │   ├── config.js         # ⭐ SATU-SATUNYA tempat ganti data tiap tahun
 │   ├── firebase.js        # Koneksi & inisialisasi Firebase
