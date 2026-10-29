@@ -217,6 +217,25 @@ body[data-theme="dark"] .theme-toggle{background:rgba(7,18,35,.76)!important;bor
 #accessGate p{color:#e0eaf6!important}
 #accessGate input{background:rgba(2,8,20,.88)!important;border-color:rgba(203,224,245,.42)!important;box-shadow:inset 0 1px 4px rgba(0,0,0,.28)}
 
+
+/* ADMIN CONTROL — qwe.jpg background */
+body:not([data-theme="light"]) {
+  background:
+    linear-gradient(135deg, rgba(3,10,24,.80), rgba(5,17,34,.66), rgba(2,8,19,.82)),
+    url('./assets/qwe.jpg') center / cover fixed no-repeat !important;
+}
+body[data-theme="light"] {
+  background:
+    linear-gradient(135deg, rgba(8,24,42,.62), rgba(10,30,48,.50)),
+    url('./assets/qwe.jpg') center / cover fixed no-repeat !important;
+}
+body[data-theme="light"] .header h1,
+body[data-theme="light"] .header p,
+body[data-theme="light"] .footer {
+  color: #fff !important;
+  text-shadow: 0 2px 12px rgba(0,0,0,.65);
+}
+
 </style>
 </head>
 
