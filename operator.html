@@ -122,6 +122,23 @@ body {
   font-size: 18px;
   color: #cbd5e1;
 }
+
+/* VISUAL SYSTEM: SMANSASOO QUEUE — responsive desktop/tablet/mobile */
+:root{color-scheme:dark;--mint:#00ff99;--line:rgba(255,255,255,.15)}
+body{overflow:auto;background:radial-gradient(ellipse at top,#15365a 0%,#0b1930 48%,#050b16 100%);font-family:'Segoe UI',Arial,sans-serif}
+.container{min-height:100vh;height:auto;padding:clamp(12px,2.5vw,28px);align-items:flex-start}
+.panel{width:100%;max-width:1100px;margin:auto;padding:clamp(16px,3vw,30px);border-radius:clamp(18px,3vw,30px);background:rgba(255,255,255,.075);border:1px solid var(--line);box-shadow:0 18px 50px #0004}
+.title{font-size:clamp(22px,3.5vw,38px);letter-spacing:.01em;margin-bottom:18px}
+.display{padding:clamp(14px,2.5vw,24px);margin-bottom:18px}.display h2{font-size:clamp(16px,2.2vw,24px)}
+.nomor{font-size:clamp(42px,9vw,90px);overflow-wrap:anywhere;letter-spacing:-.025em}
+.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,1.3vw,15px);margin-bottom:18px}
+.loket{min-width:0;min-height:54px;padding:clamp(12px,1.8vw,20px);font-size:clamp(15px,2vw,22px);touch-action:manipulation}
+.actions{gap:12px}.btn{min-height:52px;padding:14px clamp(16px,3vw,35px);font-size:clamp(16px,2vw,20px);touch-action:manipulation}
+.status{font-size:clamp(14px,1.7vw,18px);line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.container{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.actions .btn{flex:1;min-width:100%}.display{margin-bottom:14px}}
+@media(max-width:360px){.grid{grid-template-columns:1fr}.title{font-size:22px}}
+
 </style>
 </head>
 
