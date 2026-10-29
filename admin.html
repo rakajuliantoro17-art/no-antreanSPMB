@@ -136,7 +136,12 @@ body {
   <button class="btn btn-danger" onclick="resetAllData()">RESET SEMUA LOKET</button>
 </div>
 
-<div class="actions" style="margin-top:0">\n  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">NOMOR TERAKHIR</div><div id="lastIssued" class="nomor">000</div></div>\n  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">MENUNGGU</div><div id="waitingCount" class="nomor">0</div></div>\n  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">SUDAH DILAYANI</div><div id="servedCount" class="nomor">0</div></div>\n</div>\n<div id="monitor" class="monitor"></div>
+<div class="actions" style="margin-top:0">
+  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">NOMOR TERAKHIR</div><div id="lastIssued" class="nomor">000</div></div>
+  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">MENUNGGU</div><div id="waitingCount" class="nomor">0</div></div>
+  <div class="current" style="margin:0;min-width:180px"><div class="currentTitle">SUDAH DILAYANI</div><div id="servedCount" class="nomor">0</div></div>
+</div>
+<div id="monitor" class="monitor"></div>
 
 <div class="footer">Realtime Firebase Monitoring</div>
 
@@ -183,7 +188,14 @@ listenLoket((data) => {
   });
 });
 
-listenQueueMeta((meta) => { document.getElementById("lastIssued").textContent = String(meta.lastIssued || 0).padStart(3, "0"); });\nlistenTickets((tickets) => {\n  const list = Object.values(tickets || {});\n  document.getElementById("waitingCount").textContent = list.filter((t) => t.status === "waiting").length;\n  document.getElementById("servedCount").textContent = list.filter((t) => t.status === "completed").length;\n});\n\n/* RESET DISPLAY (hanya tampilan panggilan aktif) */
+listenQueueMeta((meta) => { document.getElementById("lastIssued").textContent = String(meta.lastIssued || 0).padStart(3, "0"); });
+listenTickets((tickets) => {
+  const list = Object.values(tickets || {});
+  document.getElementById("waitingCount").textContent = list.filter((t) => t.status === "waiting").length;
+  document.getElementById("servedCount").textContent = list.filter((t) => t.status === "completed").length;
+});
+
+/* RESET DISPLAY (hanya tampilan panggilan aktif) */
 window.resetDisplay = async () => {
   if (!confirm("Reset display videotron?")) return;
 
