@@ -316,7 +316,7 @@ listenLoket((data) => {
   const values = data || {};
   Object.keys(petugas).forEach((k) => {
     const el = document.getElementById("n" + k);
-    if (el) el.textContent = values[k] || "000";
+    if (el) el.textContent = values[k] || "---";
   });
 });
 
