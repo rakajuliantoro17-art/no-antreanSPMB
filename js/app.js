@@ -72,8 +72,7 @@ export async function nextCall(loket) {
     };
   });
   if (!result.committed) throw new Error("Antrean kosong atau panggilan gagal. Periksa koneksi lalu coba lagi.");
-  const current = result.snapshot.val()?.current_call;
-  return current?.nomor || null;
+  return result.snapshot.val()?.active_by_loket?.[loket] || null;
 }
 
 export async function recallCall(loket) {
