@@ -8,6 +8,30 @@ export { petugas, daftarLoket };
 const pad = (n) => String(n).padStart(3, "0");
 const ticketId = (n) => `SPMB-${pad(n)}`;
 
+// Semua tanggal operasional antrean menggunakan zona waktu WIB.
+function jakartaDateParts(timestamp = Date.now()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+  }).formatToParts(new Date(timestamp));
+  return Object.fromEntries(parts.filter((p) => p.type !== "literal").map((p) => [p.type, p.value]));
+}
+function getServiceDate(timestamp = Date.now()) {
+  const p = jakartaDateParts(timestamp);
+  const date = `${p.year}-${p.month}-${p.day}`;
+  if (Number(p.hour) < 14 || (Number(p.hour) === 14 && Number(p.minute) === 0)) return date;
+  const next = new Date(Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day) + 1));
+  return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, "0")}-${String(next.getUTCDate()).padStart(2, "0")}`;
+}
+function serviceDateForTicket(ticket) {
+  if (ticket?.serviceDate) return ticket.serviceDate;
+  return ticket?.createdAt ? getServiceDate(ticket.createdAt) : "0000-00-00";
+}
+function todayJakarta() {
+  const p = jakartaDateParts();
+  return `${p.year}-${p.month}-${p.day}`;
+}
+
 export async function getCurrentCall() {
   const snap = await get(ref(db, "current_call"));
   return snap.exists() ? snap.val() : null;
@@ -54,7 +78,7 @@ export async function nextCall(loket) {
       tickets[priorId] = { ...tickets[priorId], status: "completed", completedAt: Date.now() };
     }
     const next = Object.values(tickets)
-      .filter((t) => t && t.status === "waiting")
+      .filter((t) => t && t.status === "waiting" && serviceDateForTicket(t) <= todayJakarta())
       .sort((a,b) => a.sequence - b.sequence)[0];
     if (!next) {
       delete activeByLoket[loket];
