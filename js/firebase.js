@@ -38,7 +38,7 @@ const db = getDatabase(app);
 
 function buildDefaultLoket() {
   const out = {};
-  daftarLoket.forEach((k) => { out[k] = "000"; });
+  daftarLoket.forEach((k) => { out[k] = "---"; });
   return out;
 }
 
