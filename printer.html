@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cetak Nomor Antrean SPMB — SMAN 1 Sooko</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f7;color:#142033;font-family:Arial,sans-serif;padding:24px}
+.wrap{max-width:980px;margin:auto}.panel{background:white;border-radius:18px;padding:28px;box-shadow:0 12px 36px #13213a18}
+h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}.muted{color:#64748b}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
+.stat{padding:18px;border-radius:12px;background:#f1f5f9}.stat strong{display:block;font-size:30px;margin-top:8px}
+button{border:0;border-radius:12px;padding:16px 22px;font-size:17px;font-weight:700;cursor:pointer}
+.primary{background:#0f766e;color:white}.secondary{background:#e2e8f0;color:#0f172a}.actions{display:flex;gap:12px;flex-wrap:wrap}.status{margin-top:16px;min-height:24px;color:#334155}
+.ticket{display:none}
+@media(max-width:600px){body{padding:12px}.panel{padding:18px}.stats{grid-template-columns:1fr}.stat strong{font-size:25px}}
+@media print{
+ @page{size:58mm auto;margin:3mm}
+ body{padding:0;background:white;color:#000}.wrap,.panel,.screen-only{display:none!important}
+ .ticket{display:block;width:52mm;text-align:center;font-family:Arial,sans-serif}
+ .ticket .school{font-size:10pt;font-weight:bold}.ticket .sub{font-size:8pt;margin-top:2mm}
+ .ticket .label{font-size:10pt;margin-top:5mm}.ticket .number{font-size:27pt;font-weight:900;line-height:1.1;margin:3mm 0}
+ .ticket .date{font-size:8pt}.ticket .foot{font-size:8pt;margin-top:4mm;border-top:1px dashed #000;padding-top:3mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap screen-only">
+ <div class="panel">
+  <h1>Dashboard Cetak Nomor Antrean</h1>
+  <p class="muted">SMAN 1 Sooko · SPMB Tahun Pelajaran 2026/2027</p>
+  <p>Tekan tombol untuk mengambil satu nomor baru dari antrean bersama. Nomor tersimpan di Firebase dan akan langsung terlihat oleh operator serta layar videotron.</p>
+  <div class="stats">
+   <div class="stat">Nomor terakhir diterbitkan<strong id="lastIssued">000</strong></div>
+   <div class="stat">Menunggu<strong id="waiting">0</strong></div>
+   <div class="stat">Sudah dilayani<strong id="served">0</strong></div>
+  </div>
+  <div class="actions">
+   <button id="takePrint" class="primary">＋ Ambil & Cetak Nomor</button>
+   <button id="reprint" class="secondary" disabled>Cetak Ulang Tiket Terakhir</button>
+  </div>
+  <div id="status" class="status" role="status">Menghubungkan ke Firebase…</div>
+  <p class="muted">Printer termal 58 mm direkomendasikan. Di dialog cetak, pilih printer termal, ukuran kertas 58 mm, margin minimum, dan matikan header/footer browser. Untuk cetak otomatis tanpa dialog perlu konfigurasi kiosk pada komputer khusus.</p>
+ </div>
+</div>
+<section class="ticket" id="ticket">
+ <div class="school">SMAN 1 SOOKO</div><div class="sub">VERIFIKASI SPMB 2026/2027</div>
+ <div class="label">NOMOR ANTREAN ANDA</div><div class="number" id="ticketNumber">SPMB-000</div>
+ <div class="date" id="ticketDate"></div>
+ <div class="foot">Mohon menunggu hingga nomor Anda dipanggil.<br>Terima kasih.</div>
+</section>
+<script type="module">
+import { takeTicket, listenTickets, listenQueueMeta } from "./js/app.js";
+const $ = (id) => document.getElementById(id);
+let lastTicket = null;
+function renderTicket(id){
+ lastTicket=id; $("ticketNumber").textContent=id;
+ $("ticketDate").textContent=new Date().toLocaleString("id-ID",{dateStyle:"short",timeStyle:"short"});
+ $("reprint").disabled=false;
+}
+function printTicket(id){
+ renderTicket(id);
+ // Menunggu layout print siap sebelum memanggil dialog printer browser.
+ requestAnimationFrame(()=>window.print());
+}
+$("takePrint").addEventListener("click",async()=>{
+ const btn=$("takePrint"); btn.disabled=true; $("status").textContent="Membuat nomor antrean…";
+ try{const id=await takeTicket(); if(!id)throw new Error("Nomor tidak diterima dari Firebase."); printTicket(id); $("status").textContent="Nomor "+id+" berhasil dibuat. Pastikan tiket keluar dari printer.";}
+ catch(e){console.error(e);$("status").textContent="Gagal membuat nomor. Periksa koneksi dan izin Firebase, lalu coba lagi.";}
+ finally{btn.disabled=false;}
+});
+$("reprint").addEventListener("click",()=>{if(lastTicket)printTicket(lastTicket);});
+listenQueueMeta(meta=>{$("lastIssued").textContent=String(meta.lastIssued||0).padStart(3,"0");});
+listenTickets(tickets=>{
+ const list=Object.values(tickets||{});
+ $("waiting").textContent=list.filter(t=>t.status==="waiting").length;
+ $("served").textContent=list.filter(t=>t.status==="completed").length;
+});
+window.addEventListener("afterprint",()=>{$("status").textContent=lastTicket?"Tiket terakhir: "+lastTicket+". Siap melayani antrean berikutnya.":"Siap mencetak.";});
+</script>
+</body></html>
