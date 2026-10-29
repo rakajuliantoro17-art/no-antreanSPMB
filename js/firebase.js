@@ -5,7 +5,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getDatabase, ref, set, get, update, push, remove, onValue,
+  getDatabase, ref, set, get, update, push, remove, onValue, runTransaction,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { daftarLoket } from "./config.js";
@@ -84,4 +84,4 @@ initDatabase();
 // EXPORT
 // ==========================================
 
-export { db, ref, set, get, update, push, remove, onValue };
+export { db, ref, set, get, update, push, remove, onValue, runTransaction };
