@@ -172,6 +172,20 @@ body[data-theme="light"] .connection-status{background:rgba(226,232,240,.72);bor
 .btn,.actions button,.primary,.secondary{min-height:48px;padding:12px 20px;font-size:16px;line-height:1.25;border-radius:13px;touch-action:manipulation}
 button:focus-visible{outline:3px solid #00c982;outline-offset:3px}
 @media(max-width:600px){.school-header{justify-content:flex-start;gap:10px;margin-bottom:16px;padding:12px;border-radius:16px}.school-logo{width:46px;height:46px;flex-basis:46px;border-radius:12px}.school-identity{flex:1}.connection-status{margin-left:0;padding:7px 9px;font-size:11px}.school-header{flex-wrap:wrap}.connection-status{margin-left:56px}.btn,.actions button,.primary,.secondary{width:100%;min-height:48px}}
+
+/* TEMPORARY ACCESS GATE — client-side only, not server-side authentication */
+#accessGate{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at top,#15365a 0%,#0b1930 55%,#050b16 100%);color:#f8fafc;font-family:Arial,sans-serif}
+#accessGate .gate-card{width:100%;max-width:420px;padding:28px;border:1px solid rgba(255,255,255,.18);border-radius:24px;background:rgba(255,255,255,.09);box-shadow:0 24px 70px #0008;backdrop-filter:blur(20px)}
+#accessGate .gate-logo{display:block;width:66px;height:66px;object-fit:contain;padding:6px;margin:0 auto 16px;border-radius:18px;background:#fff}
+#accessGate h2{margin:0 0 8px;text-align:center;font-size:25px}
+#accessGate p{margin:0 0 20px;text-align:center;color:#cbd5e1;font-size:14px;line-height:1.5}
+#accessGate label{display:block;margin-bottom:8px;font-size:13px;font-weight:700}
+#accessGate input{display:block;width:100%;min-height:50px;padding:12px 14px;border:1px solid #64748b;border-radius:12px;background:#071426;color:#fff;font-size:16px;outline-offset:3px}
+#accessGate button{width:100%;min-height:50px;margin-top:14px;border:0;border-radius:12px;background:#00c982;color:#052018;font-size:16px;font-weight:800;cursor:pointer}
+#accessGate .gate-error{min-height:20px;margin:12px 0 0;color:#fda4af;font-size:13px;text-align:center}
+#logoutAccess{position:fixed;right:16px;bottom:16px;z-index:1000;border:1px solid #ffffff35;border-radius:999px;padding:10px 14px;background:#071426dd;color:white;font-weight:700;cursor:pointer}
+body.access-locked{overflow:hidden!important}
+
 </style>
 </head>
 
@@ -320,6 +334,42 @@ window.resetAllData = async () => {
    const mq=window.matchMedia('(prefers-color-scheme: light)');
    mq.addEventListener?.('change',function(){if(mode==='system')apply(mode);});
  }
+})();
+</script>
+
+
+<div id="accessGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+ <form class="gate-card" id="accessForm">
+  <img class="gate-logo" src="./assets/logo.png" alt="Logo SMAN 1 Sooko" onerror="this.style.display='none'">
+  <h2 id="gateTitle">Login Admin</h2>
+  <p>SMAN 1 Sooko · SPMB 2026/2027<br>Masukkan kode akses untuk melanjutkan.</p>
+  <label for="accessPassword">Kata sandi Admin</label>
+  <input id="accessPassword" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi admin" required>
+  <button type="submit">Masuk Dashboard</button>
+  <div class="gate-error" id="accessError" aria-live="polite"></div>
+ </form>
+</div>
+<button id="logoutAccess" type="button" hidden>Keluar</button>
+<script>
+(function(){
+ const role="admin";
+ const secret="adminrabasuni";
+ const storageKey='smansasoo-access-'+role;
+ const gate=document.getElementById('accessGate');
+ const form=document.getElementById('accessForm');
+ const input=document.getElementById('accessPassword');
+ const error=document.getElementById('accessError');
+ const logout=document.getElementById('logoutAccess');
+ document.body.classList.add('access-locked');
+ function unlock(){gate.style.display='none';document.body.classList.remove('access-locked');logout.hidden=false;}
+ try{if(sessionStorage.getItem(storageKey)==='1')unlock();}catch(_){}
+ form.addEventListener('submit',function(e){
+  e.preventDefault();
+  if(input.value===secret){try{sessionStorage.setItem(storageKey,'1');}catch(_){}input.value='';error.textContent='';unlock();}
+  else{error.textContent='Kode akses salah. Silakan coba lagi.';input.value='';input.focus();}
+ });
+ logout.addEventListener('click',function(){try{sessionStorage.removeItem(storageKey);}catch(_){}gate.style.display='flex';logout.hidden=true;document.body.classList.add('access-locked');input.value='';input.focus();});
+ input.focus();
 })();
 </script>
 
