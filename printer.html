@@ -64,7 +64,12 @@ function printTicket(id){
 $("takePrint").addEventListener("click",async()=>{
  const btn=$("takePrint"); btn.disabled=true; $("status").textContent="Membuat nomor antrean…";
  try{const id=await takeTicket(); if(!id)throw new Error("Nomor tidak diterima dari Firebase."); printTicket(id); $("status").textContent="Nomor "+id+" berhasil dibuat. Pastikan tiket keluar dari printer.";}
- catch(e){console.error(e);$("status").textContent="Gagal membuat nomor. Periksa koneksi dan izin Firebase, lalu coba lagi.";}
+ catch(e){
+  console.error("Gagal membuat nomor antrean:", e);
+  const code = e?.code ? "[" + e.code + "] " : "";
+  const detail = e?.message || "Firebase tidak memberikan detail error.";
+  $("status").textContent = "Gagal membuat nomor. " + code + detail;
+}
  finally{btn.disabled=false;}
 });
 $("reprint").addEventListener("click",()=>{if(lastTicket)printTicket(lastTicket);});
