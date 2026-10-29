@@ -56,7 +56,11 @@ export async function nextCall(loket) {
     const next = Object.values(tickets)
       .filter((t) => t && t.status === "waiting")
       .sort((a,b) => a.sequence - b.sequence)[0];
-    if (!next) {\n      delete activeByLoket[loket];\n      displays[loket] = "---";\n      return { ...data, tickets, active_by_loket: activeByLoket, counter: counters, loket: displays };\n    }
+    if (!next) {
+      delete activeByLoket[loket];
+      displays[loket] = "---";
+      return { ...data, tickets, active_by_loket: activeByLoket, counter: counters, loket: displays };
+    }
     tickets[next.id] = { ...next, status: "serving", loket, calledAt: Date.now() };
     activeByLoket[loket] = next.id;
     counters[loket] = Number(counters[loket] || 0) + 1;
