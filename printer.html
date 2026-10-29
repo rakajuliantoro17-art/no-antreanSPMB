@@ -113,6 +113,26 @@ body[data-theme="dark"] .loket:not(.active){background:rgba(30,51,79,.78)!import
 body[data-theme="dark"] input,body[data-theme="dark"] select{background:rgba(2,8,23,.72)!important;color:#f8fafc!important;border-color:rgba(203,213,225,.24)!important}
 body[data-theme="dark"] .theme-toggle{background:rgba(7,18,35,.76)!important;border-color:rgba(255,255,255,.2)!important;color:#f8fafc!important;backdrop-filter:blur(20px)!important}
 @media(max-width:600px){body[data-theme="dark"] .panel,body[data-theme="dark"] .current,body[data-theme="dark"] .school-header{border-radius:20px!important}}
+
+/* PRINTER BACKGROUND — drh.jpg + strong contrast + deep glass */
+body{position:relative;isolation:isolate;background-color:#061020!important;background-image:linear-gradient(125deg,rgba(2,8,20,.78),rgba(4,15,31,.68) 48%,rgba(2,8,20,.82)),url('./assets/drh.jpg')!important;background-size:cover!important;background-position:center!important;background-attachment:fixed!important;color:#f8fafc!important}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 20% 5%,rgba(20,100,145,.16),transparent 52%)}
+.wrap .panel{background:linear-gradient(145deg,rgba(7,21,40,.84),rgba(7,15,30,.76))!important;border:1px solid rgba(226,242,255,.24)!important;box-shadow:0 28px 80px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.10)!important;backdrop-filter:blur(25px) saturate(145%)!important;-webkit-backdrop-filter:blur(25px) saturate(145%)!important;color:#f8fafc!important}
+body .muted,body .status{color:#e0eaf6!important}
+body .stat{background:rgba(3,12,27,.68)!important;border:1px solid rgba(226,242,255,.18)!important;color:#dce8f6!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+body .stat strong{color:#5fffc1!important;text-shadow:0 0 18px rgba(0,255,153,.18)}
+body .instructions{background:rgba(2,10,23,.60)!important;border-color:rgba(203,224,245,.22)!important;color:#e7eff9!important}
+body .secondary{background:rgba(226,232,240,.94)!important;color:#0f172a!important}
+body .primary{background:#00d894!important;color:#031b12!important;box-shadow:0 8px 24px rgba(0,216,148,.22)}
+body .pdf-button{background:#2563eb!important;color:#fff!important}
+body[data-theme="light"]{background-image:linear-gradient(125deg,rgba(2,8,20,.62),rgba(4,15,31,.54)),url('./assets/drh.jpg')!important;color:#f8fafc!important}
+body[data-theme="light"] .wrap .panel{background:rgba(245,249,255,.92)!important;color:#142033!important}
+body[data-theme="light"] .wrap .panel h1{color:#142033!important}
+body[data-theme="light"] .wrap .panel .muted,body[data-theme="light"] .wrap .panel .status{color:#334155!important}
+body[data-theme="light"] .wrap .panel .stat{background:rgba(255,255,255,.90)!important;color:#334155!important}
+body[data-theme="light"] .wrap .panel .instructions{background:rgba(255,255,255,.88)!important;color:#26364a!important}
+@media print{body{background:#fff!important;background-image:none!important}body::before{display:none!important}}
+
 </style>
 </head>
 <body>
