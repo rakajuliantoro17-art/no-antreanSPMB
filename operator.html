@@ -218,7 +218,9 @@ window.nextCallOperator = async function () {
     playSound("./sounds/ding.mp3");
   } catch (error) {
     console.error("Gagal memanggil antrean:", error);
-    alert("Panggilan gagal. Periksa koneksi Firebase lalu coba lagi.");
+    const code = error?.code ? "[" + error.code + "] " : "";
+    const detail = error?.message || "Tidak ada detail error dari Firebase.";
+    alert("Panggilan gagal. " + code + detail + "\n\nJika tertulis PERMISSION_DENIED, periksa Firebase Realtime Database Rules. Jika antrean kosong, cetak nomor terlebih dahulu.");
   } finally {
     actionInProgress = false;
   }
