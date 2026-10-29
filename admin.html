@@ -160,17 +160,26 @@ listenCurrentCall((data) => {
 /* LOKET MONITOR — dibangun dari daftarLoket (config.js) */
 listenLoket((data) => {
   const monitor = document.getElementById("monitor");
-  monitor.innerHTML = "";
+  monitor.replaceChildren();
 
   daftarLoket.forEach((k) => {
-    const nomor = data?.[k] || "000";
-    monitor.innerHTML += `
-      <div class="card">
-        <h3>MEJA ${k}</h3>
-        <div class="nomor">${k}-${nomor}</div>
-        <div class="status">Realtime Monitoring</div>
-      </div>
-    `;
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const heading = document.createElement("h3");
+    heading.textContent = `MEJA ${k}`;
+
+    const nomorEl = document.createElement("div");
+    nomorEl.className = "nomor";
+    const nomor = String(data?.[k] ?? "000");
+    nomorEl.textContent = `${k}-${nomor}`;
+
+    const status = document.createElement("div");
+    status.className = "status";
+    status.textContent = "Realtime Monitoring";
+
+    card.append(heading, nomorEl, status);
+    monitor.appendChild(card);
   });
 });
 
