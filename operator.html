@@ -224,8 +224,12 @@ window.nextCallOperator = async function () {
 };
 
 window.recallCallOperator = async function () {
-  try { await recallCall(loket); playSound("./sounds/panggilan.mp3"); } catch (error) { alert(error.message || "Belum ada nomor untuk dipanggil ulang."); }
-  playSound("./sounds/panggilan.mp3");
+  try {
+    await recallCall(loket);
+    playSound("./sounds/panggilan.mp3");
+  } catch (error) {
+    alert(error.message || "Belum ada nomor untuk dipanggil ulang.");
+  }
 };
 
 window.resetOperator = async function () {
