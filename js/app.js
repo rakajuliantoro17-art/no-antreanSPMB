@@ -59,30 +59,39 @@ export async function setCounter(loket, nomor) {
 export async function nextCall(loket) {
   assertLoket(loket);
 
-  // Transaction atomik mencegah dua operator membaca counter lama
-  // lalu menghasilkan nomor antrean yang sama pada loket yang sama.
-  const result = await runTransaction(ref(db, `counter/${loket}`), (current) => {
-    const value = Number.isSafeInteger(current) && current >= 0 ? current : 0;
-    return value + 1;
+  // Counter, nomor tampilan, dan panggilan aktif diubah dalam satu
+  // transaksi root agar dua operator tidak menimpa panggilan satu sama lain.
+  const result = await runTransaction(ref(db), (currentData) => {
+    const data = currentData || {};
+    const counters = { ...(data.counter || {}) };
+    const displays = { ...(data.loket || {}) };
+    const existing = counters[loket];
+    const counter = Number.isSafeInteger(existing) && existing >= 0 ? existing + 1 : 1;
+    const nomor = `${loket}-${String(counter).padStart(3, "0")}`;
+
+    counters[loket] = counter;
+    displays[loket] = String(counter).padStart(3, "0");
+
+    return {
+      ...data,
+      counter: counters,
+      loket: displays,
+      current_call: {
+        nomor,
+        loket,
+        counter,
+        callType: "NEXT",
+        updatedAt: Date.now(),
+      },
+    };
   });
 
   if (!result.committed) {
     throw new Error("Nomor antrean gagal diperbarui. Silakan coba lagi.");
   }
 
-  const counter = result.snapshot.val();
-  const nomor = `${loket}-${String(counter).padStart(3, "0")}`;
-
-  await update(ref(db), {
-    "current_call/nomor": nomor,
-    "current_call/loket": loket,
-    "current_call/counter": counter,
-    "current_call/callType": "NEXT",
-    "current_call/updatedAt": Date.now(),
-    [`loket/${loket}`]: String(counter).padStart(3, "0"),
-  });
-
-  return nomor;
+  const data = result.snapshot.val();
+  return data.current_call.nomor;
 }
 
 // =====================================
