@@ -43,6 +43,8 @@ function assertLoket(loket) {
 // Nomor antrean global dibuat secara atomik agar tidak ada nomor ganda.
 export async function takeTicket() {
   let created = null;
+  const issuedAt = Date.now();
+  const serviceDate = getServiceDate(issuedAt);
   const result = await runTransaction(ref(db), (raw) => {
     const data = raw || {};
     const next = Number.isSafeInteger(data.queue_meta?.lastIssued) && data.queue_meta.lastIssued >= 0
@@ -51,7 +53,7 @@ export async function takeTicket() {
     const tickets = { ...(data.tickets || {}) };
     tickets[id] = {
       id, sequence: next, status: "waiting",
-      createdAt: Date.now(), loket: null, calledAt: null, completedAt: null
+      createdAt: issuedAt, serviceDate, loket: null, calledAt: null, completedAt: null
     };
     created = id;
     return { ...data, queue_meta: { ...(data.queue_meta || {}), lastIssued: next }, tickets };
