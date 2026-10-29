@@ -165,6 +165,23 @@ body[data-theme="light"] .theme-toggle{background:rgba(255,255,255,.82);border-c
 @media(max-width:600px){.theme-toggle{top:8px;right:8px;min-height:40px;padding:8px 11px}.header{padding-top:42px}.title{padding-top:34px}body{padding-top:56px}}
 @media print{.theme-toggle{display:none!important}}
 
+
+/* SHARED SCHOOL IDENTITY + LIVE FIREBASE STATUS */
+.school-header{display:flex;align-items:center;justify-content:center;gap:14px;max-width:1200px;margin:0 auto 22px;padding:14px 18px;border:1px solid rgba(255,255,255,.16);border-radius:20px;background:rgba(255,255,255,.075);backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.16)}
+.school-logo{width:58px;height:58px;flex:0 0 58px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,.92);padding:5px}
+.school-identity{min-width:0;text-align:left}
+.school-name{font-size:clamp(15px,2vw,21px);font-weight:800;line-height:1.25;letter-spacing:.01em}
+.school-subtitle{margin-top:4px;font-size:clamp(12px,1.4vw,14px);color:#cbd5e1;line-height:1.4}
+.connection-status{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;margin-left:auto;padding:8px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(15,23,42,.42);font-size:12px;font-weight:700;white-space:nowrap}
+.connection-dot{width:9px;height:9px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.16);flex:0 0 9px}
+.connection-status[data-state="connected"] .connection-dot{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.16)}
+.connection-status[data-state="disconnected"] .connection-dot{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.16)}
+body[data-theme="light"] .school-header{background:rgba(255,255,255,.78);border-color:rgba(15,23,42,.12);box-shadow:0 12px 34px rgba(15,23,42,.08)}
+body[data-theme="light"] .school-subtitle{color:#526174}
+body[data-theme="light"] .connection-status{background:rgba(226,232,240,.72);border-color:rgba(15,23,42,.12);color:#142033}
+.btn,.actions button,.primary,.secondary{min-height:48px;padding:12px 20px;font-size:16px;line-height:1.25;border-radius:13px;touch-action:manipulation}
+button:focus-visible{outline:3px solid #00c982;outline-offset:3px}
+@media(max-width:600px){.school-header{justify-content:flex-start;gap:10px;margin-bottom:16px;padding:12px;border-radius:16px}.school-logo{width:46px;height:46px;flex-basis:46px;border-radius:12px}.school-identity{flex:1}.connection-status{margin-left:0;padding:7px 9px;font-size:11px}.school-header{flex-wrap:wrap}.connection-status{margin-left:56px}.btn,.actions button,.primary,.secondary{width:100%;min-height:48px}}
 </style>
 </head>
 
@@ -175,6 +192,11 @@ body[data-theme="light"] .theme-toggle{background:rgba(255,255,255,.82);border-c
 
 <div class="container">
   <div class="panel">
+    <div class="school-header" aria-label="Identitas sekolah dan status koneksi">
+      <img class="school-logo" src="./assets/logo.png" alt="Logo SMAN 1 Sooko">
+      <div class="school-identity"><div class="school-name">SMAN 1 Sooko</div><div class="school-subtitle">SMAN 1 Sooko · SPMB 2026/2027</div></div>
+      <div class="connection-status" id="firebaseStatus" data-state="connecting" role="status" aria-live="polite"><span class="connection-dot" aria-hidden="true"></span><span id="firebaseStatusText">Menghubungkan Firebase…</span></div>
+    </div>
     <div class="title">OPERATOR ANTREAN SPMB</div>
     <div style="text-align:center;margin:-12px 0 18px;color:#cbd5e1">Antrean bersama · nomor dipanggil berdasarkan urutan tiket dibuat</div>
 
@@ -192,7 +214,7 @@ body[data-theme="light"] .theme-toggle{background:rgba(255,255,255,.82);border-c
       <button class="btn reset" onclick="resetOperator()">⛔ RESET</button>
     </div>
 
-    <div class="status">Realtime Connected To Firebase</div>
+    <div class="status" id="operatorStatus">Pilih meja untuk mulai melayani antrean.</div>
   </div>
 </div>
 
@@ -204,12 +226,25 @@ import {
   playSound,
   daftarLoket,
 } from "./js/app.js";
+import { db, ref, onValue } from "./js/firebase.js";
 
 let loket = "-";
 let counter = 0;
 let actionInProgress = false;
 
 const current = document.getElementById("current");
+const firebaseStatus = document.getElementById("firebaseStatus");
+const firebaseStatusText = document.getElementById("firebaseStatusText");
+onValue(ref(db, ".info/connected"), (snapshot) => {
+  const connected = snapshot.val() === true;
+  firebaseStatus.dataset.state = connected ? "connected" : "disconnected";
+  firebaseStatusText.textContent = connected ? "Firebase Terhubung" : "Firebase Terputus";
+  document.getElementById("operatorStatus").textContent = connected ? "Terhubung · siap melayani antrean bersama." : "Koneksi terputus · periksa jaringan internet."; 
+}, () => {
+  firebaseStatus.dataset.state = "disconnected";
+  firebaseStatusText.textContent = "Firebase Bermasalah";
+  document.getElementById("operatorStatus").textContent = "Koneksi Firebase bermasalah."; 
+});
 const gridLoket = document.getElementById("gridLoket");
 
 /* BUAT TOMBOL LOKET DARI CONFIG.JS (via app.js) */
