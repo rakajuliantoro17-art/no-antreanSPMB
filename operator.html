@@ -131,7 +131,7 @@ body {
 
 <div class="container">
   <div class="panel">
-    <div class="title">OPERATOR ANTREAN SPMB</div>
+    <div class="title">OPERATOR ANTREAN SPMB</div>\n    <div style="text-align:center;margin:-12px 0 18px;color:#cbd5e1">Antrean bersama · nomor dipanggil berdasarkan urutan tiket dibuat</div>
 
     <div class="display">
       <h2>LOKET AKTIF</h2>
@@ -183,7 +183,7 @@ function updateDisplay() {
     current.innerText = "---";
     return;
   }
-  current.innerText = `${loket}-${String(counter).padStart(3, "0")}`;
+  current.innerText = counter || "---";
 }
 
 function highlight() {
@@ -212,7 +212,7 @@ window.nextCallOperator = async function () {
     const nomor = await nextCall(loket);
     // Gunakan nomor hasil transaksi, bukan menambah counter lokal,
     // agar tampilan operator konsisten saat ada operator lain.
-    counter = Number(nomor.split("-")[1]) || counter;
+    counter = nomor || counter;
     updateDisplay();
     playSound("./sounds/ding.mp3");
   } catch (error) {
@@ -224,7 +224,7 @@ window.nextCallOperator = async function () {
 };
 
 window.recallCallOperator = async function () {
-  await recallCall();
+  await recallCall(loket);
   playSound("./sounds/panggilan.mp3");
 };
 
