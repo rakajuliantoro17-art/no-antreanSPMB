@@ -340,7 +340,7 @@ listenCurrentCall((data) => {
   document.getElementById("petugasAktif").textContent =
     data.loket && data.loket !== "-" ? `MEJA ${data.loket} • ${namaPetugas}` : "-";
 
-  const id = data.nomor + "_" + data.updatedAt;
+  if (data.callType === "EMPTY" || data.callType === "RESET" || data.callType === "INIT") return;\n\n  const id = data.nomor + "_" + data.updatedAt;
   if (id === lastCallId) return;
   lastCallId = id;
 
