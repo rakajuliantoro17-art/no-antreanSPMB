@@ -223,10 +223,20 @@ html, body {
   from { transform: translateX(0); }
   to   { transform: translateX(-100%); }
 }
+
+/* AUDIO CONTROL — visible and touch-friendly */
+.audio-control{position:fixed;top:18px;right:18px;z-index:50;display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(7,20,38,.72);color:#fff;backdrop-filter:blur(18px);box-shadow:0 8px 28px #0005;font:600 14px/1.2 'Poppins',Arial,sans-serif;cursor:pointer;touch-action:manipulation}
+.audio-control .audio-dot{width:9px;height:9px;border-radius:50%;background:#f59e0b;box-shadow:0 0 10px currentColor}
+.audio-control[data-state="on"] .audio-dot{background:#00ff99}
+.audio-control[data-state="error"] .audio-dot{background:#ef4444}
+.audio-control:focus-visible{outline:3px solid #00ff99;outline-offset:3px}
+@media(max-width:700px){.audio-control{top:10px;right:10px;padding:10px 12px;font-size:12px}.logo{top:16px;left:14px;transform:none;width:62px}}
+
 </style>
 </head>
 
 <body>
+<button class="audio-control" id="audioControl" type="button" data-state="off" aria-label="Aktifkan suara panggilan"><span class="audio-dot" aria-hidden="true"></span><span id="audioControlText">Aktifkan Suara</span></button>
 
 <div class="overlay"></div>
 <img src="./assets/logo.png" class="logo" alt="Logo">
@@ -271,44 +281,91 @@ let audioUnlocked = false;
 let voiceQueue = [];
 let isSpeaking = false;
 let lastCallId = "";
+const audioControl = document.getElementById("audioControl");
+const audioControlText = document.getElementById("audioControlText");
 
-/* GRID KARTU LOKET (dibangun dari app.js, sumber data: config.js) */
-initGridPetugas(document.getElementById("cards"));
+function setAudioState(state, text) {
+  audioControl.dataset.state = state;
+  audioControlText.textContent = text;
+  audioControl.setAttribute("aria-label", text);
+}
 
-/* AUDIO UNLOCK — browser butuh 1x interaksi user sebelum bisa bicara */
-document.body.addEventListener("click", () => {
-  speechSynthesis.speak(new SpeechSynthesisUtterance("ready"));
-  audioUnlocked = true;
-}, { once: true });
-
-/* VOICE QUEUE */
+/* Pengumuman yang masuk sebelum suara diaktifkan tetap disimpan di antrean. */
 function speakQueue(text) {
   voiceQueue.push(text);
   processQueue();
 }
 
 function processQueue() {
-  if (isSpeaking || !audioUnlocked) return;
-  if (voiceQueue.length === 0) return;
+  if (isSpeaking || !audioUnlocked || voiceQueue.length === 0) return;
+  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+    setAudioState("error", "Suara Tidak Didukung");
+    return;
+  }
 
   isSpeaking = true;
   const text = voiceQueue.shift();
-
   const u = new SpeechSynthesisUtterance(text);
   const voices = speechSynthesis.getVoices();
-
-  u.voice = voices.find((v) => v.lang.includes("id")) || voices[0];
+  const voice = voices.find((v) => v.lang.toLowerCase() === "id-id")
+    || voices.find((v) => v.lang.toLowerCase().startsWith("id"))
+    || voices[0];
+  if (voice) u.voice = voice;
   u.lang = "id-ID";
-  u.rate = 0.68;
+  u.rate = 0.78;
   u.pitch = 1;
   u.volume = 1;
-
   u.onend = () => {
     isSpeaking = false;
-    setTimeout(processQueue, 500);
+    setTimeout(processQueue, 350);
   };
-
+  u.onerror = (event) => {
+    isSpeaking = false;
+    console.warn("Speech synthesis error:", event.error);
+    setAudioState("error", "Suara Bermasalah");
+    // Jangan mengulang otomatis pengumuman yang gagal agar tidak terjadi loop.
+    setTimeout(processQueue, 350);
+  };
   speechSynthesis.speak(u);
+}
+
+/* Interaksi eksplisit membantu membuka izin audio browser, terutama pada kiosk/tablet. */
+audioControl.addEventListener("click", () => {
+  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+    setAudioState("error", "Suara Tidak Didukung");
+    return;
+  }
+  try {
+    speechSynthesis.cancel();
+    const test = new SpeechSynthesisUtterance("Suara panggilan aktif.");
+    test.lang = "id-ID";
+    test.volume = 1;
+    test.rate = 0.9;
+    test.onend = () => {
+      audioUnlocked = true;
+      setAudioState("on", "Suara Aktif");
+      processQueue();
+    };
+    test.onerror = (event) => {
+      audioUnlocked = false;
+      setAudioState("error", "Coba Aktifkan Lagi");
+      console.warn("Gagal mengaktifkan suara:", event.error);
+    };
+    audioUnlocked = true;
+    setAudioState("on", "Mengaktifkan Suara…");
+    speechSynthesis.speak(test);
+  } catch (error) {
+    audioUnlocked = false;
+    setAudioState("error", "Coba Aktifkan Lagi");
+    console.error("Gagal mengaktifkan suara:", error);
+  }
+});
+
+if ("speechSynthesis" in window) {
+  speechSynthesis.onvoiceschanged = () => {
+    // Meminta browser memuat daftar voice sebelum pengumuman berikutnya.
+    speechSynthesis.getVoices();
+  };
 }
 
 /* UPDATE ANGKA DI SETIAP KARTU LOKET */
