@@ -73,3 +73,15 @@ Edit `firebaseConfig` di `js/firebase.js` (satu-satunya tempat config Firebase d
 
 - Semua fungsi database ada di `js/app.js` — kalau perlu fungsi baru (misal statistik harian), tambahkan di sini, jangan ditulis ulang di file HTML.
 - `js/firebase.js` otomatis mengisi data default (`loket`, `counter`, `current_call`) kalau database masih kosong, jadi tidak perlu setup manual di Firebase Console setiap tahun.
+
+
+## Audit Keamanan dan Keandalan
+
+- **Wajib diperiksa di Firebase Console:** pastikan Realtime Database Security Rules tidak mengizinkan akses baca/tulis publik tanpa autentikasi. Aplikasi saat ini belum memiliki alur login; jangan menganggap tombol/konfirmasi di halaman sebagai kontrol keamanan.
+- API key Firebase pada aplikasi web mengidentifikasi proyek, bukan menggantikan Security Rules. Batasi akses melalui Rules dan konfigurasi layanan Firebase yang sesuai.
+- Nomor berikutnya memakai transaksi pada counter per loket agar pemanggilan bersamaan tidak membaca nilai counter yang sama.
+- Reset semua loket menggunakan satu multi-location update untuk mengurangi risiko keadaan data yang tidak konsisten.
+- Nilai yang berasal dari database dan nama petugas ditampilkan melalui `textContent`, bukan disisipkan sebagai HTML.
+- Uji alur panggil, recall, reset, audio, dan akses lintas perangkat pada lingkungan staging sebelum dipakai untuk pelayanan resmi.
+
+**Batas audit:** koneksi GitHub dapat membaca kode dan menulis commit, tetapi pemeriksaan aturan keamanan Firebase melalui endpoint yang tersedia ditolak oleh izin integrasi. Rules Firebase belum diubah dan keamanan akses database belum dapat dinyatakan terverifikasi.
