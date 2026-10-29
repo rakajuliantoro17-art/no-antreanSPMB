@@ -163,6 +163,7 @@ import {
 
 let loket = "-";
 let counter = 0;
+let actionInProgress = false;
 
 const current = document.getElementById("current");
 const gridLoket = document.getElementById("gridLoket");
@@ -204,10 +205,22 @@ window.nextCallOperator = async function () {
     alert("Pilih meja terlebih dahulu");
     return;
   }
-  await nextCall(loket);
-  counter++;
-  updateDisplay();
-  playSound("./sounds/ding.mp3");
+  if (actionInProgress) return;
+
+  actionInProgress = true;
+  try {
+    const nomor = await nextCall(loket);
+    // Gunakan nomor hasil transaksi, bukan menambah counter lokal,
+    // agar tampilan operator konsisten saat ada operator lain.
+    counter = Number(nomor.split("-")[1]) || counter;
+    updateDisplay();
+    playSound("./sounds/ding.mp3");
+  } catch (error) {
+    console.error("Gagal memanggil antrean:", error);
+    alert("Panggilan gagal. Periksa koneksi Firebase lalu coba lagi.");
+  } finally {
+    actionInProgress = false;
+  }
 };
 
 window.recallCallOperator = async function () {
