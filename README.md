@@ -1,6 +1,6 @@
 # Sistem Antrean Verifikasi SPMB — SMAN 1 Sooko
 
-Sistem antrean digital untuk layanan verifikasi SPMB, realtime lewat Firebase Realtime Database. Tiga halaman independen, semua terhubung ke database yang sama:
+Sistem antrean digital untuk layanan verifikasi SPMB, realtime lewat Firebase Realtime Database. Empat halaman independen, semua terhubung ke database yang sama:
 
 | Halaman | Untuk siapa | Ditampilkan di |
 |---|---|---|
@@ -19,7 +19,7 @@ npx serve .
 python -m http.server 8000
 ```
 
-Lalu buka `index.html`, `operator.html`, `admin.html` masing-masing di tab/PC berbeda.
+Lalu buka `index.html`, `operator.html`, `printer.html`, dan `admin.html` masing-masing di tab/PC sesuai peran.
 
 **Untuk videotron:** buka `index.html` di PC yang layarnya di-duplicate ke proyektor, lalu tekan `F11` untuk fullscreen. Klik sekali di halaman untuk mengaktifkan suara (browser mewajibkan 1x interaksi sebelum bisa memutar audio).
 
