@@ -139,10 +139,37 @@ body{overflow:auto;background:radial-gradient(ellipse at top,#15365a 0%,#0b1930 
 @media(max-width:600px){.container{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.actions .btn{flex:1;min-width:100%}.display{margin-bottom:14px}}
 @media(max-width:360px){.grid{grid-template-columns:1fr}.title{font-size:22px}}
 
+
+/* THEME CONTROL — system / dark / light */
+:root{color-scheme:light dark}
+body[data-theme="dark"]{color-scheme:dark}
+body[data-theme="light"]{color-scheme:light;background-image:url("./assets/bg.jpg")!important;background-position:center!important;background-size:cover!important;background-attachment:fixed!important;color:#142033!important}
+body[data-theme="light"] .header p,
+body[data-theme="light"] .currentInfo,
+body[data-theme="light"] .status,
+body[data-theme="light"] .muted{color:#526174!important}
+body[data-theme="light"] .current,
+body[data-theme="light"] .card,
+body[data-theme="light"] .panel{background:rgba(255,255,255,.78)!important;border-color:rgba(15,23,42,.12)!important;box-shadow:0 16px 40px rgba(15,23,42,.10)}
+body[data-theme="light"] .overlay{background:rgba(239,246,255,.66)!important;backdrop-filter:blur(10px)}
+body[data-theme="light"] .display{background:rgba(255,255,255,.62)!important}
+body[data-theme="light"] .stat{background:rgba(15,23,42,.045)!important;border-color:rgba(15,23,42,.1)!important;color:#526174}
+body[data-theme="light"] .currentNumber,
+body[data-theme="light"] .nomor{color:#008f61;text-shadow:none}
+body[data-theme="light"] .loket:not(.active){background:#dbeafe;color:#1e3a8a}
+body[data-theme="light"] .btn.secondary{background:#dce5ee;color:#142033}
+.theme-toggle{position:fixed;z-index:30;top:14px;right:14px;display:flex;align-items:center;gap:8px;min-height:42px;padding:9px 13px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(15,23,42,.55);color:#fff;backdrop-filter:blur(18px);box-shadow:0 6px 20px #0002;font:600 13px/1.2 'Segoe UI',Arial,sans-serif;cursor:pointer;touch-action:manipulation}
+.theme-toggle .gear{font-size:16px}
+body[data-theme="light"] .theme-toggle{background:rgba(255,255,255,.82);border-color:rgba(15,23,42,.14);color:#142033}
+.theme-toggle:focus-visible{outline:3px solid #00c982;outline-offset:3px}
+@media(max-width:600px){.theme-toggle{top:8px;right:8px;min-height:40px;padding:8px 11px}.header{padding-top:42px}.title{padding-top:34px}body{padding-top:56px}}
+@media print{.theme-toggle{display:none!important}}
+
 </style>
 </head>
 
 <body>
+<button class="theme-toggle screen-only" id="themeToggle" type="button" aria-label="Ganti tema" title="Tema: mengikuti sistem"><span class="gear" aria-hidden="true">⚙</span><span id="themeLabel">Otomatis</span></button>
 
 <div class="overlay"></div>
 
@@ -261,6 +288,39 @@ window.resetOperator = async function () {
 };
 
 updateDisplay();
+</script>
+
+
+<script>
+(function(){
+ const key='smansasoo-queue-theme';
+ const btn=document.getElementById('themeToggle');
+ const label=document.getElementById('themeLabel');
+ if(!btn||!label)return;
+ const modes=['system','dark','light'];
+ const names={system:'Otomatis',dark:'Gelap',light:'Terang'};
+ function apply(mode){
+   const resolved=mode==='system'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):mode;
+   document.body.dataset.theme=resolved;
+   label.textContent=names[mode];
+   btn.title='Tema: '+names[mode]+' · klik untuk mengganti';
+   btn.setAttribute('aria-label','Tema '+names[mode]+'. Klik untuk mengganti tema.');
+   btn.querySelector('.gear').textContent=mode==='light'?'☼':mode==='dark'?'☾':'⚙';
+ }
+ let mode='system';
+ try{mode=localStorage.getItem(key)||'system';}catch(_){}
+ if(!modes.includes(mode))mode='system';
+ apply(mode);
+ btn.addEventListener('click',function(){
+   mode=modes[(modes.indexOf(mode)+1)%modes.length];
+   try{localStorage.setItem(key,mode);}catch(_){}
+   apply(mode);
+ });
+ if(window.matchMedia){
+   const mq=window.matchMedia('(prefers-color-scheme: light)');
+   mq.addEventListener?.('change',function(){if(mode==='system')apply(mode);});
+ }
+})();
 </script>
 
 </body>
