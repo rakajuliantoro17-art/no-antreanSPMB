@@ -155,7 +155,6 @@ body {
 import {
   nextCall,
   recallCall,
-  resetLoket,
   getCounter,
   playSound,
   daftarLoket,
@@ -212,7 +211,8 @@ window.nextCallOperator = async function () {
     const nomor = await nextCall(loket);
     // Gunakan nomor hasil transaksi, bukan menambah counter lokal,
     // agar tampilan operator konsisten saat ada operator lain.
-    counter = nomor || counter;
+    if (!nomor) { current.innerText = "---"; alert("Belum ada antrean yang menunggu."); return; }
+    counter = nomor;
     updateDisplay();
     playSound("./sounds/ding.mp3");
   } catch (error) {
@@ -233,10 +233,7 @@ window.resetOperator = async function () {
     alert("Pilih meja terlebih dahulu");
     return;
   }
-  if (!confirm(`Reset meja ${loket}?`)) return;
-  await resetLoket(loket);
-  counter = 0;
-  updateDisplay();
+  alert("Reset per loket tidak tersedia pada antrean bersama. Gunakan dashboard admin untuk reset seluruh antrean.");
 };
 
 updateDisplay();
