@@ -125,7 +125,7 @@ body[data-theme="dark"] .theme-toggle{background:rgba(7,18,35,.76)!important;bor
    
   </div>
   <h1>Ambil Nomor Antrean</h1>
-  <p>Tekan tombol <strong>Ambil &amp; Cetak</strong> untuk mendapatkan nomor antrean. Simpan tiket Anda dan perhatikan layar panggilan. Datang ke loket yang disebutkan saat nomor Anda dipanggil.</p>
+  <p>Tekan tombol <strong>Ambil &amp; Cetak</strong> untuk mendapatkan nomor antrean. Masa berlaku mengikuti waktu pengambilan dan tanggal yang tercetak pada tiket.</p>
   <div class="stats">
    <div class="stat"><span>Nomor terakhir diterbitkan</span><strong id="lastIssued">000</strong></div>
    <div class="stat"><span>Antrean menunggu</span><strong id="waiting">0</strong></div>
@@ -137,7 +137,7 @@ body[data-theme="dark"] .theme-toggle{background:rgba(7,18,35,.76)!important;bor
    <button id="reprint" class="secondary" disabled>Cetak Ulang Nomor Terakhir</button>
   </div>
   <div id="status" class="status" role="status">Siap mengambil nomor antrean.</div>
-  <div class="muted instructions"><strong>Tata cara penggunaan</strong><ol><li>Tekan <strong>Ambil &amp; Cetak</strong> atau <strong>Ambil &amp; Simpan PDF</strong>.</li><li>Simpan tiket dan ingat nomor antrean Anda.</li><li>Perhatikan layar panggilan sampai nomor Anda muncul.</li><li>Saat nomor dipanggil, segera menuju loket yang ditunjukkan.</li><li>Jangan mengambil nomor baru jika tiket sebelumnya masih digunakan.</li></ol><span>Jika tiket tidak tercetak, gunakan tombol <strong>Cetak Ulang Nomor Terakhir</strong> atau minta bantuan petugas.</span></div>
+  <div class="muted instructions"><strong>Masa berlaku nomor antrean</strong><ul><li>Pengambilan pukul <strong>00.00–14.00 WIB</strong>: berlaku pada tanggal yang sama.</li><li>Pengambilan setelah pukul <strong>14.00 WIB</strong>: berlaku untuk keesokan harinya.</li></ul><strong>Tata cara penggunaan</strong><ol><li>Tekan <strong>Ambil &amp; Cetak</strong> atau <strong>Ambil &amp; Simpan PDF</strong>.</li><li>Simpan tiket dan ingat nomor antrean Anda.</li><li>Perhatikan layar panggilan sampai nomor Anda muncul.</li><li>Saat nomor dipanggil, segera menuju loket yang ditunjukkan.</li><li>Jangan mengambil nomor baru jika tiket sebelumnya masih digunakan.</li></ol><span>Jika tiket tidak tercetak, gunakan tombol <strong>Cetak Ulang Nomor Terakhir</strong> atau minta bantuan petugas.</span></div>
  </div>
 </div>
 <section class="ticket" id="ticket">
@@ -149,11 +149,26 @@ body[data-theme="dark"] .theme-toggle{background:rgba(7,18,35,.76)!important;bor
 <script type="module">
 import { takeTicket, listenTickets, listenQueueMeta } from "./js/app.js";
 const $ = (id) => document.getElementById(id);
-let lastTicket = null;
+let lastTicket = null;\nlet lastServiceDate = null;
 $("status").textContent="Siap mengambil nomor antrean.";
+function jakartaParts(date){
+ const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(date);
+ return Object.fromEntries(parts.filter(p=>p.type!=="literal").map(p=>[p.type,p.value]));
+}
+function calculateServiceDate(date){
+ const p=jakartaParts(date);
+ const today=p.year+"-"+p.month+"-"+p.day;
+ if(Number(p.hour)<14||(Number(p.hour)===14&&Number(p.minute)===0))return today;
+ const next=new Date(Date.UTC(Number(p.year),Number(p.month)-1,Number(p.day)+1));
+ return next.getUTCFullYear()+"-"+String(next.getUTCMonth()+1).padStart(2,"0")+"-"+String(next.getUTCDate()).padStart(2,"0");
+}
+function formatDate(date){
+ return new Date(date+"T00:00:00+07:00").toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric",timeZone:"Asia/Jakarta"});
+}
 function renderTicket(id){
  lastTicket=id; $("ticketNumber").textContent=id;
- $("ticketDate").textContent=new Date().toLocaleString("id-ID",{dateStyle:"short",timeStyle:"short"});
+ const now=new Date();lastServiceDate=calculateServiceDate(now);
+ $("ticketDate").textContent="Diambil: "+now.toLocaleString("id-ID",{timeZone:"Asia/Jakarta",dateStyle:"short",timeStyle:"short"})+" WIB · Berlaku: "+formatDate(lastServiceDate);
  $("reprint").disabled=false;
 }
 function printTicket(id, format="thermal"){
