@@ -84,4 +84,7 @@ Edit `firebaseConfig` di `js/firebase.js` (satu-satunya tempat config Firebase d
 - Nilai yang berasal dari database dan nama petugas ditampilkan melalui `textContent`, bukan disisipkan sebagai HTML.
 - Uji alur panggil, recall, reset, audio, dan akses lintas perangkat pada lingkungan staging sebelum dipakai untuk pelayanan resmi.
 
+
+- **Catatan transaksi:** agar pembaruan counter dan panggilan aktif benar-benar atomik, `nextCall()` menjalankan transaksi pada root Realtime Database. Ini membutuhkan izin baca/tulis pada lokasi root dan membaca struktur database yang ada. Jika Security Rules hanya memberi izin pada child tertentu, transaksi ini dapat ditolak; untuk keamanan paling kuat, pindahkan operasi antrean ke backend tepercaya/Cloud Functions dan jangan membuka akses root kepada klien tanpa autentikasi.
+
 **Batas audit:** koneksi GitHub dapat membaca kode dan menulis commit, tetapi pemeriksaan aturan keamanan Firebase melalui endpoint yang tersedia ditolak oleh izin integrasi. Rules Firebase belum diubah dan keamanan akses database belum dapat dinyatakan terverifikasi.
